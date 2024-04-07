@@ -1,21 +1,34 @@
-# remix-shadcn-prisma-stack
+# tec-website
 
-Remix template with shadcn/ui, Prisma, MongoDB, and TypeScript.
+The official website of Tirunelveli Economic Chamber
 
-![remix-template](https://github.com/mhmdsami/remix-shadcn-prisma-ts/assets/64266012/2d96fe49-fc97-4a02-bd4b-8cac9ce67480)
+## Getting Started
 
-## Using the template
+### Fork and clone the repository
 
-- Create a remix app with this template
+- [Fork](https://github.com/mhmdsami/tec-website/fork) this repository
+- Clone the forked repository
 
 ```
-pnpm dlx create-remix@latest --template mhmdsami/remix-shadcn-prisma-stack
+git clone https://github.com/<your-username>/tec-website.git
 ```
 
-- Generate Prisma client
+### Install dependencies
+
+```
+pnpm install
+```
+
+### Generate Prisma client
 
 ```
 pnpm prisma generate
+```
+
+### Start the development server
+
+```
+pnpm dev
 ```
 
 ## Tech Stack

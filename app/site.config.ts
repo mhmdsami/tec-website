@@ -5,18 +5,20 @@ type SiteConfig = {
     [key: string]: {
       text: string;
       to: string;
+      showSecondaryNavbar?: boolean;
     };
   };
   sessionName: string;
 };
 
 const siteConfig = {
-  name: "Remix Template",
-  description: "Remix with shadcn/ui, TailwindCSS, MongoDB, Prisma and more",
+  name: "Tirunelveli Economic Chamber",
+  description: "The official website of Tirunelveli Economic Chamber.",
   navLinks: {
     "/": {
       text: "Dashboard",
       to: "/dashboard",
+      showSecondaryNavbar: true,
     },
     "/dashboard": {
       text: "Home",

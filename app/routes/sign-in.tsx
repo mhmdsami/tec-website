@@ -76,15 +76,15 @@ export default function SignIn() {
     >
       <h1 className="text-3xl font-bold">Welcome Back!</h1>
       <div className="flex flex-col gap-2">
-        <Label>Username</Label>
-        <Input placeholder="Username" name="username" />
+        <Label>Email</Label>
+        <Input placeholder="Email" name="email" />
         <p
           className={cn(
             "text-sm text-destructive hidden",
-            actionData?.fieldErrors?.username && "block",
+            actionData?.fieldErrors?.email && "block",
           )}
         >
-          {actionData?.fieldErrors?.username}
+          {actionData?.fieldErrors?.email}
         </p>
       </div>
       <div className="flex flex-col gap-2">

@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ["DM Sans", "sans-serif"],
+        body: ["Geist", "sans-serif"],
       },
     },
   },

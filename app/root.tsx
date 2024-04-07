@@ -1,7 +1,7 @@
 import styles from "~/styles/globals.css?url";
-import { getUserId } from "~/utils/session.server";
-import Navbar from "~/components/navbar";
 import siteConfig from "~/site.config";
+import Navbar from "~/components/navbar";
+import { getUserId } from "~/utils/session.server";
 import {
   Links,
   Meta,
@@ -40,7 +40,7 @@ export default function App() {
         <Links />
         <title>{siteConfig.name}</title>
       </head>
-      <body className="flex flex-col min-h-screen dark">
+      <body className="flex flex-col min-h-screen mx-10">
         <Toaster
           position="top-right"
           containerClassName="mt-[10vh] mr-4"
