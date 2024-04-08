@@ -12,7 +12,7 @@ import {
   includes,
 } from "valibot";
 
-const SignUpSchema = object({
+export const SignUpSchema = object({
   name: string("Name is required", [
     minLength(3, "Name must be at least 3 characters"),
   ]),
@@ -24,7 +24,7 @@ const SignUpSchema = object({
   ]),
 });
 
-const SignInSchema = object({
+export const SignInSchema = object({
   email: string("Email is required", [
     email("Please enter a valid email address"),
   ]),
@@ -59,6 +59,8 @@ export const BusinessOnboardingSchema = object({
   ]),
 });
 
+export type SignUpData = Output<typeof SignUpSchema>;
+export type SignInData = Output<typeof SignInSchema>;
 export type BusinessOnboardingData = Output<typeof BusinessOnboardingSchema>;
 
 type ValidatedForm<Schema extends BaseSchema> =

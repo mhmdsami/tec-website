@@ -2,11 +2,11 @@ import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { createUserSession, getUserId, signUp } from "~/utils/session.server";
-import { validateSignUp } from "~/utils/validation";
+import { SignUpData, SignUpSchema, validateSignUp } from "~/utils/validation";
 import { cn } from "~/lib/utils";
 import siteConfig from "~/site.config";
 import { json, redirect } from "@remix-run/node";
-import { Form, Link, useActionData } from "@remix-run/react";
+import { Form, Link, useActionData, useSubmit } from "@remix-run/react";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
 import type {
@@ -14,6 +14,8 @@ import type {
   ActionFunction,
   MetaFunction,
 } from "@remix-run/node";
+import { useForm } from "react-hook-form";
+import { valibotResolver } from "@hookform/resolvers/valibot";
 
 export const meta: MetaFunction = () => {
   return [
@@ -62,29 +64,43 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function SignUp() {
   const actionData = useActionData<ActionData>();
-
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignUpData>({
+    resolver: valibotResolver(SignUpSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+    },
+  });
+  const submit = useSubmit();
   useEffect(() => {
     if (actionData?.error) {
       toast.error(actionData.error);
     }
   }, [actionData]);
 
+  const onSubmit = (data: SignUpData) => submit(data, { method: "post" });
+
   return (
     <Form
-      method="POST"
+      onSubmit={handleSubmit(onSubmit)}
       className="flex flex-col gap-5 grow justify-center w-80 mx-auto"
     >
       <h1 className="text-3xl font-bold">Create an Account!</h1>
       <div className="flex flex-col gap-2">
         <Label>Name</Label>
-        <Input placeholder="Name" name="name" />
+        <Input placeholder="Name" {...register("name")} />
         <p
           className={cn(
             "text-sm text-destructive hidden",
-            actionData?.fieldErrors?.name && "block",
+            errors.name && "block",
           )}
         >
-          {actionData?.fieldErrors?.name}
+          {errors.name?.message}
         </p>
       </div>
       <div className="flex flex-col gap-2">
@@ -93,10 +109,10 @@ export default function SignUp() {
         <p
           className={cn(
             "text-sm text-destructive hidden",
-            actionData?.fieldErrors?.email && "block",
+            errors.email && "block",
           )}
         >
-          {actionData?.fieldErrors?.email}
+          {errors.email?.message}
         </p>
       </div>
       <div className="flex flex-col gap-2">
@@ -105,10 +121,10 @@ export default function SignUp() {
         <p
           className={cn(
             "text-sm text-destructive hidden",
-            actionData?.fieldErrors?.password && "block",
+            errors.password && "block",
           )}
         >
-          {actionData?.fieldErrors?.password}
+          {errors.password?.message}
         </p>
       </div>
       <Button type="submit" className="text-base font-semibold">

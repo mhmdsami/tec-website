@@ -2,11 +2,11 @@ import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { createUserSession, getUserId, signIn } from "~/utils/session.server";
-import { validateSignIn } from "~/utils/validation";
+import { SignInData, SignInSchema, validateSignIn } from "~/utils/validation";
 import { cn } from "~/lib/utils";
 import siteConfig from "~/site.config";
 import { json, redirect } from "@remix-run/node";
-import { Form, Link, useActionData } from "@remix-run/react";
+import { Form, Link, useActionData, useSubmit } from "@remix-run/react";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
 import type {
@@ -14,6 +14,8 @@ import type {
   ActionFunction,
   MetaFunction,
 } from "@remix-run/node";
+import { useForm } from "react-hook-form";
+import { valibotResolver } from "@hookform/resolvers/valibot";
 
 export const meta: MetaFunction = () => {
   return [
@@ -62,41 +64,58 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function SignIn() {
   const actionData = useActionData<ActionData>();
-
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm<SignInData>({
+    resolver: valibotResolver(SignInSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+  const submit = useSubmit();
   useEffect(() => {
     if (actionData?.error) {
       toast.error(actionData.error);
     }
   }, [actionData]);
 
+  const onSubmit = async (data: SignInData) => submit(data, { method: "post" });
+
   return (
     <Form
-      method="POST"
+      onSubmit={handleSubmit(onSubmit)}
       className="flex flex-col gap-5 grow justify-center w-80 mx-auto"
     >
       <h1 className="text-3xl font-bold">Welcome Back!</h1>
       <div className="flex flex-col gap-2">
         <Label>Email</Label>
-        <Input placeholder="Email" name="email" />
+        <Input placeholder="Email" {...register("email")} />
         <p
           className={cn(
             "text-sm text-destructive hidden",
-            actionData?.fieldErrors?.email && "block",
+            errors.email && "block",
           )}
         >
-          {actionData?.fieldErrors?.email}
+          {errors.email?.message}
         </p>
       </div>
       <div className="flex flex-col gap-2">
         <Label>Password</Label>
-        <Input placeholder="Password" type="password" name="password" />
+        <Input
+          placeholder="Password"
+          type="password"
+          {...register("password")}
+        />
         <p
           className={cn(
             "text-sm text-destructive hidden",
-            actionData?.fieldErrors?.password && "block",
+            errors.password && "block",
           )}
         >
-          {actionData?.fieldErrors?.password}
+          {errors.password?.message}
         </p>
       </div>
       <Button type="submit" className="text-base font-semibold">
