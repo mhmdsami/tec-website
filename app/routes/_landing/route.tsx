@@ -1,5 +1,5 @@
-import Navbar from "~/routes/_landing/secondary-navbar";
 import { Outlet } from "@remix-run/react";
+import Navbar from "~/routes/_landing/secondary-navbar";
 
 export default function Landing() {
   return (

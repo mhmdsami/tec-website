@@ -1,3 +1,5 @@
+import { Link } from "@remix-run/react";
+import { ReactNode } from "react";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -5,8 +7,6 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "~/components/ui/navigation-menu";
-import { ReactNode } from "react";
-import { Link } from "@remix-run/react";
 
 export default function SecondaryNavbar() {
   const links = [

@@ -1,21 +1,21 @@
-import { Label } from "~/components/ui/label";
-import { Input } from "~/components/ui/input";
-import { Button } from "~/components/ui/button";
-import { createUserSession, getUserId, signIn } from "~/utils/session.server";
-import { SignInData, SignInSchema, validateSignIn } from "~/utils/validation";
-import { cn } from "~/lib/utils";
-import siteConfig from "~/site.config";
-import { json, redirect } from "@remix-run/node";
-import { Form, Link, useActionData, useSubmit } from "@remix-run/react";
-import toast from "react-hot-toast";
-import { useEffect } from "react";
+import { valibotResolver } from "@hookform/resolvers/valibot";
 import type {
-  LoaderFunction,
   ActionFunction,
+  LoaderFunction,
   MetaFunction,
 } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
+import { Form, Link, useActionData, useSubmit } from "@remix-run/react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { valibotResolver } from "@hookform/resolvers/valibot";
+import toast from "react-hot-toast";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
+import { cn } from "~/lib/utils";
+import siteConfig from "~/site.config";
+import { createUserSession, getUserId, signIn } from "~/utils/session.server";
+import { SignInData, SignInSchema, validateSignIn } from "~/utils/validation";
 
 export const meta: MetaFunction = () => {
   return [
@@ -87,7 +87,7 @@ export default function SignIn() {
   return (
     <Form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col gap-5 grow justify-center w-80 mx-auto"
+      className="mx-auto flex w-80 grow flex-col justify-center gap-5"
     >
       <h1 className="text-3xl font-bold">Welcome Back!</h1>
       <div className="flex flex-col gap-2">
@@ -95,7 +95,7 @@ export default function SignIn() {
         <Input placeholder="Email" {...register("email")} />
         <p
           className={cn(
-            "text-sm text-destructive hidden",
+            "hidden text-sm text-destructive",
             errors.email && "block",
           )}
         >
@@ -111,7 +111,7 @@ export default function SignIn() {
         />
         <p
           className={cn(
-            "text-sm text-destructive hidden",
+            "hidden text-sm text-destructive",
             errors.password && "block",
           )}
         >
@@ -123,7 +123,7 @@ export default function SignIn() {
       </Button>
       <Link
         to="/sign-up"
-        className="text-primary text-sm underline text-center"
+        className="text-center text-sm text-primary underline"
       >
         Don't have an account? Create one now!
       </Link>

@@ -1,6 +1,6 @@
 import { db } from "~/utils/db.server";
-import { BusinessOnboardingData } from "~/utils/validation";
 import { slugify } from "~/utils/helpers";
+import { BusinessOnboardingData } from "~/utils/validation";
 
 export const getUserById = async (id: string) => {
   return db.user.findUnique({ where: { id } });

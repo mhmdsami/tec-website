@@ -1,15 +1,15 @@
 import {
+  BaseSchema,
+  Output,
+  ValiError,
   email,
+  includes,
+  length,
   minLength,
   object,
   parse,
   string,
-  length,
-  ValiError,
-  Output,
-  BaseSchema,
   url,
-  includes,
 } from "valibot";
 
 export const SignUpSchema = object({

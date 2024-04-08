@@ -1,3 +1,5 @@
+import { valibotResolver } from "@hookform/resolvers/valibot";
+import { Business, BusinessType } from "@prisma-app/client";
 import {
   ActionFunction,
   json,
@@ -6,26 +8,13 @@ import {
   redirect,
   TypedResponse,
 } from "@remix-run/node";
-import { requireUserId } from "~/utils/session.server";
-import {
-  createBusiness,
-  getBusinessByOwnerId,
-  getBusinessTypes,
-  getUserById,
-} from "~/utils/api.server";
-import siteConfig from "~/site.config";
-import { Business, BusinessType } from "@prisma-app/client";
-import {
-  BusinessOnboardingData,
-  BusinessOnboardingSchema,
-  validateBusinessOnboarding,
-} from "~/utils/validation";
-import { Controller, useForm } from "react-hook-form";
-import { valibotResolver } from "@hookform/resolvers/valibot";
 import { Form, useLoaderData, useSubmit } from "@remix-run/react";
-import { Label } from "~/components/ui/label";
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { cn } from "~/lib/utils";
+import { Label } from "~/components/ui/label";
+import { Progress } from "~/components/ui/progress";
 import {
   Select,
   SelectContent,
@@ -33,10 +22,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { Button } from "~/components/ui/button";
 import { Textarea } from "~/components/ui/textarea";
-import { Progress } from "~/components/ui/progress";
-import { useState } from "react";
+import { cn } from "~/lib/utils";
+import siteConfig from "~/site.config";
+import {
+  createBusiness,
+  getBusinessByOwnerId,
+  getBusinessTypes,
+  getUserById,
+} from "~/utils/api.server";
+import { requireUserId } from "~/utils/session.server";
+import {
+  BusinessOnboardingData,
+  BusinessOnboardingSchema,
+  validateBusinessOnboarding,
+} from "~/utils/validation";
 
 export const meta: MetaFunction = () => {
   return [
@@ -122,10 +122,10 @@ export default function OnboardingForm() {
   ];
 
   return (
-    <div className="flex flex-col gap-5 w-full">
+    <div className="flex w-full flex-col gap-5">
       <h1 className="text-2xl font-bold">Business Onboarding</h1>
       <Form
-        className="flex flex-col gap-3 max-w-[400px] w-full mx-auto h-[70vh] justify-center"
+        className="mx-auto flex h-[70vh] w-full max-w-[400px] flex-col justify-center gap-3"
         onSubmit={handleSubmit(onSubmit)}
       >
         {screen === 0 && (
@@ -135,7 +135,7 @@ export default function OnboardingForm() {
               <Input placeholder="Business Name" {...register("name")} />
               <p
                 className={cn(
-                  "text-sm text-destructive hidden",
+                  "hidden text-sm text-destructive",
                   errors.name && "block",
                 )}
               >
@@ -164,7 +164,7 @@ export default function OnboardingForm() {
               />
               <p
                 className={cn(
-                  "text-sm text-destructive hidden",
+                  "hidden text-sm text-destructive",
                   errors.typeId && "block",
                 )}
               >
@@ -180,7 +180,7 @@ export default function OnboardingForm() {
               <Input placeholder="Tagline" {...register("tagline")} />
               <p
                 className={cn(
-                  "text-sm text-destructive hidden",
+                  "hidden text-sm text-destructive",
                   errors.tagline && "block",
                 )}
               >
@@ -192,7 +192,7 @@ export default function OnboardingForm() {
               <Textarea placeholder="About Business" {...register("about")} />
               <p
                 className={cn(
-                  "text-sm text-destructive hidden",
+                  "hidden text-sm text-destructive",
                   errors.about && "block",
                 )}
               >
@@ -208,7 +208,7 @@ export default function OnboardingForm() {
               <Input placeholder="Location" {...register("location")} />
               <p
                 className={cn(
-                  "text-sm text-destructive hidden",
+                  "hidden text-sm text-destructive",
                   errors.location && "block",
                 )}
               >
@@ -220,7 +220,7 @@ export default function OnboardingForm() {
               <Input placeholder="Instagram" {...register("instagram")} />
               <p
                 className={cn(
-                  "text-sm text-destructive hidden",
+                  "hidden text-sm text-destructive",
                   errors.instagram && "block",
                 )}
               >
@@ -232,7 +232,7 @@ export default function OnboardingForm() {
               <Input placeholder="WhatsApp" {...register("whatsApp")} />
               <p
                 className={cn(
-                  "text-sm text-destructive hidden",
+                  "hidden text-sm text-destructive",
                   errors.whatsApp && "block",
                 )}
               >
@@ -248,7 +248,7 @@ export default function OnboardingForm() {
               <Input placeholder="Email" {...register("email")} />
               <p
                 className={cn(
-                  "text-sm text-destructive hidden",
+                  "hidden text-sm text-destructive",
                   errors.email && "block",
                 )}
               >
@@ -260,7 +260,7 @@ export default function OnboardingForm() {
               <Input placeholder="Phone" {...register("phone")} />
               <p
                 className={cn(
-                  "text-sm text-destructive hidden",
+                  "hidden text-sm text-destructive",
                   errors.phone && "block",
                 )}
               >

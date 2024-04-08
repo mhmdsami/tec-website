@@ -1,8 +1,8 @@
-import { json, LoaderFunction, redirect, TypedResponse } from "@remix-run/node";
-import { requireUserId } from "~/utils/session.server";
-import { getBusinessByOwnerId, getUserById } from "~/utils/api.server";
-import siteConfig from "~/site.config";
 import { Business, User } from "@prisma-app/client";
+import { json, LoaderFunction, redirect, TypedResponse } from "@remix-run/node";
+import siteConfig from "~/site.config";
+import { getBusinessByOwnerId, getUserById } from "~/utils/api.server";
+import { requireUserId } from "~/utils/session.server";
 
 export const meta = () => [
   { title: `${siteConfig.name} | Dashboard` },

@@ -1,5 +1,5 @@
-import siteConfig from "~/site.config";
 import type { MetaFunction } from "@remix-run/node";
+import siteConfig from "~/site.config";
 
 export const meta: MetaFunction = () => {
   return [
