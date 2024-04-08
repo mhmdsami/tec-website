@@ -2,7 +2,7 @@ import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { createUserSession, getUserId, signUp } from "~/utils/session.server";
-import { validateSignUp } from "~/utils/validation.server";
+import { validateSignUp } from "~/utils/validation";
 import { cn } from "~/lib/utils";
 import siteConfig from "~/site.config";
 import { json, redirect } from "@remix-run/node";
@@ -47,11 +47,11 @@ export const action: ActionFunction = async ({ request }) => {
   const parseRes = validateSignUp(body);
 
   if (parseRes.success) {
-    const { email, username, password } = parseRes.data;
-    const res = await signUp(email, username, password);
+    const { email, name, password } = parseRes.data;
+    const res = await signUp(email, name, password);
     if (res.success) {
       const { user } = res.data;
-      return createUserSession(user.id, "/");
+      return createUserSession(user.id, "/dashboard");
     } else {
       return json({ error: res.error }, { status: 400 });
     }
@@ -76,15 +76,15 @@ export default function SignUp() {
     >
       <h1 className="text-3xl font-bold">Create an Account!</h1>
       <div className="flex flex-col gap-2">
-        <Label>Username</Label>
-        <Input placeholder="Username" name="username" />
+        <Label>Name</Label>
+        <Input placeholder="Name" name="name" />
         <p
           className={cn(
             "text-sm text-destructive hidden",
-            actionData?.fieldErrors?.username && "block",
+            actionData?.fieldErrors?.name && "block",
           )}
         >
-          {actionData?.fieldErrors?.username}
+          {actionData?.fieldErrors?.name}
         </p>
       </div>
       <div className="flex flex-col gap-2">

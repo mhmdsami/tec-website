@@ -7,13 +7,13 @@ import siteConfig from "~/site.config";
 
 export async function signUp(
   email: string,
-  username: string,
+  name: string,
   password: string,
 ): Promise<
   { success: true; data: { user: User } } | { success: false; error: string }
 > {
   const existingUser = await db.user.findFirst({
-    where: { OR: [{ email }, { username }] },
+    where: { email },
   });
 
   if (existingUser) {
@@ -22,7 +22,7 @@ export async function signUp(
 
   const passwordHash = await bcrypt.hash(password, 10);
   const user = await db.user.create({
-    data: { email, username, passwordHash },
+    data: { email, name, passwordHash },
   });
 
   return { success: true, data: { user: user as User } };

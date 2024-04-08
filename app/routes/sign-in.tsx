@@ -2,7 +2,7 @@ import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { createUserSession, getUserId, signIn } from "~/utils/session.server";
-import { validateSignIn } from "~/utils/validation.server";
+import { validateSignIn } from "~/utils/validation";
 import { cn } from "~/lib/utils";
 import siteConfig from "~/site.config";
 import { json, redirect } from "@remix-run/node";
@@ -51,7 +51,7 @@ export const action: ActionFunction = async ({ request }) => {
     const res = await signIn(email, password);
     if (res.success) {
       const { user } = res.data;
-      return createUserSession(user.id, "/");
+      return createUserSession(user.id, "/dashboard");
     } else {
       return json({ error: res.error }, { status: 400 });
     }

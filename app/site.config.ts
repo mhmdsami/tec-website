@@ -5,20 +5,18 @@ type SiteConfig = {
     [key: string]: {
       text: string;
       to: string;
-      showSecondaryNavbar?: boolean;
     };
   };
   sessionName: string;
 };
 
-const siteConfig = {
+const siteConfig: SiteConfig = {
   name: "Tirunelveli Economic Chamber",
   description: "The official website of Tirunelveli Economic Chamber.",
   navLinks: {
     "/": {
       text: "Dashboard",
       to: "/dashboard",
-      showSecondaryNavbar: true,
     },
     "/dashboard": {
       text: "Home",
@@ -36,4 +34,4 @@ const siteConfig = {
   sessionName: "__remix_template_session",
 };
 
-export default siteConfig as SiteConfig;
+export default siteConfig;
