@@ -1,10 +1,13 @@
-import { Outlet } from "@remix-run/react";
-import Navbar from "~/routes/_landing/secondary-navbar";
+import { Outlet, useOutletContext } from "@remix-run/react";
+import { RootOutletContext } from "~/root";
+import Navbar from "~/routes/_landing/navbar";
 
 export default function Landing() {
+  const { isLoggedIn } = useOutletContext<RootOutletContext>();
+
   return (
-    <div className="flex flex-col">
-      <Navbar />
+    <div className="mx-10 flex flex-col">
+      <Navbar isLoggedIn={isLoggedIn} />
       <Outlet />
     </div>
   );

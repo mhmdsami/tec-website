@@ -105,7 +105,7 @@ export default function SignUp() {
       </div>
       <div className="flex flex-col gap-2">
         <Label>Email</Label>
-        <Input placeholder="Email" name="email" />
+        <Input placeholder="Email" {...register("email")} />
         <p
           className={cn(
             "hidden text-sm text-destructive",
@@ -117,7 +117,11 @@ export default function SignUp() {
       </div>
       <div className="flex flex-col gap-2">
         <Label>Password</Label>
-        <Input placeholder="Password" type="password" name="password" />
+        <Input
+          placeholder="Password"
+          type="password"
+          {...register("password")}
+        />
         <p
           className={cn(
             "hidden text-sm text-destructive",

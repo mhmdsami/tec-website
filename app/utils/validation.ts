@@ -33,7 +33,7 @@ export const SignInSchema = object({
   ]),
 });
 
-export const BusinessOnboardingSchema = object({
+export const BusinessSchema = object({
   name: string("Name is required", [
     minLength(3, "Name must be at least 3 characters"),
   ]),
@@ -61,7 +61,7 @@ export const BusinessOnboardingSchema = object({
 
 export type SignUpData = Output<typeof SignUpSchema>;
 export type SignInData = Output<typeof SignInSchema>;
-export type BusinessOnboardingData = Output<typeof BusinessOnboardingSchema>;
+export type BusinessData = Output<typeof BusinessSchema>;
 
 type ValidatedForm<Schema extends BaseSchema> =
   | {
@@ -96,6 +96,4 @@ const validateForm =
 
 export const validateSignUp = validateForm(SignUpSchema);
 export const validateSignIn = validateForm(SignInSchema);
-export const validateBusinessOnboarding = validateForm(
-  BusinessOnboardingSchema,
-);
+export const validateBusiness = validateForm(BusinessSchema);

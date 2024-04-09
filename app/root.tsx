@@ -7,10 +7,8 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
-  useLocation,
 } from "@remix-run/react";
 import { Toaster } from "react-hot-toast";
-import Navbar from "~/components/navbar";
 import siteConfig from "~/site.config";
 import styles from "~/styles/globals.css?url";
 import { getUserId } from "~/utils/session.server";
@@ -27,9 +25,12 @@ export const loader: LoaderFunction = async ({ request }) => {
   return json({ isLoggedIn });
 };
 
+export type RootOutletContext = {
+  isLoggedIn: boolean;
+};
+
 export default function App() {
   const { isLoggedIn } = useLoaderData<LoaderData>();
-  const { pathname } = useLocation();
 
   return (
     <html lang="en">
@@ -40,7 +41,7 @@ export default function App() {
         <Links />
         <title>{siteConfig.name}</title>
       </head>
-      <body className="mx-10 flex min-h-screen flex-col">
+      <body className="flex min-h-screen flex-col">
         <Toaster
           position="top-right"
           containerClassName="mt-[10vh] mr-4"
@@ -53,8 +54,7 @@ export default function App() {
             },
           }}
         />
-        <Navbar isLoggedIn={isLoggedIn} path={pathname} />
-        <Outlet />
+        <Outlet context={{ isLoggedIn } as RootOutletContext} />
         <ScrollRestoration />
         <Scripts />
       </body>

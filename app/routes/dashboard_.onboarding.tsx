@@ -2,11 +2,11 @@ import { valibotResolver } from "@hookform/resolvers/valibot";
 import { Business, BusinessType } from "@prisma-app/client";
 import {
   ActionFunction,
-  json,
   LoaderFunction,
   MetaFunction,
-  redirect,
   TypedResponse,
+  json,
+  redirect,
 } from "@remix-run/node";
 import { Form, useLoaderData, useSubmit } from "@remix-run/react";
 import { useState } from "react";
@@ -33,9 +33,9 @@ import {
 } from "~/utils/api.server";
 import { requireUserId } from "~/utils/session.server";
 import {
-  BusinessOnboardingData,
-  BusinessOnboardingSchema,
-  validateBusinessOnboarding,
+  BusinessData,
+  BusinessSchema,
+  validateBusiness,
 } from "~/utils/validation";
 
 export const meta: MetaFunction = () => {
@@ -77,7 +77,7 @@ export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const body = Object.fromEntries(formData.entries());
 
-  const parseRes = validateBusinessOnboarding(body);
+  const parseRes = validateBusiness(body);
   if (parseRes.success) {
     await createBusiness(parseRes.data, user.id);
     return redirect("/dashboard");
@@ -96,8 +96,8 @@ export default function OnboardingForm() {
     handleSubmit,
     formState: { errors, isValid },
     trigger,
-  } = useForm<BusinessOnboardingData>({
-    resolver: valibotResolver(BusinessOnboardingSchema),
+  } = useForm<BusinessData>({
+    resolver: valibotResolver(BusinessSchema),
     defaultValues: {
       name: "",
       typeId: "",
@@ -111,10 +111,10 @@ export default function OnboardingForm() {
       ...business,
     },
   });
-  const onSubmit = async (data: BusinessOnboardingData) =>
+  const onSubmit = async (data: BusinessData) =>
     submit(data, { method: "post" });
 
-  const fieldsToValidate: Array<Array<keyof BusinessOnboardingData>> = [
+  const fieldsToValidate: Array<Array<keyof BusinessData>> = [
     ["name", "typeId"],
     ["tagline", "about"],
     ["location", "instagram", "whatsApp"],
@@ -122,7 +122,7 @@ export default function OnboardingForm() {
   ];
 
   return (
-    <div className="flex w-full flex-col gap-5">
+    <div className="flex w-full flex-col gap-5 p-10">
       <h1 className="text-2xl font-bold">Business Onboarding</h1>
       <Form
         className="mx-auto flex h-[70vh] w-full max-w-[400px] flex-col justify-center gap-3"

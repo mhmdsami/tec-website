@@ -1,6 +1,6 @@
 import { db } from "~/utils/db.server";
 import { slugify } from "~/utils/helpers";
-import { BusinessOnboardingData } from "~/utils/validation";
+import { BusinessData } from "~/utils/validation";
 
 export const getUserById = async (id: string) => {
   return db.user.findUnique({ where: { id } });
@@ -10,10 +10,7 @@ export const getBusinessByOwnerId = async (ownerId: string) => {
   return db.business.findFirst({ where: { ownerId } });
 };
 
-export const createBusiness = async (
-  data: BusinessOnboardingData,
-  ownerId: string,
-) => {
+export const createBusiness = async (data: BusinessData, ownerId: string) => {
   return db.business.create({
     data: {
       name: data.name,
@@ -30,11 +27,8 @@ export const createBusiness = async (
   });
 };
 
-export const updateBusiness = async (
-  id: string,
-  data: BusinessOnboardingData,
-) => {
-  return db.business.update({ where: { id }, data });
+export const updateBusiness = async (ownerId: string, data: BusinessData) => {
+  return db.business.update({ where: { ownerId }, data });
 };
 
 export const createBusinessType = async (name: string) => {
