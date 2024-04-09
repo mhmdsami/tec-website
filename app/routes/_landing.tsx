@@ -1,6 +1,6 @@
 import { Outlet, useOutletContext } from "@remix-run/react";
+import Navbar from "~/components/navbar";
 import { RootOutletContext } from "~/root";
-import Navbar from "~/routes/_landing/navbar";
 
 export default function Landing() {
   const { isLoggedIn } = useOutletContext<RootOutletContext>();

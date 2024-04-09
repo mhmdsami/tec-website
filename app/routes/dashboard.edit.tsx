@@ -26,7 +26,7 @@ import {
 } from "~/components/ui/select";
 import { Textarea } from "~/components/ui/textarea";
 import { cn } from "~/lib/utils";
-import { DashboardOutletContext } from "~/routes/dashboard/route";
+import { DashboardOutletContext } from "~/routes/dashboard";
 import { getBusinessTypes, updateBusiness } from "~/utils/api.server";
 import { requireUserId } from "~/utils/session.server";
 import {

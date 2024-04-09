@@ -1,7 +1,7 @@
 import { Business, User } from "@prisma-app/client";
 import { LoaderFunction, TypedResponse, json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
-import Sidebar from "~/routes/dashboard/sidebar";
+import Sidebar from "~/components/sidebar";
 import siteConfig from "~/site.config";
 import { getBusinessByOwnerId, getUserById } from "~/utils/api.server";
 import { requireUserId } from "~/utils/session.server";

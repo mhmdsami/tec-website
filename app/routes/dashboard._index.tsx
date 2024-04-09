@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { DashboardOutletContext } from "~/routes/dashboard/route";
+import { DashboardOutletContext } from "~/routes/dashboard";
 
 export default function Dashboard() {
   const {
