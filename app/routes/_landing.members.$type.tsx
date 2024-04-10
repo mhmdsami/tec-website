@@ -1,10 +1,10 @@
 import { Business, BusinessType, User } from "@prisma-app/client";
 import { LoaderFunction, TypedResponse, json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
+import { Button } from "~/components/ui/button";
 import { DataTable } from "~/components/ui/data-table";
 import { getBusinessByType, getBusinessTypeBySlug } from "~/utils/api.server";
 import { copyToClipboard } from "~/utils/helpers.client";
-import { Button } from "~/components/ui/button";
 
 type LoaderData = {
   businessType: BusinessType;
@@ -17,12 +17,12 @@ export const loader: LoaderFunction = async ({
   const type = params.type;
 
   if (!type) {
-    throw { status: 404, error: new Error("Type not found") };
+    throw json({ message: "Slug not found" }, { status: 400 });
   }
 
   const businessType = await getBusinessTypeBySlug(type);
   if (!businessType) {
-    throw { status: 404, error: new Error("Type not found") };
+    throw json({ message: "Invalid type of business" }, { status: 404 });
   }
 
   const businesses = await getBusinessByType(businessType.id);
@@ -75,12 +75,11 @@ export default function Members() {
             accessorKey: "id",
             header: "Details",
             cell: ({ row }) => (
-              <Button
-              >
+              <Button>
                 <Link to={`/business/${row.getValue("id")}`}>View</Link>
               </Button>
             ),
-          }
+          },
         ]}
         data={businesses}
       />
