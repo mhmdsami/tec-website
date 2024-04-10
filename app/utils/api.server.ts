@@ -49,3 +49,7 @@ export const getBusinessByType = async (typeId: string) => {
     include: { owner: true },
   });
 };
+
+export const getBusinessById = async (id: string) => {
+  return db.business.findUnique({ where: { id } });
+};

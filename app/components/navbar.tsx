@@ -64,7 +64,11 @@ export default function Navbar({ isLoggedIn, businessTypes }: NavbarProps) {
                   <NavigationMenuTrigger>{element.text}</NavigationMenuTrigger>
                   <NavigationMenuContent className="p-2">
                     {element.subLinks.slice(0, 5).map((link) => (
-                      <NavbarLink to={link.to} className="w-full justify-start">
+                      <NavbarLink
+                        key={link.text}
+                        to={link.to}
+                        className="w-full justify-start"
+                      >
                         {link.text}
                       </NavbarLink>
                     ))}
