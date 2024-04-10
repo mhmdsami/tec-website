@@ -1,4 +1,8 @@
-import type { LinksFunction, LoaderFunction } from "@remix-run/node";
+import type {
+  LinksFunction,
+  LoaderFunction,
+  TypedResponse,
+} from "@remix-run/node";
 import { json } from "@remix-run/node";
 import {
   Links,
@@ -19,7 +23,9 @@ type LoaderData = {
   isLoggedIn: boolean;
 };
 
-export const loader: LoaderFunction = async ({ request }) => {
+export const loader: LoaderFunction = async ({
+  request,
+}): Promise<TypedResponse<LoaderData>> => {
   const isLoggedIn = !!(await getUserId(request));
 
   return json({ isLoggedIn });

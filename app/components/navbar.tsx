@@ -1,3 +1,4 @@
+import { BusinessType } from "@prisma-app/client";
 import { Form, Link } from "@remix-run/react";
 import { LayoutDashboard, LogOut, UserRound } from "lucide-react";
 import { ReactNode } from "react";
@@ -12,24 +13,41 @@ import {
 } from "~/components/ui/dropdown-menu";
 import {
   NavigationMenu,
+  NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
+  NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "~/components/ui/navigation-menu";
+import { cn } from "~/lib/utils";
 
 interface NavbarProps {
   isLoggedIn: boolean;
+  businessTypes: BusinessType[];
 }
 
-export default function Navbar({ isLoggedIn }: NavbarProps) {
-  const links = [
-    { to: "/", text: "Home" },
-    { to: "/about", text: "About Us" },
-    { to: "/members", text: "Members" },
-    { to: "/events", text: "Events" },
-    { to: "/blog", text: "Blog" },
-    { to: "/contact", text: "Contact Us" },
+export default function Navbar({ isLoggedIn, businessTypes }: NavbarProps) {
+  const links: Array<
+    | {
+        hasSubLinks: true;
+        text: string;
+        subLinks: Array<{ text: string; to: string }>;
+      }
+    | { hasSubLinks: false; text: string; to: string }
+  > = [
+    { hasSubLinks: false, text: "Home", to: "/" },
+    { hasSubLinks: false, text: "About Us", to: "/about" },
+    {
+      hasSubLinks: true,
+      text: "Members",
+      subLinks: businessTypes.map(({ name, slug }) => {
+        return { text: name, to: `/members/${slug}` };
+      }),
+    },
+    { hasSubLinks: false, text: "Events", to: "/events" },
+    { hasSubLinks: false, text: "Blog", to: "/blog" },
+    { hasSubLinks: false, text: "Contact Us", to: "/contact" },
   ];
 
   return (
@@ -38,13 +56,29 @@ export default function Navbar({ isLoggedIn }: NavbarProps) {
         TEC
       </Link>
       <div className="flex gap-3">
-        <NavigationMenu className="md:-mx-3">
+        <NavigationMenu>
           <NavigationMenuList>
-            {links.map(({ to, text }) => (
-              <NavigationMenuItem key={to}>
-                <NavbarLink to={to}>{text}</NavbarLink>
-              </NavigationMenuItem>
-            ))}
+            {links.map((element) =>
+              element.hasSubLinks ? (
+                <NavigationMenuItem key={element.text}>
+                  <NavigationMenuTrigger>{element.text}</NavigationMenuTrigger>
+                  <NavigationMenuContent className="p-2">
+                    {element.subLinks.slice(0, 5).map((link) => (
+                      <NavbarLink to={link.to} className="w-full justify-start">
+                        {link.text}
+                      </NavbarLink>
+                    ))}
+                    <NavbarLink to="/members" className="w-full justify-start">
+                      More
+                    </NavbarLink>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              ) : (
+                <NavigationMenuItem key={element.text}>
+                  <NavbarLink to={element.to}>{element.text}</NavbarLink>
+                </NavigationMenuItem>
+              ),
+            )}
           </NavigationMenuList>
         </NavigationMenu>
         {isLoggedIn ? (
@@ -82,12 +116,13 @@ export default function Navbar({ isLoggedIn }: NavbarProps) {
 interface NavbarLinkProps {
   to: string;
   children: ReactNode;
+  className?: string;
 }
 
-const NavbarLink = ({ to, children }: NavbarLinkProps) => (
-  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-    <Link to={to} className="text-lg">
+const NavbarLink = ({ to, children, className }: NavbarLinkProps) => (
+  <Link to={to}>
+    <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), className)}>
       {children}
-    </Link>
-  </NavigationMenuLink>
+    </NavigationMenuLink>
+  </Link>
 );

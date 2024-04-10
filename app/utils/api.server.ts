@@ -1,5 +1,5 @@
 import { db } from "~/utils/db.server";
-import { slugify } from "~/utils/helpers";
+import { slugify } from "~/utils/helpers.server";
 import { BusinessData } from "~/utils/validation";
 
 export const getUserById = async (id: string) => {
@@ -37,4 +37,15 @@ export const createBusinessType = async (name: string) => {
 
 export const getBusinessTypes = async () => {
   return db.businessType.findMany();
+};
+
+export const getBusinessTypeBySlug = async (slug: string) => {
+  return db.businessType.findUnique({ where: { slug } });
+};
+
+export const getBusinessByType = async (typeId: string) => {
+  return db.business.findMany({
+    where: { typeId, isVerified: true },
+    include: { owner: true },
+  });
 };
