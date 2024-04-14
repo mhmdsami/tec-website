@@ -18,6 +18,13 @@ import { DataTable } from "~/components/data-table";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
 import { cn } from "~/lib/utils";
 import siteConfig from "~/site.config";
 import {
@@ -163,17 +170,39 @@ export default function AdminVerification() {
     },
   });
 
+  const handleStatusFilterChange = (value: string) => {
+    if (value === "true") {
+      table.getColumn("isVerified")?.setFilterValue(true);
+    } else if (value === "false") {
+      table.getColumn("isVerified")?.setFilterValue(false);
+    } else {
+      table.getColumn("isVerified")?.setFilterValue(undefined);
+    }
+  };
+
   return (
     <main className="flex flex-col gap-5">
       <h1 className="text-2xl font-bold">Admin Verification</h1>
-      <Input
-        placeholder="Filter emails..."
-        value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-        onChange={(event) =>
-          table.getColumn("email")?.setFilterValue(event.target.value)
-        }
-        className="max-w-sm"
-      />
+      <div className="flex flex-row items-center justify-between">
+        <Input
+          placeholder="Filter emails..."
+          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            table.getColumn("email")?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm"
+        />
+        <Select onValueChange={handleStatusFilterChange} defaultValue="all">
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="true">Verified</SelectItem>
+            <SelectItem value="false">Unverified</SelectItem>
+            <SelectItem value="all">All</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
       <DataTable table={table} />
     </main>
   );
