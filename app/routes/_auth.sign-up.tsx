@@ -1,9 +1,5 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import type {
-  ActionFunction,
-  LoaderFunction,
-  MetaFunction,
-} from "@remix-run/node";
+import type { ActionFunction, MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, Link, useActionData, useSubmit } from "@remix-run/react";
 import { useEffect } from "react";
@@ -22,15 +18,6 @@ export const meta: MetaFunction = () => {
     { title: `Sign Up | ${siteConfig.name}` },
     { name: "description", content: `Sign Up for ${siteConfig.name}` },
   ];
-};
-
-export const loader: LoaderFunction = async ({ request }) => {
-  const userId = await getUserId(request);
-  if (userId) {
-    return redirect("/");
-  }
-
-  return null;
 };
 
 type ActionData = {
@@ -88,7 +75,7 @@ export default function SignUp() {
   return (
     <Form
       onSubmit={handleSubmit(onSubmit)}
-      className="mx-auto flex w-80 grow flex-col justify-center gap-5"
+      className="mx-auto -mt-20 flex w-80 grow flex-col justify-center gap-5"
     >
       <h1 className="text-3xl font-bold">Create an Account!</h1>
       <div className="flex flex-col gap-2">
