@@ -1,40 +1,24 @@
+import { flexRender, Table } from "@tanstack/react-table";
 import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
-import {
-  Table,
   TableBody,
   TableCell,
+  Table as TableContainer,
   TableHead,
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
 import { cn } from "~/lib/utils";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+interface DataTableProps<TData> {
+  table: Table<TData>;
   className?: string;
 }
 
-export function DataTable<TData, TValue>({
-  columns,
-  data,
-  className,
-}: DataTableProps<TData, TValue>) {
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
-
+export function DataTable<TData>({ table, className }: DataTableProps<TData>) {
   return (
     <>
       <div className={cn("rounded-md border", className)}>
-        <Table>
+        <TableContainer>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -73,7 +57,7 @@ export function DataTable<TData, TValue>({
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length}
+                  colSpan={table.getAllColumns().length}
                   className="h-24 text-center"
                 >
                   No results.
@@ -81,7 +65,7 @@ export function DataTable<TData, TValue>({
               </TableRow>
             )}
           </TableBody>
-        </Table>
+        </TableContainer>
       </div>
     </>
   );

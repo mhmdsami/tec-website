@@ -6,11 +6,18 @@ import {
   json,
 } from "@remix-run/node";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
-import { useEffect } from "react";
+import {
+  ColumnFiltersState,
+  getCoreRowModel,
+  getFilteredRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { DataTable } from "~/components/data-table";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
 import { cn } from "~/lib/utils";
 import siteConfig from "~/site.config";
 import {
@@ -90,67 +97,84 @@ export default function AdminVerification() {
     }
   }, [actionData]);
 
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const table = useReactTable({
+    data: businesses,
+    columns: [
+      { accessorKey: "name", header: "Name" },
+      { accessorKey: "owner.name", header: "Owner" },
+      {
+        accessorKey: "phone",
+        header: "Phone",
+        cell: ({ row }) => (
+          <div
+            className="hover:cursor-pointer"
+            onClick={() =>
+              copyToClipboard(row.getValue("phone"), "Copied to clipboard")
+            }
+          >
+            {row.getValue("phone")}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "email",
+        header: "Email",
+        cell: ({ row }) => (
+          <div
+            className="hover:cursor-pointer"
+            onClick={() =>
+              copyToClipboard(row.getValue("email"), "Copied to clipboard")
+            }
+          >
+            {row.getValue("email")}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "isVerified",
+        header: "Status",
+        cell: ({ row }) => (
+          <Badge
+            className={cn(
+              row.getValue("isVerified") ? "bg-primary" : "bg-destructive",
+            )}
+          >
+            {row.getValue("isVerified") ? "Verified" : "Not Verified"}
+          </Badge>
+        ),
+      },
+      {
+        accessorKey: "id",
+        header: "Actions",
+        cell: ({ row }) => (
+          <VerifyButton
+            id={row.getValue("id")}
+            isVerified={row.getValue("isVerified")}
+          />
+        ),
+      },
+    ],
+    getCoreRowModel: getCoreRowModel(),
+    onColumnFiltersChange: setColumnFilters,
+    getFilteredRowModel: getFilteredRowModel(),
+    state: {
+      columnFilters,
+    },
+  });
+
   return (
     <main className="flex flex-col gap-5">
       <h1 className="text-2xl font-bold">Admin Verification</h1>
-      <DataTable
-        columns={[
-          { accessorKey: "name", header: "Name" },
-          { accessorKey: "owner.name", header: "Owner" },
-          {
-            accessorKey: "phone",
-            header: "Phone",
-            cell: ({ row }) => (
-              <div
-                className="hover:cursor-pointer"
-                onClick={() =>
-                  copyToClipboard(row.getValue("phone"), "Copied to clipboard")
-                }
-              >
-                {row.getValue("phone")}
-              </div>
-            ),
-          },
-          {
-            accessorKey: "email",
-            header: "Email",
-            cell: ({ row }) => (
-              <div
-                className="hover:cursor-pointer"
-                onClick={() =>
-                  copyToClipboard(row.getValue("email"), "Copied to clipboard")
-                }
-              >
-                {row.getValue("email")}
-              </div>
-            ),
-          },
-          {
-            accessorKey: "isVerified",
-            header: "Status",
-            cell: ({ row }) => (
-              <Badge
-                className={cn(
-                  row.getValue("isVerified") ? "bg-primary" : "bg-destructive",
-                )}
-              >
-                {row.getValue("isVerified") ? "Verified" : "Not Verified"}
-              </Badge>
-            ),
-          },
-          {
-            accessorKey: "id",
-            header: "Actions",
-            cell: ({ row }) => (
-              <VerifyButton
-                id={row.getValue("id")}
-                isVerified={row.getValue("isVerified")}
-              />
-            ),
-          },
-        ]}
-        data={businesses}
+      <Input
+        placeholder="Filter emails..."
+        value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+        onChange={(event) =>
+          table.getColumn("email")?.setFilterValue(event.target.value)
+        }
+        className="max-w-sm"
       />
+      <DataTable table={table} />
     </main>
   );
 }

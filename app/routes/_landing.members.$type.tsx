@@ -1,8 +1,16 @@
 import { Business, BusinessType, User } from "@prisma-app/client";
 import { LoaderFunction, TypedResponse, json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
+import {
+  ColumnFiltersState,
+  getCoreRowModel,
+  getFilteredRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import { useState } from "react";
 import { DataTable } from "~/components/data-table";
 import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
 import { getBusinessByType, getBusinessTypeBySlug } from "~/utils/api.server";
 import { copyToClipboard } from "~/utils/helpers.client";
 
@@ -36,53 +44,70 @@ export default function Members() {
     businesses,
   } = useLoaderData<LoaderData>();
 
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const table = useReactTable({
+    data: businesses,
+    columns: [
+      { accessorKey: "name", header: "Name" },
+      { accessorKey: "owner.name", header: "Owner" },
+      {
+        accessorKey: "phone",
+        header: "Phone",
+        cell: ({ row }) => (
+          <div
+            className="hover:cursor-pointer"
+            onClick={() =>
+              copyToClipboard(row.getValue("phone"), "Copied to clipboard")
+            }
+          >
+            {row.getValue("phone")}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "email",
+        header: "Email",
+        cell: ({ row }) => (
+          <div
+            className="hover:cursor-pointer"
+            onClick={() =>
+              copyToClipboard(row.getValue("email"), "Copied to clipboard")
+            }
+          >
+            {row.getValue("email")}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "id",
+        header: "Details",
+        cell: ({ row }) => (
+          <Button>
+            <Link to={`/business/${row.getValue("id")}`}>View</Link>
+          </Button>
+        ),
+      },
+    ],
+    getCoreRowModel: getCoreRowModel(),
+    onColumnFiltersChange: setColumnFilters,
+    getFilteredRowModel: getFilteredRowModel(),
+    state: {
+      columnFilters,
+    },
+  });
+
   return (
     <main className="flex flex-col gap-5">
       <h1 className="text-2xl font-bold">{name}</h1>
-      <DataTable
-        columns={[
-          { accessorKey: "name", header: "Name" },
-          { accessorKey: "owner.name", header: "Owner" },
-          {
-            accessorKey: "phone",
-            header: "Phone",
-            cell: ({ row }) => (
-              <div
-                className="hover:cursor-pointer"
-                onClick={() =>
-                  copyToClipboard(row.getValue("phone"), "Copied to clipboard")
-                }
-              >
-                {row.getValue("phone")}
-              </div>
-            ),
-          },
-          {
-            accessorKey: "email",
-            header: "Email",
-            cell: ({ row }) => (
-              <div
-                className="hover:cursor-pointer"
-                onClick={() =>
-                  copyToClipboard(row.getValue("email"), "Copied to clipboard")
-                }
-              >
-                {row.getValue("email")}
-              </div>
-            ),
-          },
-          {
-            accessorKey: "id",
-            header: "Details",
-            cell: ({ row }) => (
-              <Button>
-                <Link to={`/business/${row.getValue("id")}`}>View</Link>
-              </Button>
-            ),
-          },
-        ]}
-        data={businesses}
+      <Input
+        placeholder="Filter emails..."
+        value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+        onChange={(event) =>
+          table.getColumn("email")?.setFilterValue(event.target.value)
+        }
+        className="max-w-sm"
       />
+      <DataTable table={table} />
     </main>
   );
 }
