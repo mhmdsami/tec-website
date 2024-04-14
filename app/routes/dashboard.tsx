@@ -23,7 +23,7 @@ export const loader: LoaderFunction = async ({
 
   const user = await getUserById(userId);
   if (!user) return redirect("/sign-in");
-  if (user.isAdmin) return redirect("/admin/dashboard");
+  if (user.isAdmin) return redirect("/admin");
 
   const business = await getBusinessByOwnerId(user.id);
   if (!business) return redirect("/dashboard/onboarding");

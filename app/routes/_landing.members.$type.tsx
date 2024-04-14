@@ -1,8 +1,8 @@
 import { Business, BusinessType, User } from "@prisma-app/client";
 import { LoaderFunction, TypedResponse, json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
+import { DataTable } from "~/components/data-table";
 import { Button } from "~/components/ui/button";
-import { DataTable } from "~/components/ui/data-table";
 import { getBusinessByType, getBusinessTypeBySlug } from "~/utils/api.server";
 import { copyToClipboard } from "~/utils/helpers.client";
 

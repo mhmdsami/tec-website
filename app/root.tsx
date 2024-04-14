@@ -63,7 +63,7 @@ function Layout({ children }: { children: ReactNode }) {
       <body className="flex min-h-screen flex-col">
         <Toaster
           position="top-right"
-          containerClassName="mt-[10vh] mr-4"
+          containerClassName="mr-4"
           toastOptions={{
             style: {
               background: "hsl(var(--card))",

@@ -53,3 +53,28 @@ export const getBusinessByType = async (typeId: string) => {
 export const getBusinessById = async (id: string) => {
   return db.business.findUnique({ where: { id } });
 };
+
+export const getNumberOfBusinesses = async () => {
+  return db.business.count();
+};
+
+export const getNumberOfVerifiedBusinesses = async () => {
+  return db.business.count({ where: { isVerified: true } });
+};
+
+export const getAllBusinesses = async () => {
+  return db.business.findMany({ include: { owner: true } });
+};
+
+export const toggleBusinessVerification = async (id: string) => {
+  const business = await db.business.findUnique({ where: { id } });
+
+  if (!business) {
+    throw new Error("Business not found");
+  }
+
+  return db.business.update({
+    where: { id },
+    data: { isVerified: !business.isVerified },
+  });
+};

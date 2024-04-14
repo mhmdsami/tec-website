@@ -59,6 +59,10 @@ export const BusinessSchema = object({
   ]),
 });
 
+export const VerifyBusinessSchema = object({
+  id: string("ID is required", [minLength(1, "ID is required")]),
+});
+
 export type SignUpData = Output<typeof SignUpSchema>;
 export type SignInData = Output<typeof SignInSchema>;
 export type BusinessData = Output<typeof BusinessSchema>;
@@ -97,3 +101,4 @@ const validateForm =
 export const validateSignUp = validateForm(SignUpSchema);
 export const validateSignIn = validateForm(SignInSchema);
 export const validateBusiness = validateForm(BusinessSchema);
+export const validateVerifyBusiness = validateForm(VerifyBusinessSchema);
