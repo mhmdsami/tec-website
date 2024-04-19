@@ -1,5 +1,5 @@
 import { db } from "~/utils/db.server";
-import { slugify } from "~/utils/helpers.server";
+import { slugify } from "~/utils/helpers";
 import { BusinessData } from "~/utils/validation";
 
 export const getUserById = async (id: string) => {
@@ -29,6 +29,10 @@ export const createBusiness = async (data: BusinessData, ownerId: string) => {
 
 export const updateBusiness = async (ownerId: string, data: BusinessData) => {
   return db.business.update({ where: { ownerId }, data });
+};
+
+export const getNumberOfBusinessTypes = async () => {
+  return db.businessType.count();
 };
 
 export const createBusinessType = async (name: string) => {

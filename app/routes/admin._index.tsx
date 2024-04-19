@@ -1,17 +1,19 @@
 import { json, LoaderFunction, TypedResponse } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
-import { BadgeCheck, Building } from "lucide-react";
+import { BadgeCheck, Building, CirclePlus } from "lucide-react";
 import StatsCard from "~/components/stats-card";
 import { Button } from "~/components/ui/button";
 import siteConfig from "~/site.config";
 import {
   getNumberOfBusinesses,
+  getNumberOfBusinessTypes,
   getNumberOfVerifiedBusinesses,
 } from "~/utils/api.server";
 
 type LoaderData = {
   numberOfBusinesses: number;
   numberOfVerifiedBusinesses: number;
+  numberOfBusinessTypes: number;
 };
 
 export const meta = () => [
@@ -24,16 +26,21 @@ export const loader: LoaderFunction = async (): Promise<
 > => {
   const numberOfBusinesses = await getNumberOfBusinesses();
   const numberOfVerifiedBusinesses = await getNumberOfVerifiedBusinesses();
+  const numberOfBusinessTypes = await getNumberOfBusinessTypes();
 
   return json({
     numberOfBusinesses,
     numberOfVerifiedBusinesses,
+    numberOfBusinessTypes,
   });
 };
 
 export default function Admin() {
-  const { numberOfBusinesses, numberOfVerifiedBusinesses } =
-    useLoaderData<LoaderData>();
+  const {
+    numberOfBusinesses,
+    numberOfVerifiedBusinesses,
+    numberOfBusinessTypes,
+  } = useLoaderData<LoaderData>();
 
   return (
     <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
@@ -56,6 +63,16 @@ export default function Admin() {
       >
         <Button className="self-end">
           <Link to="/admin/verification">Verify Business</Link>
+        </Button>
+      </StatsCard>
+      <StatsCard
+        title="Business Types"
+        description="Total number of verified businesses on the platform"
+        value={numberOfBusinessTypes}
+        Icon={CirclePlus}
+      >
+        <Button className="self-end">
+          <Link to="/admin/manage/type">Manage Business Types</Link>
         </Button>
       </StatsCard>
     </div>

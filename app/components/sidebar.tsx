@@ -3,6 +3,7 @@ import {
   BadgeCheck,
   Building,
   CircleHelp,
+  CirclePlus,
   Home,
   LogOut,
   Pencil,
@@ -28,6 +29,11 @@ export default function Sidebar({ isAdmin = false }: SidebarProps) {
           to: "/admin/verification",
           text: "Verify",
           icon: <BadgeCheck size={22} />,
+        },
+        {
+          to: "/admin/manage/type",
+          text: "Add Business Type",
+          icon: <CirclePlus size={22} />,
         },
       ]
     : [
