@@ -6,7 +6,12 @@ import {
   TypedResponse,
   json,
 } from "@remix-run/node";
-import { Form, useActionData, useLoaderData } from "@remix-run/react";
+import {
+  Form,
+  useActionData,
+  useLoaderData,
+  useSubmit,
+} from "@remix-run/react";
 import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -27,13 +32,16 @@ import { cn } from "~/lib/utils";
 import siteConfig from "~/site.config";
 import {
   createBusinessType,
+  deleteBusinessType,
   getBusinessTypeBySlug,
   getBusinessTypes,
 } from "~/utils/api.server";
 import { slugify } from "~/utils/helpers";
 import {
+  AddBusinessTypeData,
   AddBusinessTypeSchema,
   validateAddBusinessType,
+  validateDeleteBusinessType,
 } from "~/utils/validation";
 
 export const meta = () => [
@@ -62,42 +70,67 @@ type ActionData = {
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const body = Object.fromEntries(formData.entries());
-  const parseRes = validateAddBusinessType(body);
+  const action = formData.get("action");
 
-  if (parseRes.success) {
-    const doesExist = await getBusinessTypeBySlug(slugify(parseRes.data.name));
-    if (doesExist) {
-      return json({ error: "Business Type already exists" }, { status: 409 });
+  switch (action) {
+    case "add": {
+      const parseRes = validateAddBusinessType(body);
+
+      if (parseRes.success) {
+        const doesExist = await getBusinessTypeBySlug(
+          slugify(parseRes.data.name),
+        );
+        if (doesExist) {
+          return json(
+            { error: "Business Type already exists" },
+            { status: 409 },
+          );
+        }
+
+        const businessType = await createBusinessType(parseRes.data.name);
+        if (businessType) {
+          return json({
+            message: "Business Type added successfully",
+          });
+        }
+
+        return json({ error: "Failed to add Business Type" }, { status: 500 });
+      }
+
+      return json({ fieldErrors: parseRes.errors }, { status: 400 });
     }
 
-    const businessType = await createBusinessType(parseRes.data.name);
-    if (businessType) {
-      return json({
-        success: true,
-        message: "Business Type added successfully",
-      });
-    }
+    case "delete": {
+      const parseRes = validateDeleteBusinessType(body);
 
-    return json(
-      { success: false, message: "Failed to add Business Type" },
-      { status: 500 },
-    );
+      if (parseRes.success) {
+        await deleteBusinessType(parseRes.data.id);
+
+        try {
+          return json({ message: "Deleted Business Type successfully" });
+        } catch (e) {
+          return json({ error: "Failed to delete Business Type" });
+        }
+      }
+
+      return json(
+        { success: false, fieldErrors: parseRes.errors },
+        { status: 400 },
+      );
+    }
   }
-
-  return json(
-    { success: false, fieldErrors: parseRes.errors },
-    { status: 400 },
-  );
 };
 
 export default function AdminManageType() {
   const { businessTypes } = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
+  const submit = useSubmit();
   const {
     register,
     formState: { errors },
     watch,
     reset,
+    handleSubmit,
   } = useForm({
     resolver: valibotResolver(AddBusinessTypeSchema),
     defaultValues: {
@@ -109,6 +142,19 @@ export default function AdminManageType() {
     columns: [
       { accessorKey: "name", header: "Name" },
       { accessorKey: "slug", header: "Slug" },
+      {
+        accessorKey: "id",
+        header: "Actions",
+        cell: ({ row }) => (
+          <Button
+            variant="destructive"
+            type="button"
+            onClick={() => deleteBusinessType(row.getValue("id"))}
+          >
+            Delete
+          </Button>
+        ),
+      },
     ],
     getCoreRowModel: getCoreRowModel(),
   });
@@ -123,6 +169,12 @@ export default function AdminManageType() {
     }
   }, [actionData]);
 
+  const addBusinessType = (values: AddBusinessTypeData) =>
+    submit({ action: "add", ...values }, { method: "POST" });
+
+  const deleteBusinessType = (id: string) =>
+    submit({ action: "delete", id }, { method: "POST" });
+
   return (
     <main className="flex flex-col gap-5">
       <h1 className="text-2xl font-bold">Manage Business Type</h1>
@@ -135,7 +187,11 @@ export default function AdminManageType() {
             <DialogTitle>Business Type</DialogTitle>
             <DialogDescription>Add new business type</DialogDescription>
           </DialogHeader>
-          <Form className="flex flex-col gap-3" method="POST">
+          <Form
+            className="flex flex-col gap-3"
+            onSubmit={handleSubmit(addBusinessType)}
+          >
+            <input hidden name="action" value="" />
             <Label>Name</Label>
             <Input placeholder="Type Name" {...register("name")} />
             <p

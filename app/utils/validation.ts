@@ -69,9 +69,15 @@ export const AddBusinessTypeSchema = object({
   ]),
 });
 
+export const DeleteBusinessTypeSchema = object({
+  id: string("ID is required", [minLength(1, "ID is required")]),
+});
+
 export type SignUpData = Output<typeof SignUpSchema>;
 export type SignInData = Output<typeof SignInSchema>;
 export type BusinessData = Output<typeof BusinessSchema>;
+export type AddBusinessTypeData = Output<typeof AddBusinessTypeSchema>;
+export type DeleteBusinessTypeData = Output<typeof DeleteBusinessTypeSchema>;
 
 type ValidatedForm<Schema extends BaseSchema> =
   | {
@@ -109,3 +115,6 @@ export const validateSignIn = validateForm(SignInSchema);
 export const validateBusiness = validateForm(BusinessSchema);
 export const validateVerifyBusiness = validateForm(VerifyBusinessSchema);
 export const validateAddBusinessType = validateForm(AddBusinessTypeSchema);
+export const validateDeleteBusinessType = validateForm(
+  DeleteBusinessTypeSchema,
+);

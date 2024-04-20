@@ -54,6 +54,10 @@ export const getBusinessByType = async (typeId: string) => {
   });
 };
 
+export const deleteBusinessType = async (id: string) => {
+  return db.businessType.delete({ where: { id } });
+};
+
 export const getBusinessById = async (id: string) => {
   return db.business.findUnique({ where: { id } });
 };
