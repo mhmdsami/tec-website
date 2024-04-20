@@ -75,7 +75,8 @@ export const action: ActionFunction = async ({ request }) => {
 
   const parseRes = validate(body, BusinessSchema);
   if (parseRes.success) {
-    await createBusiness(parseRes.data, user.id);
+    const { typeId, ...business } = parseRes.data;
+    await createBusiness(business, typeId, user.id);
     return redirect("/dashboard");
   }
 

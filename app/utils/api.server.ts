@@ -2,46 +2,8 @@ import { Prisma } from "@prisma-app/client";
 import { db } from "~/utils/db.server";
 import { slugify } from "~/utils/helpers";
 
-type BusinessCreate = Prisma.BusinessCreateInput;
-
 export const getUserById = async (id: string) => {
   return db.user.findUnique({ where: { id } });
-};
-
-export const getBusinessByOwnerId = async (ownerId: string) => {
-  return db.business.findFirst({ where: { ownerId } });
-};
-
-export const createBusiness = async (
-  data: Omit<BusinessCreate, "type" | "owner">,
-  ownerId: string,
-) => {
-  return db.business.create({
-    data: {
-      name: data.name,
-      tagline: data.tagline,
-      about: data.about,
-      location: data.location,
-      instagram: data.instagram,
-      whatsApp: data.whatsApp,
-      email: data.email,
-      phone: data.phone,
-      // @ts-ignore
-      typeId: data.typeId,
-      ownerId,
-    },
-  });
-};
-
-export const updateBusiness = async (
-  ownerId: string,
-  data: Partial<BusinessCreate>,
-) => {
-  return db.business.update({ where: { ownerId }, data });
-};
-
-export const getNumberOfBusinessTypes = async () => {
-  return db.businessType.count();
 };
 
 export const createBusinessType = async (name: string) => {
@@ -56,6 +18,47 @@ export const getBusinessTypeBySlug = async (slug: string) => {
   return db.businessType.findUnique({ where: { slug } });
 };
 
+export const deleteBusinessType = async (id: string) => {
+  return db.businessType.delete({ where: { id } });
+};
+
+export const createBusiness = async (
+  business: Omit<Prisma.BusinessCreateInput, "owner" | "type">,
+  typeId: string,
+  ownerId: string,
+) => {
+  return db.business.create({
+    data: {
+      name: business.name,
+      tagline: business.tagline,
+      about: business.about,
+      location: business.location,
+      instagram: business.instagram,
+      whatsApp: business.whatsApp,
+      email: business.email,
+      phone: business.phone,
+      type: {
+        connect: { id: typeId },
+      },
+      owner: {
+        connect: { id: ownerId },
+      },
+    },
+  });
+};
+
+export const getAllBusinesses = async () => {
+  return db.business.findMany({ include: { owner: true } });
+};
+
+export const getBusinessById = async (id: string) => {
+  return db.business.findUnique({ where: { id } });
+};
+
+export const getBusinessByOwnerId = async (ownerId: string) => {
+  return db.business.findFirst({ where: { ownerId } });
+};
+
 export const getBusinessByType = async (typeId: string) => {
   return db.business.findMany({
     where: { typeId, isVerified: true },
@@ -63,24 +66,11 @@ export const getBusinessByType = async (typeId: string) => {
   });
 };
 
-export const deleteBusinessType = async (id: string) => {
-  return db.businessType.delete({ where: { id } });
-};
-
-export const getBusinessById = async (id: string) => {
-  return db.business.findUnique({ where: { id } });
-};
-
-export const getNumberOfBusinesses = async () => {
-  return db.business.count();
-};
-
-export const getNumberOfVerifiedBusinesses = async () => {
-  return db.business.count({ where: { isVerified: true } });
-};
-
-export const getAllBusinesses = async () => {
-  return db.business.findMany({ include: { owner: true } });
+export const updateBusiness = async (
+  ownerId: string,
+  data: Prisma.BusinessUpdateInput,
+) => {
+  return db.business.update({ where: { ownerId }, data });
 };
 
 export const toggleBusinessVerification = async (id: string) => {
@@ -94,4 +84,16 @@ export const toggleBusinessVerification = async (id: string) => {
     where: { id },
     data: { isVerified: !business.isVerified },
   });
+};
+
+export const getNumberOfBusinessTypes = async () => {
+  return db.businessType.count();
+};
+
+export const getNumberOfBusinesses = async () => {
+  return db.business.count();
+};
+
+export const getNumberOfVerifiedBusinesses = async () => {
+  return db.business.count({ where: { isVerified: true } });
 };

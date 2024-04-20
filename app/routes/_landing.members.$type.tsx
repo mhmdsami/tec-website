@@ -23,7 +23,6 @@ export const loader: LoaderFunction = async ({
   params,
 }): Promise<TypedResponse<LoaderData>> => {
   const type = params.type;
-
   if (!type) {
     throw json({ message: "Slug not found" }, { status: 400 });
   }
