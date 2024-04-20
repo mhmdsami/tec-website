@@ -29,11 +29,7 @@ import { cn } from "~/lib/utils";
 import { DashboardOutletContext } from "~/routes/dashboard";
 import { getBusinessTypes, updateBusiness } from "~/utils/api.server";
 import { requireUserId } from "~/utils/session.server";
-import {
-  BusinessData,
-  BusinessSchema,
-  validateBusiness,
-} from "~/utils/validation";
+import { BusinessSchema, validate } from "~/utils/validation";
 
 type LoaderData = {
   businessTypes: BusinessType[];
@@ -53,7 +49,7 @@ export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const body = Object.fromEntries(formData.entries());
 
-  const parseRes = validateBusiness(body);
+  const parseRes = validate(body, BusinessSchema);
   if (parseRes.success) {
     await updateBusiness(userId, parseRes.data);
     return redirect("/dashboard");
@@ -71,18 +67,25 @@ export default function DashboardEdit() {
     handleSubmit,
     formState: { errors, isDirty },
     control,
-  } = useForm<BusinessData>({
-    defaultValues: { ...business },
+  } = useForm({
     resolver: valibotResolver(BusinessSchema),
+    defaultValues: {
+      name: business?.name,
+      typeId: business?.typeId,
+      tagline: business?.tagline,
+      about: business?.about,
+      location: business?.location,
+      instagram: business?.instagram,
+      whatsApp: business?.whatsApp,
+      email: business?.email,
+      phone: business?.phone,
+    },
   });
-
-  const onSubmit = async (data: BusinessData) =>
-    submit(data, { method: "post" });
 
   return (
     <Form
       className="mx-auto flex h-screen max-w-[800px] flex-col justify-center gap-3"
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit((data) => submit(data, { method: "post" }))}
     >
       <div className="grid grid-cols-2 content-center gap-3">
         <div className="flex flex-col gap-2">

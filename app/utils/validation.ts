@@ -12,6 +12,16 @@ import {
   url,
 } from "valibot";
 
+type ValidatedForm<Schema extends BaseSchema> =
+  | {
+      success: true;
+      data: Output<Schema>;
+    }
+  | {
+      success: false;
+      errors: Record<string, string>;
+    };
+
 export const SignUpSchema = object({
   name: string("Name is required", [
     minLength(3, "Name must be at least 3 characters"),
@@ -73,48 +83,26 @@ export const DeleteBusinessTypeSchema = object({
   id: string("ID is required", [minLength(1, "ID is required")]),
 });
 
-export type SignUpData = Output<typeof SignUpSchema>;
-export type SignInData = Output<typeof SignInSchema>;
-export type BusinessData = Output<typeof BusinessSchema>;
-export type AddBusinessTypeData = Output<typeof AddBusinessTypeSchema>;
-export type DeleteBusinessTypeData = Output<typeof DeleteBusinessTypeSchema>;
-
-type ValidatedForm<Schema extends BaseSchema> =
-  | {
-      success: true;
-      data: Output<Schema>;
+export const validate = <T extends BaseSchema>(
+  data: Record<string, unknown>,
+  schema: T,
+): ValidatedForm<T> => {
+  try {
+    const parsed = parse(schema, data);
+    return { success: true, data: parsed };
+  } catch (error) {
+    if (error instanceof ValiError) {
+      const errors: Record<string, string> = {};
+      error.issues.forEach((issue) => {
+        if (issue.path) {
+          errors[String(issue.path[0].key)] = issue.message;
+        }
+      });
+      return { success: false, errors: errors };
     }
-  | {
-      success: false;
-      errors: Record<string, string>;
-    };
 
-const validateForm =
-  <T extends BaseSchema>(schema: T) =>
-  (data: Record<string, unknown>): ValidatedForm<T> => {
-    try {
-      const parsed = parse(schema, data);
-      return { success: true, data: parsed };
-    } catch (error) {
-      if (error instanceof ValiError) {
-        const errors: Record<string, string> = {};
-        error.issues.forEach((issue) => {
-          if (issue.path) {
-            errors[String(issue.path[0].key)] = issue.message;
-          }
-        });
-        return { success: false, errors: errors };
-      }
+    return { success: false, errors: { error: "Something went wrong" } };
+  }
+};
 
-      return { success: false, errors: { error: "Something went wrong" } };
-    }
-  };
-
-export const validateSignUp = validateForm(SignUpSchema);
-export const validateSignIn = validateForm(SignInSchema);
-export const validateBusiness = validateForm(BusinessSchema);
-export const validateVerifyBusiness = validateForm(VerifyBusinessSchema);
-export const validateAddBusinessType = validateForm(AddBusinessTypeSchema);
-export const validateDeleteBusinessType = validateForm(
-  DeleteBusinessTypeSchema,
-);
+export type { Output } from "valibot";

@@ -35,7 +35,7 @@ model Business {
   isVerified Boolean @default(false)
 
   type   BusinessType @relation(fields: [typeId], references: [id])
-  typeId String
+  typeId String       @unique
 
   owner   User   @relation(fields: [ownerId], references: [id])
   ownerId String @unique

@@ -32,7 +32,7 @@ import {
   toggleBusinessVerification,
 } from "~/utils/api.server";
 import { copyToClipboard } from "~/utils/helpers.client";
-import { validateVerifyBusiness } from "~/utils/validation";
+import { VerifyBusinessSchema, validate } from "~/utils/validation";
 
 export const meta = () => [
   { title: `${siteConfig.name} | Admin Verification` },
@@ -64,7 +64,7 @@ type ActionData =
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const body = Object.fromEntries(formData.entries());
-  const parseRes = validateVerifyBusiness(body);
+  const parseRes = validate(body, VerifyBusinessSchema);
 
   if (parseRes.success) {
     try {

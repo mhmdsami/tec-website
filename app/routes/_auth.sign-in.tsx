@@ -11,7 +11,7 @@ import { Label } from "~/components/ui/label";
 import { cn } from "~/lib/utils";
 import siteConfig from "~/site.config";
 import { createUserSession, getUserId, signIn } from "~/utils/session.server";
-import { SignInData, SignInSchema, validateSignIn } from "~/utils/validation";
+import { SignInSchema, validate } from "~/utils/validation";
 
 export const meta: MetaFunction = () => {
   return [
@@ -33,7 +33,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   const formData = await request.formData();
   const body = Object.fromEntries(formData.entries());
-  const parseRes = validateSignIn(body);
+  const parseRes = validate(body, SignInSchema);
 
   if (parseRes.success) {
     const { email, password } = parseRes.data;
@@ -55,7 +55,7 @@ export default function SignIn() {
     register,
     formState: { errors },
     handleSubmit,
-  } = useForm<SignInData>({
+  } = useForm({
     resolver: valibotResolver(SignInSchema),
     defaultValues: {
       email: "",
@@ -69,11 +69,9 @@ export default function SignIn() {
     }
   }, [actionData]);
 
-  const onSubmit = async (data: SignInData) => submit(data, { method: "post" });
-
   return (
     <Form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit((data) => submit(data, { method: "post" }))}
       className="mx-auto -mt-20 flex w-80 grow flex-col justify-center gap-5"
     >
       <h1 className="text-3xl font-bold">Welcome Back!</h1>

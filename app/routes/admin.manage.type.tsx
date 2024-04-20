@@ -38,10 +38,9 @@ import {
 } from "~/utils/api.server";
 import { slugify } from "~/utils/helpers";
 import {
-  AddBusinessTypeData,
   AddBusinessTypeSchema,
-  validateAddBusinessType,
-  validateDeleteBusinessType,
+  DeleteBusinessTypeSchema,
+  validate,
 } from "~/utils/validation";
 
 export const meta = () => [
@@ -74,7 +73,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   switch (action) {
     case "add": {
-      const parseRes = validateAddBusinessType(body);
+      const parseRes = validate(body, AddBusinessTypeSchema);
 
       if (parseRes.success) {
         const doesExist = await getBusinessTypeBySlug(
@@ -101,7 +100,7 @@ export const action: ActionFunction = async ({ request }) => {
     }
 
     case "delete": {
-      const parseRes = validateDeleteBusinessType(body);
+      const parseRes = validate(body, DeleteBusinessTypeSchema);
 
       if (parseRes.success) {
         await deleteBusinessType(parseRes.data.id);
@@ -169,9 +168,6 @@ export default function AdminManageType() {
     }
   }, [actionData]);
 
-  const addBusinessType = (values: AddBusinessTypeData) =>
-    submit({ action: "add", ...values }, { method: "POST" });
-
   const deleteBusinessType = (id: string) =>
     submit({ action: "delete", id }, { method: "POST" });
 
@@ -189,7 +185,9 @@ export default function AdminManageType() {
           </DialogHeader>
           <Form
             className="flex flex-col gap-3"
-            onSubmit={handleSubmit(addBusinessType)}
+            onSubmit={handleSubmit((values) =>
+              submit({ action: "add", ...values }, { method: "POST" }),
+            )}
           >
             <input hidden name="action" value="" />
             <Label>Name</Label>

@@ -1,6 +1,8 @@
+import { Prisma } from "@prisma-app/client";
 import { db } from "~/utils/db.server";
 import { slugify } from "~/utils/helpers";
-import { BusinessData } from "~/utils/validation";
+
+type BusinessCreate = Prisma.BusinessCreateInput;
 
 export const getUserById = async (id: string) => {
   return db.user.findUnique({ where: { id } });
@@ -10,7 +12,10 @@ export const getBusinessByOwnerId = async (ownerId: string) => {
   return db.business.findFirst({ where: { ownerId } });
 };
 
-export const createBusiness = async (data: BusinessData, ownerId: string) => {
+export const createBusiness = async (
+  data: Omit<BusinessCreate, "type" | "owner">,
+  ownerId: string,
+) => {
   return db.business.create({
     data: {
       name: data.name,
@@ -21,13 +26,17 @@ export const createBusiness = async (data: BusinessData, ownerId: string) => {
       whatsApp: data.whatsApp,
       email: data.email,
       phone: data.phone,
+      // @ts-ignore
       typeId: data.typeId,
       ownerId,
     },
   });
 };
 
-export const updateBusiness = async (ownerId: string, data: BusinessData) => {
+export const updateBusiness = async (
+  ownerId: string,
+  data: Partial<BusinessCreate>,
+) => {
   return db.business.update({ where: { ownerId }, data });
 };
 

@@ -11,7 +11,7 @@ import { Label } from "~/components/ui/label";
 import { cn } from "~/lib/utils";
 import siteConfig from "~/site.config";
 import { createUserSession, getUserId, signUp } from "~/utils/session.server";
-import { SignUpData, SignUpSchema, validateSignUp } from "~/utils/validation";
+import { SignUpSchema, validate } from "~/utils/validation";
 
 export const meta: MetaFunction = () => {
   return [
@@ -33,7 +33,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   const formData = await request.formData();
   const body = Object.fromEntries(formData.entries());
-  const parseRes = validateSignUp(body);
+  const parseRes = validate(body, SignUpSchema);
 
   if (parseRes.success) {
     const { email, name, password } = parseRes.data;
@@ -55,7 +55,7 @@ export default function SignUp() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<SignUpData>({
+  } = useForm({
     resolver: valibotResolver(SignUpSchema),
     defaultValues: {
       name: "",
@@ -70,11 +70,9 @@ export default function SignUp() {
     }
   }, [actionData]);
 
-  const onSubmit = (data: SignUpData) => submit(data, { method: "post" });
-
   return (
     <Form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit((data) => submit(data, { method: "post" }))}
       className="mx-auto -mt-20 flex w-80 grow flex-col justify-center gap-5"
     >
       <h1 className="text-3xl font-bold">Create an Account!</h1>

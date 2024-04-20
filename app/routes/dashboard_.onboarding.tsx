@@ -32,11 +32,7 @@ import {
   getUserById,
 } from "~/utils/api.server";
 import { requireUserId } from "~/utils/session.server";
-import {
-  BusinessData,
-  BusinessSchema,
-  validateBusiness,
-} from "~/utils/validation";
+import { BusinessSchema, Output, validate } from "~/utils/validation";
 
 export const meta: MetaFunction = () => {
   return [
@@ -77,7 +73,7 @@ export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const body = Object.fromEntries(formData.entries());
 
-  const parseRes = validateBusiness(body);
+  const parseRes = validate(body, BusinessSchema);
   if (parseRes.success) {
     await createBusiness(parseRes.data, user.id);
     return redirect("/dashboard");
@@ -96,7 +92,7 @@ export default function OnboardingForm() {
     handleSubmit,
     formState: { errors, isValid },
     trigger,
-  } = useForm<BusinessData>({
+  } = useForm({
     resolver: valibotResolver(BusinessSchema),
     defaultValues: {
       name: "",
@@ -111,10 +107,10 @@ export default function OnboardingForm() {
       ...business,
     },
   });
-  const onSubmit = async (data: BusinessData) =>
+  const onSubmit = async (data: Output<typeof BusinessSchema>) =>
     submit(data, { method: "post" });
 
-  const fieldsToValidate: Array<Array<keyof BusinessData>> = [
+  const fieldsToValidate: Array<Array<keyof Output<typeof BusinessSchema>>> = [
     ["name", "typeId"],
     ["tagline", "about"],
     ["location", "instagram", "whatsApp"],
