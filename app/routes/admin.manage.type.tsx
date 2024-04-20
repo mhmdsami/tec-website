@@ -28,6 +28,7 @@ import { ActionResponse } from "~/types";
 import {
   createBusinessType,
   deleteBusinessType,
+  getBusinessByType,
   getBusinessTypeBySlug,
   getBusinessTypes,
 } from "~/utils/api.server";
@@ -92,13 +93,20 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
       const parseRes = validate(body, DeleteBusinessTypeSchema);
 
       if (parseRes.success) {
-        await deleteBusinessType(parseRes.data.id);
-
-        try {
-          return json({ message: "Deleted Business Type successfully" });
-        } catch (e) {
-          return json({ error: "Failed to delete Business Type" });
+        const business = await getBusinessByType(parseRes.data.id);
+        if (business) {
+          return json({ error: "Business type is in use" }, { status: 409 });
         }
+
+        const res = await deleteBusinessType(parseRes.data.id);
+        if (res) {
+          return json({ message: "Business Type deleted successfully" });
+        }
+
+        return json(
+          { error: "Failed to delete Business Type" },
+          { status: 500 },
+        );
       }
 
       return json(

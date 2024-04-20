@@ -7,14 +7,3 @@ export type ActionData = {
 };
 
 export type ActionResponse = Promise<TypedResponse<ActionData>>;
-
-type ApiResponse<T> = Promise<
-  | {
-      success: false;
-      message: string;
-    }
-  | {
-      success: true;
-      data: T;
-    }
->;
