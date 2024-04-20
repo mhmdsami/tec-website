@@ -38,12 +38,12 @@ export const loader: LoaderFunction = async ({
 };
 
 export default function Members() {
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const {
     businessType: { name },
     businesses,
   } = useLoaderData<LoaderData>();
 
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const table = useReactTable({
     data: businesses,
     columns: [

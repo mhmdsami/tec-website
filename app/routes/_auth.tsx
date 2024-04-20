@@ -1,8 +1,17 @@
-import { LoaderFunction, redirect } from "@remix-run/node";
+import { ActionFunction, LoaderFunction, redirect } from "@remix-run/node";
 import { Link, Outlet } from "@remix-run/react";
 import { getUserId } from "~/utils/session.server";
 
 export const loader: LoaderFunction = async ({ request }) => {
+  const userId = await getUserId(request);
+  if (userId) {
+    return redirect("/");
+  }
+
+  return null;
+};
+
+export const action: ActionFunction = async ({ request }) => {
   const userId = await getUserId(request);
   if (userId) {
     return redirect("/");

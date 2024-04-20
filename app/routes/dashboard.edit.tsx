@@ -27,6 +27,7 @@ import {
 import { Textarea } from "~/components/ui/textarea";
 import { cn } from "~/lib/utils";
 import { DashboardOutletContext } from "~/routes/dashboard";
+import { ActionResponse } from "~/types";
 import { getBusinessTypes, updateBusiness } from "~/utils/api.server";
 import { requireUserId } from "~/utils/session.server";
 import { BusinessSchema, validate } from "~/utils/validation";
@@ -43,7 +44,7 @@ export const loader: LoaderFunction = async (): Promise<
   return json({ businessTypes });
 };
 
-export const action: ActionFunction = async ({ request }) => {
+export const action: ActionFunction = async ({ request }): ActionResponse => {
   const userId = await requireUserId(request);
 
   const formData = await request.formData();
@@ -59,9 +60,10 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function DashboardEdit() {
+  const submit = useSubmit();
   const { business } = useOutletContext<DashboardOutletContext>();
   const { businessTypes } = useLoaderData<LoaderData>();
-  const submit = useSubmit();
+
   const {
     register,
     handleSubmit,

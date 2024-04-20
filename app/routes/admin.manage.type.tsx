@@ -6,16 +6,9 @@ import {
   TypedResponse,
   json,
 } from "@remix-run/node";
-import {
-  Form,
-  useActionData,
-  useLoaderData,
-  useSubmit,
-} from "@remix-run/react";
+import { Form, useLoaderData, useSubmit } from "@remix-run/react";
 import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 import { DataTable } from "~/components/data-table";
 import { Button } from "~/components/ui/button";
 import {
@@ -28,8 +21,10 @@ import {
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import { cn } from "~/lib/utils";
 import siteConfig from "~/site.config";
+import { ActionResponse } from "~/types";
 import {
   createBusinessType,
   deleteBusinessType,
@@ -60,13 +55,7 @@ export const loader: LoaderFunction = async (): Promise<
   return json({ businessTypes });
 };
 
-type ActionData = {
-  message?: string;
-  error?: string;
-  fieldErrors?: Record<string, string>;
-};
-
-export const action: ActionFunction = async ({ request }) => {
+export const action: ActionFunction = async ({ request }): ActionResponse => {
   const formData = await request.formData();
   const body = Object.fromEntries(formData.entries());
   const action = formData.get("action");
@@ -117,13 +106,16 @@ export const action: ActionFunction = async ({ request }) => {
         { status: 400 },
       );
     }
+
+    default:
+      return json({ error: "Invalid action" }, { status: 400 });
   }
 };
 
 export default function AdminManageType() {
-  const { businessTypes } = useLoaderData<LoaderData>();
-  const actionData = useActionData<ActionData>();
   const submit = useSubmit();
+  const { businessTypes } = useLoaderData<LoaderData>();
+
   const {
     register,
     formState: { errors },
@@ -136,6 +128,11 @@ export default function AdminManageType() {
       name: "",
     },
   });
+
+  const actionData = useActionDataWithToast({
+    onMessage: reset,
+  });
+
   const table = useReactTable({
     data: businessTypes,
     columns: [
@@ -157,16 +154,6 @@ export default function AdminManageType() {
     ],
     getCoreRowModel: getCoreRowModel(),
   });
-  useEffect(() => {
-    if (actionData?.error) {
-      toast.error(actionData.error);
-    }
-
-    if (actionData?.message) {
-      reset();
-      toast.success(actionData.message);
-    }
-  }, [actionData]);
 
   const deleteBusinessType = (id: string) =>
     submit({ action: "delete", id }, { method: "POST" });

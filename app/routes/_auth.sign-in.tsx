@@ -1,16 +1,16 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import type { ActionFunction, MetaFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
-import { Form, Link, useActionData, useSubmit } from "@remix-run/react";
-import { useEffect } from "react";
+import { json } from "@remix-run/node";
+import { Form, Link, useSubmit } from "@remix-run/react";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import { cn } from "~/lib/utils";
 import siteConfig from "~/site.config";
-import { createUserSession, getUserId, signIn } from "~/utils/session.server";
+import type { ActionResponse } from "~/types";
+import { createUserSession, signIn } from "~/utils/session.server";
 import { SignInSchema, validate } from "~/utils/validation";
 
 export const meta: MetaFunction = () => {
@@ -20,17 +20,7 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-type ActionData = {
-  error?: string;
-  fieldErrors?: Record<string, string>;
-};
-
-export const action: ActionFunction = async ({ request }) => {
-  const userId = await getUserId(request);
-  if (userId) {
-    return redirect("/");
-  }
-
+export const action: ActionFunction = async ({ request }): ActionResponse => {
   const formData = await request.formData();
   const body = Object.fromEntries(formData.entries());
   const parseRes = validate(body, SignInSchema);
@@ -50,7 +40,9 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function SignIn() {
-  const actionData = useActionData<ActionData>();
+  const submit = useSubmit();
+  const actionData = useActionDataWithToast();
+
   const {
     register,
     formState: { errors },
@@ -62,12 +54,6 @@ export default function SignIn() {
       password: "",
     },
   });
-  const submit = useSubmit();
-  useEffect(() => {
-    if (actionData?.error) {
-      toast.error(actionData.error);
-    }
-  }, [actionData]);
 
   return (
     <Form

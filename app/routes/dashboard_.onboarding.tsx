@@ -25,6 +25,7 @@ import {
 import { Textarea } from "~/components/ui/textarea";
 import { cn } from "~/lib/utils";
 import siteConfig from "~/site.config";
+import { ActionResponse } from "~/types";
 import {
   createBusiness,
   getBusinessByOwnerId,
@@ -64,7 +65,7 @@ export const loader: LoaderFunction = async ({
   return json({ user, business, businessTypes });
 };
 
-export const action: ActionFunction = async ({ request }) => {
+export const action: ActionFunction = async ({ request }): ActionResponse => {
   const userId = await requireUserId(request);
 
   const user = await getUserById(userId);
@@ -84,9 +85,10 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function OnboardingForm() {
+  const submit = useSubmit();
   const [screen, setScreen] = useState(0);
   const { business, businessTypes } = useLoaderData<LoaderData>();
-  const submit = useSubmit();
+
   const {
     register,
     control,
@@ -108,8 +110,6 @@ export default function OnboardingForm() {
       ...business,
     },
   });
-  const onSubmit = async (data: Output<typeof BusinessSchema>) =>
-    submit(data, { method: "post" });
 
   const fieldsToValidate: Array<Array<keyof Output<typeof BusinessSchema>>> = [
     ["name", "typeId"],
@@ -123,7 +123,7 @@ export default function OnboardingForm() {
       <h1 className="text-2xl font-bold">Business Onboarding</h1>
       <Form
         className="mx-auto flex h-[70vh] w-full max-w-[400px] flex-col justify-center gap-3"
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit((data) => submit(data, { method: "post" }))}
       >
         {screen === 0 && (
           <>

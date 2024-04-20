@@ -5,15 +5,14 @@ import {
   TypedResponse,
   json,
 } from "@remix-run/node";
-import { Form, useActionData, useLoaderData } from "@remix-run/react";
+import { Form, useLoaderData } from "@remix-run/react";
 import {
   ColumnFiltersState,
   getCoreRowModel,
   getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import { useState } from "react";
 import { DataTable } from "~/components/data-table";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
@@ -25,8 +24,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import { cn } from "~/lib/utils";
 import siteConfig from "~/site.config";
+import { ActionData } from "~/types";
 import {
   getAllBusinesses,
   toggleBusinessVerification,
@@ -51,17 +52,9 @@ export const loader: LoaderFunction = async (): Promise<
   return json({ businesses });
 };
 
-type ActionData =
-  | {
-      success: true;
-      message: string;
-    }
-  | {
-      success: false;
-      fieldErrors: Record<string, string>;
-    };
-
-export const action: ActionFunction = async ({ request }) => {
+export const action: ActionFunction = async ({
+  request,
+}): Promise<TypedResponse<ActionData>> => {
   const formData = await request.formData();
   const body = Object.fromEntries(formData.entries());
   const parseRes = validate(body, VerifyBusinessSchema);
@@ -81,10 +74,7 @@ export const action: ActionFunction = async ({ request }) => {
         );
       }
     } catch (error) {
-      return json(
-        { success: false, message: "Failed to verify business" },
-        { status: 500 },
-      );
+      return json({ error: "Failed to verify business" }, { status: 500 });
     }
   }
 
@@ -95,16 +85,10 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function AdminVerification() {
-  const { businesses } = useLoaderData<LoaderData>();
-  const actionData = useActionData<ActionData>();
-
-  useEffect(() => {
-    if (actionData?.success) {
-      toast.success(actionData.message);
-    }
-  }, [actionData]);
-
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const { businesses } = useLoaderData<LoaderData>();
+  const actionData = useActionDataWithToast();
+
   const table = useReactTable({
     data: businesses,
     columns: [
