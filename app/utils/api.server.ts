@@ -86,6 +86,23 @@ export const toggleBusinessVerification = async (id: string) => {
   });
 };
 
+export const makeEnquiry = async (
+  enquiry: Omit<Prisma.EnquiryCreateInput, "business">,
+  businessId: string,
+) => {
+  return db.enquiry.create({
+    data: {
+      name: enquiry.name,
+      email: enquiry.email,
+      phone: enquiry.phone,
+      message: enquiry.message,
+      business: {
+        connect: { id: businessId },
+      },
+    },
+  });
+};
+
 export const getNumberOfBusinessTypes = async () => {
   return db.businessType.count();
 };

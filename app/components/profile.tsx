@@ -1,8 +1,7 @@
 import { Business } from "@prisma-app/client";
-import { Link } from "@remix-run/react";
 import { Instagram, MessageCircle, Phone } from "lucide-react";
+import { ReactNode } from "react";
 import { Avatar, AvatarFallback } from "~/components/ui/avatar";
-import { Button } from "~/components/ui/button";
 import {
   Card,
   CardContent,
@@ -12,7 +11,7 @@ import {
 } from "~/components/ui/card";
 
 interface ProfileProps extends Omit<Business, "createdAt"> {
-  showEditButton?: boolean;
+  children?: ReactNode;
 }
 
 export default function Profile({
@@ -22,7 +21,7 @@ export default function Profile({
   instagram,
   whatsApp,
   phone,
-  showEditButton = false,
+  children,
 }: ProfileProps) {
   return (
     <Card className="w-[500px]">
@@ -34,11 +33,7 @@ export default function Profile({
         <CardDescription>{tagline}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        {showEditButton && (
-          <Button>
-            <Link to="/dashboard/edit">Edit</Link>
-          </Button>
-        )}
+        {children}
         <div>
           <p className="text-lg font-bold">About</p>
           <p>{about}</p>

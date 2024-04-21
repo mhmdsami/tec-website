@@ -1,6 +1,5 @@
 import * as React from "react";
 
-import { InputHTMLAttributes } from "react";
 import { UseFormRegister } from "react-hook-form";
 import { Label } from "~/components/ui/label";
 import { cn } from "~/lib/utils";
@@ -23,9 +22,9 @@ const InputPrimitive = React.forwardRef<HTMLInputElement, InputPrimitiveProps>(
     );
   },
 );
-Input.displayName = "Input";
+InputPrimitive.displayName = "Input";
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   name: string;
   register?: UseFormRegister<any>;
   label?: string;
@@ -74,5 +73,6 @@ function Input({
     </div>
   );
 }
+Input.displayName = "Input";
 
 export { Input, InputPrimitive };

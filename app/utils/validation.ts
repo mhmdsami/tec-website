@@ -83,6 +83,21 @@ export const DeleteBusinessTypeSchema = object({
   id: string("ID is required", [minLength(1, "ID is required")]),
 });
 
+export const EnquirySchema = object({
+  name: string("Name is required", [
+    minLength(3, "Name must be at least 3 characters"),
+  ]),
+  email: string("Email is required", [
+    email("Please enter a valid email address"),
+  ]),
+  phone: string("Phone is required", [
+    length(10, "Enter a valid Phone number"),
+  ]),
+  message: string("Message is required", [
+    minLength(5, "Message must be at least 5 characters"),
+  ]),
+});
+
 export const validate = <T extends BaseSchema>(
   data: Record<string, unknown>,
   schema: T,

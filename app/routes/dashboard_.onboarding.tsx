@@ -172,18 +172,12 @@ export default function OnboardingForm() {
               errorMessage={errors.tagline?.message}
               register={register}
             />
-            <div className="flex flex-col gap-2">
-              <Label>About</Label>
-              <Textarea placeholder="About Business" {...register("about")} />
-              <p
-                className={cn(
-                  "hidden text-sm text-destructive",
-                  errors.about && "block",
-                )}
-              >
-                {errors.about?.message}
-              </p>
-            </div>
+            <Textarea
+              name="about"
+              label="About Business"
+              errorMessage={errors.about?.message}
+              register={register}
+            />
           </>
         )}
         {screen === 2 && (

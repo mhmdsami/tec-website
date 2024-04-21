@@ -126,10 +126,12 @@ export default function DashboardEdit() {
           errorMessage={errors.tagline?.message}
           register={register}
         />
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="about">About</Label>
-          <Textarea placeholder="About" {...register("about")} />
-        </div>
+        <Textarea
+          name="about"
+          label="About"
+          errorMessage={errors.tagline?.message}
+          register={register}
+        />
         <Input
           name="location"
           label="Location"
