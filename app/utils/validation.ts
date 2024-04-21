@@ -98,6 +98,10 @@ export const EnquirySchema = object({
   ]),
 });
 
+export const ResolveEnquirySchema = object({
+  id: string("ID is required", [minLength(1, "ID is required")]),
+});
+
 export const validate = <T extends BaseSchema>(
   data: Record<string, unknown>,
   schema: T,

@@ -39,8 +39,8 @@ export default function Sidebar({ isAdmin = false }: SidebarProps) {
     : [
         { to: "/dashboard", text: "Dashboard", icon: <Home size={22} /> },
         {
-          to: "/dashboard/enquries",
-          text: "Enquries",
+          to: "/dashboard/enquires",
+          text: "Enquires",
           icon: <CircleHelp size={22} />,
         },
         { to: "/dashboard/edit", text: "Edit", icon: <Pencil size={22} /> },

@@ -103,6 +103,23 @@ export const makeEnquiry = async (
   });
 };
 
+export const getEnquiriesByBusinessId = async (businessId: string) => {
+  return db.enquiry.findMany({ where: { businessId } });
+};
+
+export const toggleMarkEnquiryAsResolved = async (id: string) => {
+  const enquiry = await db.enquiry.findUnique({ where: { id } });
+
+  if (!enquiry) {
+    throw new Error("Enquiry not found");
+  }
+
+  return db.enquiry.update({
+    where: { id },
+    data: { isResolved: !enquiry.isResolved },
+  });
+};
+
 export const getNumberOfBusinessTypes = async () => {
   return db.businessType.count();
 };

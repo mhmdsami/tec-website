@@ -86,7 +86,7 @@ export default function DashboardEdit() {
 
   return (
     <Form
-      className="mx-auto flex h-screen max-w-[800px] flex-col justify-center gap-3"
+      className="mx-auto flex max-w-[800px] grow flex-col justify-center gap-3"
       onSubmit={handleSubmit((data) => submit(data, { method: "post" }))}
     >
       <div className="grid grid-cols-2 content-center gap-3">

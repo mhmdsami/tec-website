@@ -7,7 +7,7 @@ export default function Dashboard() {
   const { business } = useOutletContext<DashboardOutletContext>();
 
   return (
-    <main className="flex h-screen w-full flex-col items-center justify-center overflow-scroll">
+    <main className="flex w-full grow flex-col items-center justify-center overflow-scroll">
       <Profile {...business}>
         <Button>
           <Link to="/dashboard/edit">Edit</Link>

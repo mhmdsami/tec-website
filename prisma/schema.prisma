@@ -53,12 +53,13 @@ model BusinessType {
 }
 
 model Enquiry {
-  id        String   @id @default(uuid()) @map("_id")
-  name      String
-  email     String
-  phone     String
-  message   String
-  createdAt DateTime @default(now())
+  id         String   @id @default(uuid()) @map("_id")
+  name       String
+  email      String
+  phone      String
+  message    String
+  isResolved Boolean  @default(false)
+  createdAt  DateTime @default(now())
 
   business   Business @relation(fields: [businessId], references: [id])
   businessId String
