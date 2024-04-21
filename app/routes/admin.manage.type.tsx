@@ -20,9 +20,7 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
-import { cn } from "~/lib/utils";
 import siteConfig from "~/site.config";
 import { ActionResponse } from "~/types";
 import {
@@ -184,20 +182,15 @@ export default function AdminManageType() {
               submit({ action: "add", ...values }, { method: "POST" }),
             )}
           >
-            <input hidden name="action" value="" />
-            <Label>Name</Label>
-            <Input placeholder="Type Name" {...register("name")} />
-            <p
-              className={cn(
-                "hidden text-sm text-destructive",
-                errors.name && "block",
-              )}
-            >
-              {errors.name?.message}
-            </p>
-            <Label>Slug</Label>
             <Input
-              placeholder="Slug"
+              name="name"
+              label="Name"
+              placeholder="Type Name"
+              errorMessage={errors.name?.message}
+              register={register}
+            />
+            <Input
+              label="Slug"
               name="slug"
               type="text"
               required

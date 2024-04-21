@@ -5,9 +5,7 @@ import { Form, Link, useSubmit } from "@remix-run/react";
 import { useForm } from "react-hook-form";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
-import { cn } from "~/lib/utils";
 import siteConfig from "~/site.config";
 import type { ActionResponse } from "~/types";
 import { createUserSession, signIn } from "~/utils/session.server";
@@ -61,34 +59,19 @@ export default function SignIn() {
       className="mx-auto -mt-20 flex w-80 grow flex-col justify-center gap-5"
     >
       <h1 className="text-3xl font-bold">Welcome Back!</h1>
-      <div className="flex flex-col gap-2">
-        <Label>Email</Label>
-        <Input placeholder="Email" {...register("email")} />
-        <p
-          className={cn(
-            "hidden text-sm text-destructive",
-            errors.email && "block",
-          )}
-        >
-          {errors.email?.message}
-        </p>
-      </div>
-      <div className="flex flex-col gap-2">
-        <Label>Password</Label>
-        <Input
-          placeholder="Password"
-          type="password"
-          {...register("password")}
-        />
-        <p
-          className={cn(
-            "hidden text-sm text-destructive",
-            errors.password && "block",
-          )}
-        >
-          {errors.password?.message}
-        </p>
-      </div>
+      <Input
+        name="email"
+        label="Email"
+        errorMessage={errors.email?.message}
+        register={register}
+      />
+      <Input
+        name="password"
+        label="Password"
+        errorMessage={errors.password?.message}
+        type="password"
+        register={register}
+      />
       <Button type="submit" className="text-base font-semibold">
         Sign In
       </Button>

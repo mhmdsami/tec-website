@@ -127,18 +127,12 @@ export default function OnboardingForm() {
       >
         {screen === 0 && (
           <>
-            <div className="flex flex-col gap-2">
-              <Label>Business Name</Label>
-              <Input placeholder="Business Name" {...register("name")} />
-              <p
-                className={cn(
-                  "hidden text-sm text-destructive",
-                  errors.name && "block",
-                )}
-              >
-                {errors.name?.message}
-              </p>
-            </div>
+            <Input
+              name="name"
+              label="Business Name"
+              errorMessage={errors.name?.message}
+              register={register}
+            />
             <div className="flex flex-col gap-2">
               <Label>Business Type</Label>
               <Controller
@@ -172,18 +166,12 @@ export default function OnboardingForm() {
         )}
         {screen === 1 && (
           <>
-            <div className="flex flex-col gap-2">
-              <Label>Tagline</Label>
-              <Input placeholder="Tagline" {...register("tagline")} />
-              <p
-                className={cn(
-                  "hidden text-sm text-destructive",
-                  errors.tagline && "block",
-                )}
-              >
-                {errors.tagline?.message}
-              </p>
-            </div>
+            <Input
+              name="tagline"
+              label="Tagline"
+              errorMessage={errors.tagline?.message}
+              register={register}
+            />
             <div className="flex flex-col gap-2">
               <Label>About</Label>
               <Textarea placeholder="About Business" {...register("about")} />
@@ -200,70 +188,40 @@ export default function OnboardingForm() {
         )}
         {screen === 2 && (
           <>
-            <div className="flex flex-col gap-2">
-              <Label>Location</Label>
-              <Input placeholder="Location" {...register("location")} />
-              <p
-                className={cn(
-                  "hidden text-sm text-destructive",
-                  errors.location && "block",
-                )}
-              >
-                {errors.location?.message}
-              </p>
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label>Instagram</Label>
-              <Input placeholder="Instagram" {...register("instagram")} />
-              <p
-                className={cn(
-                  "hidden text-sm text-destructive",
-                  errors.instagram && "block",
-                )}
-              >
-                {errors.instagram?.message}
-              </p>
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label>WhatsApp Number</Label>
-              <Input placeholder="WhatsApp" {...register("whatsApp")} />
-              <p
-                className={cn(
-                  "hidden text-sm text-destructive",
-                  errors.whatsApp && "block",
-                )}
-              >
-                {errors.whatsApp?.message}
-              </p>
-            </div>
+            <Input
+              name="location"
+              label="Location"
+              errorMessage={errors.location?.message}
+              register={register}
+            />
+            <Input
+              name="instagram"
+              label="Instagram"
+              errorMessage={errors.instagram?.message}
+              register={register}
+            />
+            <Input
+              name="whatsApp"
+              label="WhatsApp Number"
+              errorMessage={errors.whatsApp?.message}
+              register={register}
+            />
           </>
         )}
         {screen === 3 && (
           <>
-            <div className="flex flex-col gap-2">
-              <Label>Email</Label>
-              <Input placeholder="Email" {...register("email")} />
-              <p
-                className={cn(
-                  "hidden text-sm text-destructive",
-                  errors.email && "block",
-                )}
-              >
-                {errors.email?.message}
-              </p>
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label>Phone</Label>
-              <Input placeholder="Phone" {...register("phone")} />
-              <p
-                className={cn(
-                  "hidden text-sm text-destructive",
-                  errors.phone && "block",
-                )}
-              >
-                {errors.phone?.message}
-              </p>
-            </div>
+            <Input
+              name="email"
+              label="Email"
+              errorMessage={errors.email?.message}
+              register={register}
+            />
+            <Input
+              name="phone"
+              label="Phone"
+              errorMessage={errors.phone?.message}
+              register={register}
+            />
           </>
         )}
         <div className="flex flex-row gap-3 self-end">

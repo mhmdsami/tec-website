@@ -5,9 +5,7 @@ import { Form, Link, useSubmit } from "@remix-run/react";
 import { useForm } from "react-hook-form";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
-import { cn } from "~/lib/utils";
 import siteConfig from "~/site.config";
 import { ActionResponse } from "~/types";
 import { createUserSession, signUp } from "~/utils/session.server";
@@ -62,46 +60,25 @@ export default function SignUp() {
       className="mx-auto -mt-20 flex w-80 grow flex-col justify-center gap-5"
     >
       <h1 className="text-3xl font-bold">Create an Account!</h1>
-      <div className="flex flex-col gap-2">
-        <Label>Name</Label>
-        <Input placeholder="Name" {...register("name")} />
-        <p
-          className={cn(
-            "hidden text-sm text-destructive",
-            errors.name && "block",
-          )}
-        >
-          {errors.name?.message}
-        </p>
-      </div>
-      <div className="flex flex-col gap-2">
-        <Label>Email</Label>
-        <Input placeholder="Email" {...register("email")} />
-        <p
-          className={cn(
-            "hidden text-sm text-destructive",
-            errors.email && "block",
-          )}
-        >
-          {errors.email?.message}
-        </p>
-      </div>
-      <div className="flex flex-col gap-2">
-        <Label>Password</Label>
-        <Input
-          placeholder="Password"
-          type="password"
-          {...register("password")}
-        />
-        <p
-          className={cn(
-            "hidden text-sm text-destructive",
-            errors.password && "block",
-          )}
-        >
-          {errors.password?.message}
-        </p>
-      </div>
+      <Input
+        name="name"
+        label="Name"
+        register={register}
+        errorMessage={errors.name?.message}
+      />
+      <Input
+        name="email"
+        label="Email"
+        register={register}
+        errorMessage={errors.email?.message}
+      />
+      <Input
+        name="password"
+        label="Password"
+        type="password"
+        register={register}
+        errorMessage={errors.password?.message}
+      />
       <Button type="submit" className="text-base font-semibold">
         Sign Up
       </Button>

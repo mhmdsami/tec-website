@@ -169,6 +169,7 @@ export default function AdminVerification() {
       <h1 className="text-2xl font-bold">Admin Verification</h1>
       <div className="flex flex-row items-center justify-between">
         <Input
+          name="email"
           placeholder="Filter emails..."
           value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>

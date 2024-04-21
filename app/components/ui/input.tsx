@@ -1,11 +1,14 @@
 import * as React from "react";
 
+import { InputHTMLAttributes } from "react";
+import { UseFormRegister } from "react-hook-form";
+import { Label } from "~/components/ui/label";
 import { cn } from "~/lib/utils";
 
-export interface InputProps
+export interface InputPrimitiveProps
   extends React.InputHTMLAttributes<HTMLInputElement> {}
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
+const InputPrimitive = React.forwardRef<HTMLInputElement, InputPrimitiveProps>(
   ({ className, type, ...props }, ref) => {
     return (
       <input
@@ -22,4 +25,54 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 );
 Input.displayName = "Input";
 
-export { Input };
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+  name: string;
+  register?: UseFormRegister<any>;
+  label?: string;
+  errorMessage?: string;
+  className?: string;
+  labelClassName?: string;
+  inputClassName?: string;
+}
+
+function Input({
+  name,
+  label,
+  placeholder,
+  errorMessage,
+  register,
+  className,
+  labelClassName,
+  inputClassName,
+  ...props
+}: InputProps) {
+  return (
+    <div className={cn("flex flex-col gap-2", className)}>
+      <Label className={labelClassName}>{label}</Label>
+      {register ? (
+        <InputPrimitive
+          className={className}
+          placeholder={placeholder ?? label}
+          {...props}
+          {...register(name)}
+        />
+      ) : (
+        <InputPrimitive
+          className={className}
+          placeholder={placeholder ?? label}
+          {...props}
+        />
+      )}
+      <p
+        className={cn(
+          "hidden text-sm text-destructive",
+          errorMessage && "block",
+        )}
+      >
+        {errorMessage}
+      </p>
+    </div>
+  );
+}
+
+export { Input, InputPrimitive };

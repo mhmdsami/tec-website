@@ -90,18 +90,7 @@ export default function DashboardEdit() {
       onSubmit={handleSubmit((data) => submit(data, { method: "post" }))}
     >
       <div className="grid grid-cols-2 content-center gap-3">
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="name">Name</Label>
-          <Input {...register("name")} />
-          <p
-            className={cn(
-              "hidden text-sm text-destructive",
-              errors.name && "block",
-            )}
-          >
-            {errors.name?.message}
-          </p>
-        </div>
+        <Input name="name" label="Name" register={register} />
         <div className="flex flex-col gap-2">
           <Label>Business Type</Label>
           <Controller
@@ -131,74 +120,46 @@ export default function DashboardEdit() {
             {errors.typeId?.message}
           </p>
         </div>
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="tagline">Tagline</Label>
-          <Input {...register("tagline")} />
-        </div>
+        <Input
+          name="tagline"
+          label="Tagline"
+          errorMessage={errors.tagline?.message}
+          register={register}
+        />
         <div className="flex flex-col gap-2">
           <Label htmlFor="about">About</Label>
-          <Textarea {...register("about")} />
+          <Textarea placeholder="About" {...register("about")} />
         </div>
-        <div className="flex flex-col gap-2">
-          <Label>Location</Label>
-          <Input placeholder="Location" {...register("location")} />
-          <p
-            className={cn(
-              "hidden text-sm text-destructive",
-              errors.location && "block",
-            )}
-          >
-            {errors.location?.message}
-          </p>
-        </div>
-        <div className="flex flex-col gap-2">
-          <Label>Instagram</Label>
-          <Input placeholder="Instagram" {...register("instagram")} />
-          <p
-            className={cn(
-              "hidden text-sm text-destructive",
-              errors.instagram && "block",
-            )}
-          >
-            {errors.instagram?.message}
-          </p>
-        </div>
-        <div className="flex flex-col gap-2">
-          <Label>WhatsApp Number</Label>
-          <Input placeholder="WhatsApp" {...register("whatsApp")} />
-          <p
-            className={cn(
-              "hidden text-sm text-destructive",
-              errors.whatsApp && "block",
-            )}
-          >
-            {errors.whatsApp?.message}
-          </p>
-        </div>
-        <div className="flex flex-col gap-2">
-          <Label>Email</Label>
-          <Input placeholder="Email" {...register("email")} />
-          <p
-            className={cn(
-              "hidden text-sm text-destructive",
-              errors.email && "block",
-            )}
-          >
-            {errors.email?.message}
-          </p>
-        </div>
-        <div className="flex flex-col gap-2">
-          <Label>Phone</Label>
-          <Input placeholder="Phone" {...register("phone")} />
-          <p
-            className={cn(
-              "hidden text-sm text-destructive",
-              errors.phone && "block",
-            )}
-          >
-            {errors.phone?.message}
-          </p>
-        </div>
+        <Input
+          name="location"
+          label="Location"
+          errorMessage={errors.location?.message}
+          register={register}
+        />
+        <Input
+          name="instagram"
+          label="Instagram"
+          errorMessage={errors.instagram?.message}
+          register={register}
+        />
+        <Input
+          name="whatsApp"
+          label="WhatsApp"
+          errorMessage={errors.whatsApp?.message}
+          register={register}
+        />
+        <Input
+          name="email"
+          label="Email"
+          errorMessage={errors.email?.message}
+          register={register}
+        />
+        <Input
+          name="phone"
+          label="Phone"
+          errorMessage={errors.phone?.message}
+          register={register}
+        />
       </div>
       <Button type="submit" className="w-fit self-end" disabled={!isDirty}>
         Save

@@ -99,6 +99,7 @@ export default function Members() {
     <main className="flex flex-col gap-5">
       <h1 className="text-2xl font-bold">{name}</h1>
       <Input
+        name="email"
         placeholder="Filter emails..."
         value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
         onChange={(event) =>

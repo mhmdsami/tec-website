@@ -109,6 +109,7 @@ export default function AdminBusinesses() {
       <h1 className="text-2xl font-bold">Verified Businesses</h1>
       <div className="flex gap-3">
         <Input
+          name="name"
           placeholder="Filter name..."
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
@@ -117,6 +118,7 @@ export default function AdminBusinesses() {
           className="max-w-sm"
         />
         <Input
+          name="email"
           placeholder="Filter emails..."
           value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
