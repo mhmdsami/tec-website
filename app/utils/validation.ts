@@ -7,6 +7,7 @@ import {
   length,
   minLength,
   object,
+  optional,
   parse,
   string,
   url,
@@ -54,6 +55,7 @@ export const BusinessSchema = object({
   about: string("About is required", [
     minLength(5, "About must be at least 5 characters"),
   ]),
+  logo: optional(string()),
   location: string([minLength(3, "Location must be at least 3 characters")]),
   instagram: string([
     minLength(3, "Instagram must be at least 3 characters"),

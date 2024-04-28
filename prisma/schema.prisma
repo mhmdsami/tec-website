@@ -26,6 +26,7 @@ model Business {
   name      String
   tagline   String
   about     String
+  logo      String?
   location  String
   instagram String
   whatsApp  String

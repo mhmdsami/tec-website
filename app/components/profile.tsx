@@ -1,7 +1,7 @@
 import { Business } from "@prisma-app/client";
 import { Instagram, MessageCircle, Phone } from "lucide-react";
 import { ReactNode } from "react";
-import { Avatar, AvatarFallback } from "~/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import {
   Card,
   CardContent,
@@ -18,6 +18,7 @@ export default function Profile({
   name,
   tagline,
   about,
+  logo,
   instagram,
   whatsApp,
   phone,
@@ -27,6 +28,7 @@ export default function Profile({
     <Card className="w-[500px]">
       <CardHeader className="items-center">
         <Avatar className="-mt-20 h-40 w-40">
+          {logo && <AvatarImage src={logo} alt={name} />}
           <AvatarFallback className="text-3xl">{name[0]}</AvatarFallback>
         </Avatar>
         <CardTitle className="">{name}</CardTitle>

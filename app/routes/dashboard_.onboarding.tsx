@@ -11,6 +11,7 @@ import {
 import { Form, useLoaderData, useSubmit } from "@remix-run/react";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import ImageUpload from "~/components/image-upload";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
@@ -87,6 +88,7 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
 export default function OnboardingForm() {
   const submit = useSubmit();
   const [screen, setScreen] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
   const { business, businessTypes } = useLoaderData<LoaderData>();
 
   const {
@@ -95,6 +97,7 @@ export default function OnboardingForm() {
     handleSubmit,
     formState: { errors, isValid },
     trigger,
+    watch,
   } = useForm({
     resolver: valibotResolver(BusinessSchema),
     defaultValues: {
@@ -113,7 +116,7 @@ export default function OnboardingForm() {
 
   const fieldsToValidate: Array<Array<keyof Output<typeof BusinessSchema>>> = [
     ["name", "typeId"],
-    ["tagline", "about"],
+    ["tagline", "about", "logo"],
     ["location", "instagram", "whatsApp"],
     ["email", "phone"],
   ];
@@ -178,6 +181,22 @@ export default function OnboardingForm() {
               errorMessage={errors.about?.message}
               register={register}
             />
+            <div className="flex flex-col gap-2">
+              <Label>Logo</Label>
+              <Controller
+                control={control}
+                name="logo"
+                render={({ field }) => (
+                  <ImageUpload
+                    imageUrl={watch("logo")}
+                    onChange={field.onChange}
+                    folder="logo"
+                    isUploading={isUploading}
+                    setIsUploading={setIsUploading}
+                  />
+                )}
+              />
+            </div>
           </>
         )}
         {screen === 2 && (
@@ -234,6 +253,7 @@ export default function OnboardingForm() {
             </Button>
           ) : (
             <Button
+              disabled={isUploading}
               type="button"
               className="w-fit self-end"
               onClick={async () => {

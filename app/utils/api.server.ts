@@ -32,6 +32,7 @@ export const createBusiness = async (
       name: business.name,
       tagline: business.tagline,
       about: business.about,
+      logo: business.logo,
       location: business.location,
       instagram: business.instagram,
       whatsApp: business.whatsApp,
