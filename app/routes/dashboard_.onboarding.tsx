@@ -196,6 +196,14 @@ export default function OnboardingForm() {
                   />
                 )}
               />
+              <p
+                className={cn(
+                  "hidden text-sm text-destructive",
+                  errors.logo && "block",
+                )}
+              >
+                {errors.logo?.message}
+              </p>
             </div>
           </>
         )}
