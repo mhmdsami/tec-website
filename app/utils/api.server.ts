@@ -132,3 +132,18 @@ export const getNumberOfBusinesses = async () => {
 export const getNumberOfVerifiedBusinesses = async () => {
   return db.business.count({ where: { isVerified: true } });
 };
+
+export const createEvent = async (event: Prisma.EventCreateInput) => {
+  return db.event.create({
+    data: {
+      title: event.title,
+      description: event.description,
+      image: event.image,
+      date: event.date,
+    },
+  });
+};
+
+export const getAllEvents = async () => {
+  return db.event.findMany();
+};

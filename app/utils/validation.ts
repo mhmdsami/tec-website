@@ -2,6 +2,7 @@ import {
   BaseSchema,
   Output,
   ValiError,
+  date,
   email,
   includes,
   length,
@@ -12,16 +13,6 @@ import {
   string,
   url,
 } from "valibot";
-
-type ValidatedForm<Schema extends BaseSchema> =
-  | {
-      success: true;
-      data: Output<Schema>;
-    }
-  | {
-      success: false;
-      errors: Record<string, string>;
-    };
 
 export const SignUpSchema = object({
   name: string("Name is required", [
@@ -103,6 +94,27 @@ export const EnquirySchema = object({
 export const ResolveEnquirySchema = object({
   id: string("ID is required", [minLength(1, "ID is required")]),
 });
+
+export const AddEventSchema = object({
+  title: string("Title is required", [
+    minLength(3, "Title must be at least 3 characters"),
+  ]),
+  description: string("Description is required", [
+    minLength(5, "Description must be at least 5 characters"),
+  ]),
+  date: date("Date is required"),
+  coverImage: optional(string()),
+});
+
+type ValidatedForm<Schema extends BaseSchema> =
+  | {
+      success: true;
+      data: Output<Schema>;
+    }
+  | {
+      success: false;
+      errors: Record<string, string>;
+    };
 
 export const validate = <T extends BaseSchema>(
   data: Record<string, unknown>,

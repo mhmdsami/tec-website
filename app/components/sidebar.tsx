@@ -2,6 +2,7 @@ import { Form, Link, useLocation } from "@remix-run/react";
 import {
   BadgeCheck,
   Building,
+  Calendar,
   CircleHelp,
   CirclePlus,
   Home,
@@ -34,6 +35,11 @@ export default function Sidebar({ isAdmin = false }: SidebarProps) {
           to: "/admin/manage/type",
           text: "Add Business Type",
           icon: <CirclePlus size={22} />,
+        },
+        {
+          to: "/admin/events",
+          text: "Events",
+          icon: <Calendar size={22} />,
         },
       ]
     : [

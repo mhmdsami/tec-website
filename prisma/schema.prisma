@@ -65,3 +65,21 @@ model Enquiry {
   business   Business @relation(fields: [businessId], references: [id])
   businessId String
 }
+
+model Event {
+  id          String   @id @default(uuid()) @map("_id")
+  title       String
+  description String
+  date        DateTime
+  coverImage  String?
+  createdAt   DateTime @default(now())
+}
+
+model Blog {
+  id          String   @id @default(uuid()) @map("_id")
+  title       String
+  description String
+  content     String
+  image       String
+  createdAt   DateTime @default(now())
+}
