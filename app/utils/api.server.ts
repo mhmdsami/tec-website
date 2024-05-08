@@ -142,7 +142,6 @@ export const createEvent = async (event: Prisma.EventCreateInput) => {
     data: {
       title: event.title,
       description: event.description,
-      coverImage: event.coverImage,
       date: event.date,
     },
   });

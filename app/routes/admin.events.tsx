@@ -153,7 +153,6 @@ export default function AdminEvents() {
       title: "",
       description: "",
       date: new Date(),
-      coverImage: "",
     },
   });
 
@@ -254,30 +253,6 @@ export default function AdminEvents() {
                 {errors.date?.message}
               </p>
             </div>
-            <div className="flex flex-col gap-2">
-              <Label>Cover Image</Label>
-              <Controller
-                control={control}
-                name="coverImage"
-                render={({ field }) => (
-                  <ImageUpload
-                    imageUrl={field.value}
-                    onChange={field.onChange}
-                    folder="events"
-                    isUploading={isUploading}
-                    setIsUploading={setIsUploading}
-                  />
-                )}
-              />
-              <p
-                className={cn(
-                  "hidden text-sm text-destructive",
-                  errors.coverImage && "block",
-                )}
-              >
-                {errors.coverImage?.message}
-              </p>
-            </div>
             <Button type="submit" className="w-24 self-end">
               Add
             </Button>
@@ -299,7 +274,6 @@ function ManageEvent({
   title,
   description,
   date,
-  coverImage,
   images,
 }: ManageEventProps) {
   const submit = useSubmit();

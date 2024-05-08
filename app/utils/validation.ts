@@ -103,7 +103,6 @@ export const AddEventSchema = object({
     minLength(5, "Description must be at least 5 characters"),
   ]),
   date: date("Date is required"),
-  coverImage: optional(string()),
 });
 
 export const DeleteEventSchema = object({
