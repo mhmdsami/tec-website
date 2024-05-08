@@ -38,8 +38,19 @@ import { Textarea } from "~/components/ui/textarea";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import { cn } from "~/lib/utils";
 import siteConfig from "~/site.config";
-import { createEvent, getAllEvents } from "~/utils/api.server";
-import { AddEventSchema, validate } from "~/utils/validation";
+import {
+  addEventImage,
+  createEvent,
+  deleteEvent,
+  getAllEvents,
+  getEventById,
+} from "~/utils/api.server";
+import {
+  AddEventImageSchema,
+  AddEventSchema,
+  DeleteEventSchema,
+  validate,
+} from "~/utils/validation";
 
 export const meta = () => [
   { title: `${siteConfig.name} | Admin Events` },
@@ -64,7 +75,7 @@ export const action: ActionFunction = async ({ request }) => {
   const action = formData.get("action");
 
   switch (action) {
-    case "add":
+    case "add": {
       const parseRes = validate(
         {
           ...body,
@@ -82,6 +93,43 @@ export const action: ActionFunction = async ({ request }) => {
       }
 
       return json({ message: "Failed to add event" }, { status: 500 });
+    }
+
+    case "delete": {
+      const parseRes = validate(body, DeleteEventSchema);
+      if (!parseRes.success) {
+        return json({ errors: parseRes.errors }, { status: 400 });
+      }
+
+      const event = await deleteEvent(parseRes.data.id);
+      if (event) {
+        return json({ message: "Event deleted successfully" });
+      }
+
+      return json({ message: "Failed to delete event" }, { status: 500 });
+    }
+
+    case "addImage": {
+      const parseRes = validate(body, AddEventImageSchema);
+
+      if (!parseRes.success) {
+        return json({ fieldErrors: parseRes.errors }, { status: 400 });
+      }
+
+      const event = await getEventById(parseRes.data.id);
+      if (!event) {
+        return json({ error: "Event not found" }, { status: 404 });
+      }
+
+      const { id, image, description = "" } = parseRes.data;
+      const updatedEvent = await addEventImage(id, image, description);
+
+      if (updatedEvent) {
+        return json({ message: "Image added successfully" });
+      }
+
+      return json({ message: "Failed to add image" }, { status: 500 });
+    }
 
     default:
       return json({ message: "Invalid action" }, { status: 400 });
@@ -129,12 +177,21 @@ export default function AdminEvents() {
         cell: ({ row }) => (
           <div className="flex gap-2">
             <ManageEvent {...row.original} />
+            <Button
+              variant="destructive"
+              onClick={() => deleteEvent(row.getValue("id"))}
+            >
+              Delete
+            </Button>
           </div>
         ),
       },
     ],
     getCoreRowModel: getCoreRowModel(),
   });
+
+  const deleteEvent = (id: string) =>
+    submit({ action: "delete", id }, { method: "POST" });
 
   return (
     <main className="flex flex-col gap-5">
@@ -238,11 +295,30 @@ interface ManageEventProps extends Omit<Event, "date" | "createdAt"> {
 }
 
 function ManageEvent({
+  id,
   title,
   description,
   date,
   coverImage,
+  images,
 }: ManageEventProps) {
+  const submit = useSubmit();
+  const [isUploading, setIsUploading] = useState(false);
+
+  const {
+    register,
+    control,
+    formState: { errors },
+    handleSubmit,
+  } = useForm({
+    resolver: valibotResolver(AddEventImageSchema),
+    defaultValues: {
+      id,
+      image: "",
+      description: "",
+    },
+  });
+
   return (
     <Drawer>
       <DrawerTrigger asChild>
@@ -255,6 +331,75 @@ function ManageEvent({
           </DrawerTitle>
           <DrawerDescription>{description}</DrawerDescription>
         </DrawerHeader>
+        <div className="flex flex-col gap-5 overflow-scroll px-4">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button className="w-fit self-end">Add Image</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Event image</DialogTitle>
+                <DialogDescription>Add event image</DialogDescription>
+              </DialogHeader>
+              <Form
+                className="flex flex-col gap-3"
+                onSubmit={handleSubmit((values) =>
+                  submit(
+                    { action: "addImage", ...values },
+                    {
+                      method: "POST",
+                    },
+                  ),
+                )}
+              >
+                <div className="flex flex-col gap-2">
+                  <Label>Image</Label>
+                  <Controller
+                    control={control}
+                    name="image"
+                    render={({ field }) => (
+                      <ImageUpload
+                        imageUrl={field.value}
+                        onChange={field.onChange}
+                        folder="events"
+                        isUploading={isUploading}
+                        setIsUploading={setIsUploading}
+                      />
+                    )}
+                  />
+                  <p
+                    className={cn(
+                      "hidden text-sm text-destructive",
+                      errors.image && "block",
+                    )}
+                  >
+                    {errors.image?.message}
+                  </p>
+                </div>
+                <Input
+                  name="description"
+                  label="Description"
+                  placeholder="Image description"
+                  errorMessage={errors.description?.message}
+                  register={register}
+                />
+                <Button
+                  type="submit"
+                  className="w-24 self-end"
+                  disabled={isUploading}
+                >
+                  Add
+                </Button>
+              </Form>
+            </DialogContent>
+          </Dialog>
+          <h1 className="text-xl font-bold">Current Images</h1>
+          <div className="grid h-1/2 grid-cols-6 gap-5">
+            {images.map(({ url, description }) => (
+              <img className="w-[200px]" src={url} alt={description || ""} />
+            ))}
+          </div>
+        </div>
         <DrawerFooter>
           <DrawerClose>
             <Button variant="outline">Cancel</Button>

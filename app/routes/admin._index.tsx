@@ -1,12 +1,13 @@
 import { json, LoaderFunction, TypedResponse } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
-import { BadgeCheck, Building, CirclePlus } from "lucide-react";
+import { BadgeCheck, Building, Calendar, CirclePlus } from "lucide-react";
 import StatsCard from "~/components/stats-card";
 import { Button } from "~/components/ui/button";
 import siteConfig from "~/site.config";
 import {
   getNumberOfBusinesses,
   getNumberOfBusinessTypes,
+  getNumberOfEvents,
   getNumberOfVerifiedBusinesses,
 } from "~/utils/api.server";
 
@@ -14,6 +15,7 @@ type LoaderData = {
   numberOfBusinesses: number;
   numberOfVerifiedBusinesses: number;
   numberOfBusinessTypes: number;
+  numberOfEvents: number;
 };
 
 export const meta = () => [
@@ -27,11 +29,13 @@ export const loader: LoaderFunction = async (): Promise<
   const numberOfBusinesses = await getNumberOfBusinesses();
   const numberOfVerifiedBusinesses = await getNumberOfVerifiedBusinesses();
   const numberOfBusinessTypes = await getNumberOfBusinessTypes();
+  const numberOfEvents = await getNumberOfEvents();
 
   return json({
     numberOfBusinesses,
     numberOfVerifiedBusinesses,
     numberOfBusinessTypes,
+    numberOfEvents,
   });
 };
 
@@ -40,13 +44,14 @@ export default function Admin() {
     numberOfBusinesses,
     numberOfVerifiedBusinesses,
     numberOfBusinessTypes,
+    numberOfEvents,
   } = useLoaderData<LoaderData>();
 
   return (
     <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
       <StatsCard
         title="Total Businesses"
-        description="Total number of businesses on the platform"
+        description="Total number of businesses"
         value={numberOfBusinesses}
         Icon={Building}
       >
@@ -56,7 +61,7 @@ export default function Admin() {
       </StatsCard>
       <StatsCard
         title="Verified Businesses"
-        description="Total number of verified businesses on the platform"
+        description="Manage business verification"
         value={numberOfVerifiedBusinesses}
         total={numberOfBusinesses}
         Icon={BadgeCheck}
@@ -67,12 +72,22 @@ export default function Admin() {
       </StatsCard>
       <StatsCard
         title="Business Types"
-        description="Total number of verified businesses on the platform"
+        description="Manage business types"
         value={numberOfBusinessTypes}
         Icon={CirclePlus}
       >
         <Button className="self-end">
           <Link to="/admin/manage/type">Manage Business Types</Link>
+        </Button>
+      </StatsCard>
+      <StatsCard
+        title="Events"
+        description="Add or update events"
+        value={numberOfEvents}
+        Icon={Calendar}
+      >
+        <Button className="self-end">
+          <Link to="/admin/events">Manage Events</Link>
         </Button>
       </StatsCard>
     </div>

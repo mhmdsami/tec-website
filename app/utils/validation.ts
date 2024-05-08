@@ -106,6 +106,16 @@ export const AddEventSchema = object({
   coverImage: optional(string()),
 });
 
+export const DeleteEventSchema = object({
+  id: string("ID is required", [minLength(1, "ID is required")]),
+});
+
+export const AddEventImageSchema = object({
+  id: string("ID is required", [minLength(1, "ID is required")]),
+  image: string("Image is required"),
+  description: optional(string()),
+});
+
 type ValidatedForm<Schema extends BaseSchema> =
   | {
       success: true;

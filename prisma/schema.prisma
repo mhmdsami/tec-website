@@ -66,6 +66,11 @@ model Enquiry {
   businessId String
 }
 
+type Image {
+  url         String
+  description String?
+}
+
 model Event {
   id          String   @id @default(uuid()) @map("_id")
   title       String
@@ -73,6 +78,7 @@ model Event {
   date        DateTime
   coverImage  String?
   createdAt   DateTime @default(now())
+  images      Image[]
 }
 
 model Blog {

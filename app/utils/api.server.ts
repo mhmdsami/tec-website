@@ -133,12 +133,16 @@ export const getNumberOfVerifiedBusinesses = async () => {
   return db.business.count({ where: { isVerified: true } });
 };
 
+export const getNumberOfEvents = async () => {
+  return db.event.count();
+};
+
 export const createEvent = async (event: Prisma.EventCreateInput) => {
   return db.event.create({
     data: {
       title: event.title,
       description: event.description,
-      image: event.image,
+      coverImage: event.coverImage,
       date: event.date,
     },
   });
@@ -146,4 +150,27 @@ export const createEvent = async (event: Prisma.EventCreateInput) => {
 
 export const getAllEvents = async () => {
   return db.event.findMany();
+};
+
+export const getEventById = async (id: string) => {
+  return db.event.findUnique({ where: { id } });
+};
+
+export const deleteEvent = async (id: string) => {
+  return db.event.delete({ where: { id } });
+};
+
+export const addEventImage = async (
+  id: string,
+  url: string,
+  description: string,
+) => {
+  return db.event.update({
+    where: { id },
+    data: {
+      images: {
+        push: { url, description },
+      },
+    },
+  });
 };
