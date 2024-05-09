@@ -59,7 +59,7 @@ export default function Navbar({ isLoggedIn, businessTypes }: NavbarProps) {
     { hasSubLinks: false, text: "Events", to: "/events" },
     { hasSubLinks: false, text: "Blog", to: "/blog" },
     { hasSubLinks: false, text: "Contact Us", to: "/contact" },
-    { hasSubLinks: false, text: "Sign In", to: "/sign-in" }
+    { hasSubLinks: false, text: "Sign In", to: "/sign-in" },
   ];
 
   return (
@@ -67,7 +67,7 @@ export default function Navbar({ isLoggedIn, businessTypes }: NavbarProps) {
       <Link to="/" className="text-3xl font-bold text-primary">
         <img src="/logomark.png" alt="TEC Logo" className="h-12 w-12" />
       </Link>
-      <div className="flex flex-row-reverse md:flex-row gap-3">
+      <div className="flex flex-row-reverse gap-3 md:flex-row">
         <NavigationMenu>
           <NavigationMenu className="list-none md:hidden">
             <NavigationMenuItem>
@@ -108,7 +108,7 @@ export default function Navbar({ isLoggedIn, businessTypes }: NavbarProps) {
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          <Button asChild className="hidden md:block text-base font-semibold">
+          <Button asChild className="hidden text-base font-semibold md:block">
             <Link to="/sign-in">Sign In</Link>
           </Button>
         )}

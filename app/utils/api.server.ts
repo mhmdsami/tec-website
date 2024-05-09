@@ -173,3 +173,11 @@ export const addEventImage = async (
     },
   });
 };
+
+export const getLatestEvents = async () => {
+  return db.event.findMany({ take: 2, orderBy: { createdAt: "desc" } });
+};
+
+export const getLatestBlogs = async () => {
+  return db.blog.findMany({ take: 2 });
+};
