@@ -1,6 +1,6 @@
 import { BusinessType } from "@prisma-app/client";
 import { Form, Link } from "@remix-run/react";
-import { LayoutDashboard, LogOut, UserRound } from "lucide-react";
+import { LayoutDashboard, LogOut, Menu, UserRound } from "lucide-react";
 import { ReactNode } from "react";
 import { Button } from "~/components/ui/button";
 import {
@@ -27,15 +27,17 @@ interface NavbarProps {
   businessTypes: BusinessType[];
 }
 
+type Links = Array<
+  | {
+      hasSubLinks: true;
+      text: string;
+      subLinks: Array<{ text: string; to: string }>;
+    }
+  | { hasSubLinks: false; text: string; to: string }
+>;
+
 export default function Navbar({ isLoggedIn, businessTypes }: NavbarProps) {
-  const links: Array<
-    | {
-        hasSubLinks: true;
-        text: string;
-        subLinks: Array<{ text: string; to: string }>;
-      }
-    | { hasSubLinks: false; text: string; to: string }
-  > = [
+  const desktopLinks: Links = [
     { hasSubLinks: false, text: "Home", to: "/" },
     { hasSubLinks: false, text: "About Us", to: "/about" },
     {
@@ -50,40 +52,38 @@ export default function Navbar({ isLoggedIn, businessTypes }: NavbarProps) {
     { hasSubLinks: false, text: "Contact Us", to: "/contact" },
   ];
 
+  const mobileLinks: Links = [
+    { hasSubLinks: false, text: "Home", to: "/" },
+    { hasSubLinks: false, text: "About Us", to: "/about" },
+    { hasSubLinks: false, text: "Members", to: "/members" },
+    { hasSubLinks: false, text: "Events", to: "/events" },
+    { hasSubLinks: false, text: "Blog", to: "/blog" },
+    { hasSubLinks: false, text: "Contact Us", to: "/contact" },
+    { hasSubLinks: false, text: "Sign In", to: "/sign-in" }
+  ];
+
   return (
     <nav className="flex h-20 items-center justify-between">
       <Link to="/" className="text-3xl font-bold text-primary">
-        TEC
+        <img src="/logomark.png" alt="TEC Logo" className="h-12 w-12" />
       </Link>
-      <div className="flex gap-3">
+      <div className="flex flex-row-reverse md:flex-row gap-3">
         <NavigationMenu>
-          <NavigationMenuList>
-            {links.map((element) =>
-              element.hasSubLinks ? (
-                <NavigationMenuItem key={element.text}>
-                  <NavigationMenuTrigger>{element.text}</NavigationMenuTrigger>
-                  <NavigationMenuContent className="p-2">
-                    {element.subLinks.slice(0, 5).map((link) => (
-                      <NavbarLink
-                        key={link.text}
-                        to={link.to}
-                        className="w-full justify-start"
-                      >
-                        {link.text}
-                      </NavbarLink>
-                    ))}
-                    <NavbarLink to="/members" className="w-full justify-start">
-                      More
-                    </NavbarLink>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              ) : (
-                <NavigationMenuItem key={element.text}>
-                  <NavbarLink to={element.to}>{element.text}</NavbarLink>
-                </NavigationMenuItem>
-              ),
-            )}
-          </NavigationMenuList>
+          <NavigationMenu className="list-none md:hidden">
+            <NavigationMenuItem>
+              <NavigationMenuTrigger showChevron={false}>
+                <Menu />
+              </NavigationMenuTrigger>
+              <NavigationMenuContent className="p-2">
+                <NavbarItems links={mobileLinks} />
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+          </NavigationMenu>
+          <NavigationMenu className="hidden md:flex">
+            <NavigationMenuList>
+              <NavbarItems links={desktopLinks} />
+            </NavigationMenuList>
+          </NavigationMenu>
         </NavigationMenu>
         {isLoggedIn ? (
           <DropdownMenu>
@@ -108,7 +108,7 @@ export default function Navbar({ isLoggedIn, businessTypes }: NavbarProps) {
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          <Button asChild className="text-base font-semibold">
+          <Button asChild className="hidden md:block text-base font-semibold">
             <Link to="/sign-in">Sign In</Link>
           </Button>
         )}
@@ -130,3 +130,39 @@ const NavbarLink = ({ to, children, className }: NavbarLinkProps) => (
     </NavigationMenuLink>
   </Link>
 );
+
+interface NavbarItemsProps {
+  links: Links;
+}
+
+function NavbarItems({ links }: NavbarItemsProps) {
+  return (
+    <>
+      {links.map((element) =>
+        element.hasSubLinks ? (
+          <NavigationMenuItem key={element.text}>
+            <NavigationMenuTrigger>{element.text}</NavigationMenuTrigger>
+            <NavigationMenuContent className="p-2">
+              {element.subLinks.slice(0, 5).map((link) => (
+                <NavbarLink
+                  key={link.text}
+                  to={link.to}
+                  className="w-full justify-start"
+                >
+                  {link.text}
+                </NavbarLink>
+              ))}
+              <NavbarLink to="/members" className="w-full justify-start">
+                More
+              </NavbarLink>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+        ) : (
+          <NavigationMenuItem key={element.text}>
+            <NavbarLink to={element.to}>{element.text}</NavbarLink>
+          </NavigationMenuItem>
+        ),
+      )}
+    </>
+  );
+}

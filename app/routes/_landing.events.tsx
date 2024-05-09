@@ -1,6 +1,7 @@
 import { Event } from "@prisma-app/client";
 import { json, LoaderFunction, TypedResponse } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+import { Calendar } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -16,7 +17,6 @@ import {
   CarouselPrevious,
 } from "~/components/ui/carousel";
 import { getAllEvents } from "~/utils/api.server";
-import { Calendar } from "lucide-react";
 
 type LoaderData = {
   events: Event[];
@@ -34,7 +34,7 @@ export default function Events() {
   const { events } = useLoaderData<LoaderData>();
 
   return (
-    <main className="grid grid-cols-3 gap-5">
+    <main className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
       {events.map((event) => (
         <EventCard {...event} />
       ))}
@@ -49,13 +49,13 @@ interface EventCardProps extends Omit<Event, "date" | "createdAt"> {
 
 function EventCard({ title, description, images, date }: EventCardProps) {
   return (
-    <Card>
+    <Card className="h-fit">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         <CardDescription>
           <h1 className="text-lg">{description}</h1>
-          <h2 className="flex gap-1 items-center">
-            <Calendar size={16} /> {" "}
+          <h2 className="flex items-center gap-1">
+            <Calendar size={16} />{" "}
             {new Date(date).toLocaleDateString("en-IN", {
               weekday: "long",
               year: "numeric",
@@ -74,10 +74,12 @@ function EventCard({ title, description, images, date }: EventCardProps) {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <div className="mt-5 flex items-center justify-center gap-3">
-            <CarouselPrevious className="static translate-y-0" />
-            <CarouselNext className="static translate-y-0" />
-          </div>
+          {images.length > 0 && (
+            <div className="mt-5 flex items-center justify-center gap-3">
+              <CarouselPrevious className="static translate-y-0" />
+              <CarouselNext className="static translate-y-0" />
+            </div>
+          )}
         </Carousel>
       </CardContent>
     </Card>
