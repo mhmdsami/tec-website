@@ -1,7 +1,6 @@
 import { Prisma } from "@prisma-app/client";
 
-export const errorHandler = (e: any) => {
-  console.error(e);
+export const errorHandler = (e: Error) => {
   if (e instanceof Prisma.PrismaClientKnownRequestError) {
     if (e.code === "P2002") {
       return {

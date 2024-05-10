@@ -61,7 +61,8 @@ export default function Navbar({ isLoggedIn, businessTypes }: NavbarProps) {
     { hasSubLinks: false, text: "Contact Us", to: "/contact" },
   ];
 
-  !isLoggedIn && mobileLinks.push({ hasSubLinks: false, text: "Sign In", to: "/sign-in" });
+  !isLoggedIn &&
+    mobileLinks.push({ hasSubLinks: false, text: "Sign In", to: "/sign-in" });
 
   return (
     <nav className="flex h-20 items-center justify-between">

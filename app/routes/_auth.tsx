@@ -23,7 +23,7 @@ export const action: ActionFunction = async ({ request }) => {
 export default function Auth() {
   return (
     <>
-      <nav className="mx-5 sm:mx-10 flex h-20 items-center">
+      <nav className="mx-5 flex h-20 items-center sm:mx-10">
         <Link to="/" className="text-3xl font-bold text-primary">
           TEC
         </Link>

@@ -6,8 +6,9 @@ import {
   CircleHelp,
   CirclePlus,
   Home,
-  LogOut, Menu,
-  Pencil
+  LogOut,
+  Menu,
+  Pencil,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "~/lib/utils";
@@ -75,11 +76,11 @@ export default function Sidebar({ isAdmin = false }: SidebarProps) {
 
   return (
     <>
-      <Menu onClick={() => setShowSidebar(prev => !prev)} className="m-5" />
+      <Menu onClick={() => setShowSidebar((prev) => !prev)} className="m-5" />
       <aside
         ref={sidebarRef}
         className={cn(
-          "z-10 fixed flex -left-24 sm:left-0 h-screen w-14 flex-col items-center justify-between gap-5 border bg-secondary pb-10 pt-4 transition-all duration-30",
+          "duration-30 fixed -left-24 z-10 flex h-screen w-14 flex-col items-center justify-between gap-5 border bg-secondary pb-10 pt-4 transition-all sm:left-0",
           showSidebar && "left-0",
         )}
       >

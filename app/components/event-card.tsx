@@ -47,7 +47,7 @@ export default function EventCard({
         <Carousel>
           <CarouselContent>
             {images.map(({ url, description }, idx) => (
-              <CarouselItem>
+              <CarouselItem key={idx}>
                 <img
                   src={url}
                   alt={description || ""}

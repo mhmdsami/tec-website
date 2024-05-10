@@ -66,7 +66,7 @@ export const action: ActionFunction = async ({
       await makeEnquiry(parseRes.data, businessId);
       return json({ message: "Enquiry sent" });
     } catch (error) {
-      const { status, message } = errorHandler(error);
+      const { status, message } = errorHandler(error as Error);
       return json({ error: message }, { status });
     }
   }

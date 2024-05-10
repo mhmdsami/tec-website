@@ -369,8 +369,13 @@ function ManageEvent({
           </Dialog>
           <h1 className="text-xl font-bold">Current Images</h1>
           <div className="grid h-1/2 grid-cols-6 gap-5">
-            {images.map(({ url, description }) => (
-              <img className="w-[200px]" src={url} alt={description || ""} />
+            {images.map(({ url, description }, idx) => (
+              <img
+                key={idx}
+                className="w-[200px]"
+                src={url}
+                alt={description || ""}
+              />
             ))}
           </div>
         </div>
