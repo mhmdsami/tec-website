@@ -24,7 +24,7 @@ export default function Admin() {
   return (
     <>
       <Sidebar isAdmin />
-      <main className="ml-14 p-10">
+      <main className="p-5 sm:p-10 sm:ml-14">
         <Outlet />
       </main>
     </>

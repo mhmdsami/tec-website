@@ -57,7 +57,7 @@ export default function SignUp() {
   return (
     <Form
       onSubmit={handleSubmit((data) => submit(data, { method: "post" }))}
-      className="mx-auto -mt-20 flex w-80 grow flex-col justify-center gap-5"
+      className="mx-auto -mt-20 flex w-72 sm:w-80 grow flex-col justify-center gap-5"
     >
       <h1 className="text-3xl font-bold">Create an Account!</h1>
       <Input

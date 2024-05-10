@@ -167,7 +167,7 @@ export default function AdminVerification() {
   return (
     <main className="flex flex-col gap-5">
       <h1 className="text-2xl font-bold">Admin Verification</h1>
-      <div className="flex flex-row items-center justify-between">
+      <div className="flex flex-row items-center justify-between gap-2">
         <Input
           name="email"
           placeholder="Filter emails..."
@@ -175,10 +175,9 @@ export default function AdminVerification() {
           onChange={(event) =>
             table.getColumn("email")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
         />
         <Select onValueChange={handleStatusFilterChange} defaultValue="all">
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-[130px]">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>

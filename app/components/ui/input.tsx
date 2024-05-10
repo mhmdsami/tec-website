@@ -47,7 +47,7 @@ function Input({
 }: InputProps) {
   return (
     <div className={cn("flex flex-col gap-2", className)}>
-      <Label className={labelClassName}>{label}</Label>
+      {label && <Label className={labelClassName}>{label}</Label>}
       {register ? (
         <InputPrimitive
           className={className}

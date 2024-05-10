@@ -22,7 +22,7 @@ export default function Landing() {
   const { businessTypes } = useLoaderData<LoaderData>();
 
   return (
-    <div className="mx-10 flex flex-col">
+    <div className="mx-5 flex flex-col sm:mx-10">
       <Navbar isLoggedIn={isLoggedIn} businessTypes={businessTypes} />
       <Outlet />
     </div>
