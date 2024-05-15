@@ -127,9 +127,7 @@ export default function AdminVerification() {
         header: "Status",
         cell: ({ row }) => (
           <Badge
-            className={cn(
-              row.getValue("isVerified") ? "bg-primary" : "bg-destructive",
-            )}
+            variant={row.getValue("isVerified") ? "default" : "destructive"}
           >
             {row.getValue("isVerified") ? "Verified" : "Not Verified"}
           </Badge>

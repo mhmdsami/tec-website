@@ -52,6 +52,10 @@ export const getAllBusinesses = async () => {
   return db.business.findMany({ include: { owner: true } });
 };
 
+export const getAllVerifiedBusinesses = async () => {
+  return db.business.findMany({ where: { isVerified: true } , include: { owner: true } });
+};
+
 export const getBusinessById = async (id: string) => {
   return db.business.findUnique({ where: { id } });
 };

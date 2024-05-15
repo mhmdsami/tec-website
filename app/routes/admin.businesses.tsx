@@ -26,7 +26,7 @@ import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { cn } from "~/lib/utils";
 import siteConfig from "~/site.config";
-import { getAllBusinesses } from "~/utils/api.server";
+import { getAllVerifiedBusinesses } from "~/utils/api.server";
 import { copyToClipboard } from "~/utils/helpers.client";
 
 export const meta = () => [
@@ -41,7 +41,7 @@ type LoaderData = {
 export const loader: LoaderFunction = async (): Promise<
   TypedResponse<LoaderData>
 > => {
-  const businesses = await getAllBusinesses();
+  const businesses = await getAllVerifiedBusinesses();
 
   return json({ businesses });
 };
