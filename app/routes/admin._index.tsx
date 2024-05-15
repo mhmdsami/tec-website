@@ -1,10 +1,11 @@
 import { json, LoaderFunction, TypedResponse } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import { BadgeCheck, Building, Calendar, CirclePlus } from "lucide-react";
-import StatsCard from "~/components/stats-card";
+import { StatsCard } from "~/components/cards";
 import { Button } from "~/components/ui/button";
 import siteConfig from "~/site.config";
 import {
+  getNumberOfBlogs,
   getNumberOfBusinesses,
   getNumberOfBusinessTypes,
   getNumberOfEvents,
@@ -16,6 +17,7 @@ type LoaderData = {
   numberOfVerifiedBusinesses: number;
   numberOfBusinessTypes: number;
   numberOfEvents: number;
+  numberOfBlogs: number;
 };
 
 export const meta = () => [
@@ -30,12 +32,14 @@ export const loader: LoaderFunction = async (): Promise<
   const numberOfVerifiedBusinesses = await getNumberOfVerifiedBusinesses();
   const numberOfBusinessTypes = await getNumberOfBusinessTypes();
   const numberOfEvents = await getNumberOfEvents();
+  const numberOfBlogs = await getNumberOfBlogs();
 
   return json({
     numberOfBusinesses,
     numberOfVerifiedBusinesses,
     numberOfBusinessTypes,
     numberOfEvents,
+    numberOfBlogs,
   });
 };
 
@@ -45,6 +49,7 @@ export default function Admin() {
     numberOfVerifiedBusinesses,
     numberOfBusinessTypes,
     numberOfEvents,
+    numberOfBlogs,
   } = useLoaderData<LoaderData>();
 
   return (
@@ -88,6 +93,16 @@ export default function Admin() {
       >
         <Button className="self-end">
           <Link to="/admin/events">Manage Events</Link>
+        </Button>
+      </StatsCard>
+      <StatsCard
+        title="Blogs"
+        description="Create new blog"
+        value={numberOfBlogs}
+        Icon={Building}
+      >
+        <Button className="self-end">
+          <Link to="/admin/blog">Manage Blog</Link>
         </Button>
       </StatsCard>
     </div>

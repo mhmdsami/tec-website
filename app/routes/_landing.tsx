@@ -22,9 +22,17 @@ export default function Landing() {
   const { businessTypes } = useLoaderData<LoaderData>();
 
   return (
-    <div className="mx-5 flex flex-col sm:mx-10">
+    <div className="mx-5 flex min-h-screen flex-col sm:mx-10">
       <Navbar isLoggedIn={isLoggedIn} businessTypes={businessTypes} />
       <Outlet />
+      <footer className="flex grow items-end">
+        <div className="flex w-full items-center justify-between">
+          <p className="text-sm text-muted-foreground">
+            &copy; {new Date().getFullYear()} Tirunelveli Economic Chamber
+          </p>
+          <img src="/tec.png" alt="TEC Logo" className="w-32" />
+        </div>
+      </footer>
     </div>
   );
 }

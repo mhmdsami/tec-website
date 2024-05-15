@@ -9,6 +9,7 @@ import {
   LogOut,
   Menu,
   Pencil,
+  StickyNote,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "~/lib/utils";
@@ -63,6 +64,11 @@ export default function Sidebar({ isAdmin = false }: SidebarProps) {
           text: "Events",
           icon: <Calendar size={22} />,
         },
+        {
+          to: "/admin/blog",
+          text: "Blog",
+          icon: <StickyNote size={22} />,
+        },
       ]
     : [
         { to: "/dashboard", text: "Dashboard", icon: <Home size={22} /> },
@@ -76,7 +82,10 @@ export default function Sidebar({ isAdmin = false }: SidebarProps) {
 
   return (
     <>
-      <Menu onClick={() => setShowSidebar((prev) => !prev)} className="m-5" />
+      <Menu
+        onClick={() => setShowSidebar((prev) => !prev)}
+        className="m-5 sm:hidden"
+      />
       <aside
         ref={sidebarRef}
         className={cn(

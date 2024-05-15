@@ -1,7 +1,7 @@
 import { Event } from "@prisma-app/client";
 import { json, LoaderFunction, TypedResponse } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import EventCard from "~/components/event-card";
+import { EventCard } from "~/components/cards";
 import { getAllEvents } from "~/utils/api.server";
 
 type LoaderData = {

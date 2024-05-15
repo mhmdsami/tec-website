@@ -6,7 +6,7 @@ import {
   json,
 } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
-import EventCard from "~/components/event-card";
+import { BlogCard, EventCard } from "~/components/cards";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
 import {
@@ -47,7 +47,7 @@ export default function Index() {
   const { events, blogs } = useLoaderData<LoaderData>();
 
   return (
-    <div className="mb-10 flex flex-col gap-20">
+    <main className="mb-10 flex flex-col gap-20">
       <div className="flex h-[85vh] flex-col-reverse items-center justify-center sm:flex-row">
         <div className="sm:basis-1/2">
           <h1 className="text-4xl font-bold lg:text-7xl">
@@ -126,9 +126,14 @@ export default function Index() {
           ))}
         </div>
       </div>
-      <div className="flex flex-col">
-        <h1 className="text-2xl font-bold lg:text-3xl">Blogs</h1>
+      <div className="flex flex-col gap-5">
+        <h1 className="text-2xl font-bold lg:text-3xl">Latest Blogs</h1>
+        <div className="grid gap-10 md:grid-cols-2">
+          {blogs.map((blog, idx) => (
+            <BlogCard key={idx} {...blog} />
+          ))}
+        </div>
       </div>
-    </div>
+    </main>
   );
 }

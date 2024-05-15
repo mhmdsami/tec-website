@@ -121,22 +121,6 @@ export const toggleMarkEnquiryAsResolved = async (id: string) => {
   });
 };
 
-export const getNumberOfBusinessTypes = async () => {
-  return db.businessType.count();
-};
-
-export const getNumberOfBusinesses = async () => {
-  return db.business.count();
-};
-
-export const getNumberOfVerifiedBusinesses = async () => {
-  return db.business.count({ where: { isVerified: true } });
-};
-
-export const getNumberOfEvents = async () => {
-  return db.event.count();
-};
-
 export const createEvent = async (event: Prisma.EventCreateInput) => {
   return db.event.create({
     data: {
@@ -147,16 +131,16 @@ export const createEvent = async (event: Prisma.EventCreateInput) => {
   });
 };
 
+export const getLatestEvents = async () => {
+  return db.event.findMany({ take: 2, orderBy: { createdAt: "desc" } });
+};
+
 export const getAllEvents = async () => {
   return db.event.findMany();
 };
 
 export const getEventById = async (id: string) => {
   return db.event.findUnique({ where: { id } });
-};
-
-export const deleteEvent = async (id: string) => {
-  return db.event.delete({ where: { id } });
 };
 
 export const addEventImage = async (
@@ -174,10 +158,53 @@ export const addEventImage = async (
   });
 };
 
-export const getLatestEvents = async () => {
-  return db.event.findMany({ take: 2, orderBy: { createdAt: "desc" } });
+export const deleteEvent = async (id: string) => {
+  return db.event.delete({ where: { id } });
+};
+
+export const getNumberOfBlogs = async () => {
+  return db.blog.count();
+};
+
+export const createBlog = async (blog: Prisma.BlogCreateInput) => {
+  return db.blog.create({
+    data: {
+      title: blog.title,
+      description: blog.description,
+      content: blog.content,
+      image: blog.image,
+    },
+  });
 };
 
 export const getLatestBlogs = async () => {
   return db.blog.findMany({ take: 2 });
+};
+
+export const getAllBlogs = async () => {
+  return db.blog.findMany();
+};
+
+export const getBlogById = async (id: string) => {
+  return db.blog.findUnique({ where: { id } });
+};
+
+export const deleteBlog = async (id: string) => {
+  return db.blog.delete({ where: { id } });
+};
+
+export const getNumberOfBusinessTypes = async () => {
+  return db.businessType.count();
+};
+
+export const getNumberOfBusinesses = async () => {
+  return db.business.count();
+};
+
+export const getNumberOfVerifiedBusinesses = async () => {
+  return db.business.count({ where: { isVerified: true } });
+};
+
+export const getNumberOfEvents = async () => {
+  return db.event.count();
 };

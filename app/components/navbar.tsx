@@ -48,7 +48,7 @@ export default function Navbar({ isLoggedIn, businessTypes }: NavbarProps) {
       }),
     },
     { hasSubLinks: false, text: "Events", to: "/events" },
-    { hasSubLinks: false, text: "Blog", to: "/blog" },
+    { hasSubLinks: false, text: "Blog", to: "/blogs" },
     { hasSubLinks: false, text: "Contact Us", to: "/contact" },
   ];
 
@@ -57,7 +57,7 @@ export default function Navbar({ isLoggedIn, businessTypes }: NavbarProps) {
     { hasSubLinks: false, text: "About Us", to: "/about" },
     { hasSubLinks: false, text: "Members", to: "/members" },
     { hasSubLinks: false, text: "Events", to: "/events" },
-    { hasSubLinks: false, text: "Blog", to: "/blog" },
+    { hasSubLinks: false, text: "Blog", to: "/blogs" },
     { hasSubLinks: false, text: "Contact Us", to: "/contact" },
   ];
 

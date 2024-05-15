@@ -115,6 +115,23 @@ export const AddEventImageSchema = object({
   description: optional(string()),
 });
 
+export const AddBlogSchema = object({
+  title: string("Title is required", [
+    minLength(3, "Title must be at least 3 characters"),
+  ]),
+  description: string("Description is required", [
+    minLength(5, "Description must be at least 5 characters"),
+  ]),
+  content: string("Content is required", [
+    minLength(50, "Content must be at least 50 characters"),
+  ]),
+  image: string("Image is required", [minLength(3, "Image is required")]),
+});
+
+export const DeleteBlogSchema = object({
+  id: string("ID is required", [minLength(1, "ID is required")]),
+});
+
 type ValidatedForm<Schema extends BaseSchema> =
   | {
       success: true;

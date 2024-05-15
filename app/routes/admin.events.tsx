@@ -84,7 +84,7 @@ export const action: ActionFunction = async ({ request }) => {
         AddEventSchema,
       );
       if (!parseRes.success) {
-        return json({ errors: parseRes.errors }, { status: 400 });
+        return json({ fieldErrors: parseRes.errors }, { status: 400 });
       }
 
       const event = await createEvent(parseRes.data);
@@ -98,7 +98,7 @@ export const action: ActionFunction = async ({ request }) => {
     case "delete": {
       const parseRes = validate(body, DeleteEventSchema);
       if (!parseRes.success) {
-        return json({ errors: parseRes.errors }, { status: 400 });
+        return json({ fieldErrors: parseRes.errors }, { status: 400 });
       }
 
       const event = await deleteEvent(parseRes.data.id);
@@ -139,7 +139,6 @@ export const action: ActionFunction = async ({ request }) => {
 export default function AdminEvents() {
   const { events } = useLoaderData<LoaderData>();
   const submit = useSubmit();
-  const [isUploading, setIsUploading] = useState(false);
 
   const {
     register,
