@@ -24,7 +24,7 @@ import {
 } from "~/components/ui/drawer";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { cn } from "~/lib/utils";
+import { cn } from "~/utils/helpers";
 import siteConfig from "~/site.config";
 import { getAllVerifiedBusinesses } from "~/utils/api.server";
 import { copyToClipboard } from "~/utils/helpers.client";

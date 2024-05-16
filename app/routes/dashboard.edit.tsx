@@ -27,7 +27,7 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { Textarea } from "~/components/ui/textarea";
-import { cn } from "~/lib/utils";
+import { cn } from "~/utils/helpers";
 import { DashboardOutletContext } from "~/routes/dashboard";
 import { ActionResponse } from "~/types";
 import { getBusinessTypes, updateBusiness } from "~/utils/api.server";

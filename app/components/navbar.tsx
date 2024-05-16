@@ -20,7 +20,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "~/components/ui/navigation-menu";
-import { cn } from "~/lib/utils";
+import { cn } from "~/utils/helpers";
 
 interface NavbarProps {
   isLoggedIn: boolean;

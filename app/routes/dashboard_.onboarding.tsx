@@ -24,7 +24,7 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { Textarea } from "~/components/ui/textarea";
-import { cn } from "~/lib/utils";
+import { cn } from "~/utils/helpers";
 import siteConfig from "~/site.config";
 import { ActionResponse } from "~/types";
 import {
