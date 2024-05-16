@@ -1,4 +1,4 @@
-import { Business, User, BusinessType } from "@prisma-app/client";
+import { Business, BusinessType, User } from "@prisma-app/client";
 import { LoaderFunction, TypedResponse, json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import {
@@ -11,9 +11,15 @@ import { useState } from "react";
 import { DataTable } from "~/components/data-table";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
 import { getAllVerifiedBusinesses, getBusinessTypes } from "~/utils/api.server";
 import { copyToClipboard } from "~/utils/helpers.client";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
 
 type LoaderData = {
   businessTypes: BusinessType[];
@@ -31,10 +37,7 @@ export const loader: LoaderFunction = async ({
 
 export default function Members() {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const {
-    businessTypes,
-    businesses,
-  } = useLoaderData<LoaderData>();
+  const { businessTypes, businesses } = useLoaderData<LoaderData>();
 
   const table = useReactTable({
     data: businesses,
@@ -72,7 +75,9 @@ export default function Members() {
       {
         accessorKey: "typeId",
         header: "Type",
-        cell: ({ row }) => businessTypes.find((bt) => bt.id === row.getValue("typeId"))?.name ?? "N/A",
+        cell: ({ row }) =>
+          businessTypes.find((bt) => bt.id === row.getValue("typeId"))?.name ??
+          "N/A",
       },
       {
         accessorKey: "id",
@@ -102,8 +107,8 @@ export default function Members() {
 
   return (
     <main className="flex flex-col gap-5">
-      <div className="flex flex-wrap flex-row items-center justify-between gap-2">
-        <div className="flex flex-wrap flex-row items-center gap-2 w-full sm:w-fit">
+      <div className="flex flex-row flex-wrap items-center justify-between gap-2">
+        <div className="flex w-full flex-row flex-wrap items-center gap-2 sm:w-fit">
           <Input
             name="name"
             placeholder="Search by name"
