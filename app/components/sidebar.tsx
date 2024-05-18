@@ -100,7 +100,7 @@ export default function Sidebar({ isAdmin = false }: SidebarProps) {
         )}
       >
         <div className="flex flex-col items-center gap-5">
-          <Link to="/" className="font-bold text-primary">
+          <Link to="/" className="font-bold text-primary" prefetch="render">
             <img src="/logomark.png" alt="TEC Logo" className="h-8 w-8" />
           </Link>
           <div className="flex flex-col items-center gap-2">
@@ -109,6 +109,7 @@ export default function Sidebar({ isAdmin = false }: SidebarProps) {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Link
+                      prefetch="intent"
                       key={to}
                       to={to}
                       className={cn(

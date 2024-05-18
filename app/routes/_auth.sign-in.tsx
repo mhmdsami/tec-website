@@ -76,6 +76,7 @@ export default function SignIn() {
         Sign In
       </Button>
       <Link
+        prefetch="intent"
         to="/sign-up"
         className="text-center text-sm text-primary underline"
       >

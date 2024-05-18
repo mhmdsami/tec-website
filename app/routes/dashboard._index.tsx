@@ -34,7 +34,7 @@ export default function Dashboard() {
           </Tooltip>
         </TooltipProvider>
         <Button>
-          <Link to="/dashboard/edit">Edit</Link>
+          <Link to="/dashboard/edit" prefetch="intent">Edit</Link>
         </Button>
       </Profile>
     </main>

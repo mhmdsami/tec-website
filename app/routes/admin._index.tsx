@@ -61,7 +61,7 @@ export default function Admin() {
         Icon={Building}
       >
         <Button className="self-end">
-          <Link to="/admin/businesses">View Businesses</Link>
+          <Link to="/admin/businesses" prefetch="intent">View Businesses</Link>
         </Button>
       </StatsCard>
       <StatsCard
@@ -72,7 +72,7 @@ export default function Admin() {
         Icon={BadgeCheck}
       >
         <Button className="self-end">
-          <Link to="/admin/verification">Verify Business</Link>
+          <Link to="/admin/verification" prefetch="intent">Verify Business</Link>
         </Button>
       </StatsCard>
       <StatsCard
@@ -82,7 +82,7 @@ export default function Admin() {
         Icon={CirclePlus}
       >
         <Button className="self-end">
-          <Link to="/admin/manage/type">Manage Business Types</Link>
+          <Link to="/admin/manage/type" prefetch="intent">Manage Business Types</Link>
         </Button>
       </StatsCard>
       <StatsCard
@@ -92,7 +92,7 @@ export default function Admin() {
         Icon={Calendar}
       >
         <Button className="self-end">
-          <Link to="/admin/events">Manage Events</Link>
+          <Link to="/admin/events" prefetch="intent">Manage Events</Link>
         </Button>
       </StatsCard>
       <StatsCard
@@ -102,7 +102,7 @@ export default function Admin() {
         Icon={Building}
       >
         <Button className="self-end">
-          <Link to="/admin/blog">Manage Blog</Link>
+          <Link to="/admin/blog" prefetch="intent">Manage Blog</Link>
         </Button>
       </StatsCard>
     </div>

@@ -66,7 +66,7 @@ export default function Navbar({ isLoggedIn, businessTypes }: NavbarProps) {
 
   return (
     <nav className="flex h-20 items-center justify-between">
-      <Link to="/" className="text-3xl font-bold text-primary">
+      <Link to="/" className="text-3xl font-bold text-primary" prefetch="viewport">
         <img src="/logomark.png" alt="TEC Logo" className="h-12 w-12" />
       </Link>
       <div className="flex flex-row-reverse gap-3 md:flex-row">
@@ -95,7 +95,7 @@ export default function Navbar({ isLoggedIn, businessTypes }: NavbarProps) {
             <DropdownMenuContent className="mr-10">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <Link to="/dashboard">
+              <Link to="/dashboard" prefetch="viewport">
                 <DropdownMenuItem className="hover:cursor-pointer">
                   <LayoutDashboard className="mr-2 h-4 w-4" />{" "}
                   <span>Dashboard</span>
@@ -126,7 +126,7 @@ interface NavbarLinkProps {
 }
 
 const NavbarLink = ({ to, children, className }: NavbarLinkProps) => (
-  <Link to={to}>
+  <Link to={to} prefetch="intent">
     <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), className)}>
       {children}
     </NavigationMenuLink>

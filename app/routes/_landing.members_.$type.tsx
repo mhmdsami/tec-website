@@ -82,7 +82,7 @@ export default function Members() {
         header: "Details",
         cell: ({ row }) => (
           <Button>
-            <Link to={`/business/${row.getValue("id")}`}>View</Link>
+            <Link to={`/business/${row.getValue("id")}`} prefetch="intent">View</Link>
           </Button>
         ),
       },

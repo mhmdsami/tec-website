@@ -83,6 +83,7 @@ export default function SignUp() {
         Sign Up
       </Button>
       <Link
+        prefetch="render"
         to="/sign-in"
         className="text-center text-sm text-primary underline"
       >
