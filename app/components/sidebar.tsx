@@ -1,5 +1,11 @@
 import { Form, Link, useLocation } from "@remix-run/react";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip"
+import {
   BadgeCheck,
   Building,
   Calendar,
@@ -95,20 +101,29 @@ export default function Sidebar({ isAdmin = false }: SidebarProps) {
       >
         <div className="flex flex-col items-center gap-5">
           <Link to="/" className="font-bold text-primary">
-            TEC
+            <img src="/logomark.png" alt="TEC Logo" className="h-8 w-8" />
           </Link>
           <div className="flex flex-col items-center gap-2">
             {links.map(({ to, text, icon }) => (
-              <Link
-                key={to}
-                to={to}
-                className={cn(
-                  "rounded-xl p-2",
-                  pathname === to && "bg-primary/10",
-                )}
-              >
-                {icon}
-              </Link>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link
+                      key={to}
+                      to={to}
+                      className={cn(
+                        "rounded-xl p-2",
+                        pathname === to && "bg-primary/10",
+                      )}
+                    >
+                      {icon}
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{text}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             ))}
           </div>
         </div>
