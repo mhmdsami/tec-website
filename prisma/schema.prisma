@@ -22,17 +22,18 @@ model User {
 }
 
 model Business {
-  id        String   @id @default(uuid()) @map("_id")
-  name      String
-  tagline   String
-  about     String
-  logo      String?
-  location  String
-  instagram String
-  whatsApp  String
-  email     String
-  phone     String
-  createdAt DateTime @default(now())
+  id         String   @id @default(uuid()) @map("_id")
+  name       String
+  tagline    String
+  about      String
+  logo       String?
+  coverImage String?
+  location   String
+  instagram  String
+  whatsApp   String
+  email      String
+  phone      String
+  createdAt  DateTime @default(now())
 
   isVerified Boolean @default(false)
 

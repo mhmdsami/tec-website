@@ -81,6 +81,7 @@ export default function DashboardEdit() {
       tagline: business?.tagline,
       about: business?.about,
       logo: business?.logo,
+      coverImage: business?.coverImage,
       location: business?.location,
       instagram: business?.instagram,
       whatsApp: business?.whatsApp,
@@ -132,13 +133,13 @@ export default function DashboardEdit() {
           register={register}
         />
         <Textarea
-          className="row-span-2"
+          className="row-span-2 h-[160px]"
           name="about"
           label="About"
           errorMessage={errors.tagline?.message}
           register={register}
         />
-        <div className="row-span-3 flex flex-col gap-2">
+        <div className="row-span-2 flex flex-col gap-2">
           <Label>Logo</Label>
           <Controller
             control={control}
@@ -160,6 +161,30 @@ export default function DashboardEdit() {
             )}
           >
             {errors.logo?.message}
+          </p>
+        </div>
+        <div className="row-span-2 flex flex-col gap-2">
+          <Label>Cover Image</Label>
+          <Controller
+            control={control}
+            name="coverImage"
+            render={({ field }) => (
+              <ImageUpload
+                imageUrl={watch("coverImage")}
+                onChange={field.onChange}
+                folder="coverImage"
+                isUploading={isUploading}
+                setIsUploading={setIsUploading}
+              />
+            )}
+          />
+          <p
+            className={cn(
+              "hidden text-sm text-destructive",
+              errors.coverImage && "block",
+            )}
+          >
+            {errors.coverImage?.message}
           </p>
         </div>
         <Input

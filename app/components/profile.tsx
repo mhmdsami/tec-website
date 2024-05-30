@@ -12,6 +12,7 @@ import {
 
 interface ProfileProps extends Omit<Business, "createdAt"> {
   children?: ReactNode;
+  headerChildren?: ReactNode;
 }
 
 export default function Profile({
@@ -23,23 +24,26 @@ export default function Profile({
   whatsApp,
   phone,
   children,
+  coverImage,
+  headerChildren
 }: ProfileProps) {
   return (
     <Card className="w-[500px]">
-      <CardHeader className="items-center">
-        <Avatar className="-mt-20 h-40 w-40">
-          {logo && <AvatarImage src={logo} alt={name} />}
-          <AvatarFallback className="text-3xl">{name[0]}</AvatarFallback>
-        </Avatar>
-        <CardTitle className="">{name}</CardTitle>
-        <CardDescription>{tagline}</CardDescription>
+      <img src={coverImage || ""} alt={name} className="aspect-video object-cover rounded-t-lg" />
+      <CardHeader className="flex flex-row justify-between">
+        <div className="flex flex-col gap-2">
+          <Avatar className="-mt-20 h-32 w-32 self-start">
+            {logo && <AvatarImage src={logo} alt={name} />}
+            <AvatarFallback className="text-3xl">{name[0]}</AvatarFallback>
+          </Avatar>
+          <CardTitle>{name}</CardTitle>
+          <CardDescription>{tagline}</CardDescription>
+        </div>
+        {headerChildren}
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         {children}
-        <div>
-          <p className="text-lg font-bold">About</p>
-          <p>{about}</p>
-        </div>
+        <p>{about}</p>
         <div className="flex gap-2">
           <a href={instagram}>
             <Instagram />

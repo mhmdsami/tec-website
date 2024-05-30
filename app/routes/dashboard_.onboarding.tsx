@@ -116,7 +116,7 @@ export default function OnboardingForm() {
 
   const fieldsToValidate: Array<Array<keyof Output<typeof BusinessSchema>>> = [
     ["name", "typeId"],
-    ["tagline", "about", "logo"],
+    ["tagline", "about", "logo", "coverImage"],
     ["location", "instagram", "whatsApp"],
     ["email", "phone"],
   ];
@@ -203,6 +203,30 @@ export default function OnboardingForm() {
                 )}
               >
                 {errors.logo?.message}
+              </p>
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label>Cover Image</Label>
+              <Controller
+                control={control}
+                name="coverImage"
+                render={({ field }) => (
+                  <ImageUpload
+                    imageUrl={watch("coverImage")}
+                    onChange={field.onChange}
+                    folder="coverImage"
+                    isUploading={isUploading}
+                    setIsUploading={setIsUploading}
+                  />
+                )}
+              />
+              <p
+                className={cn(
+                  "hidden text-sm text-destructive",
+                  errors.coverImage && "block",
+                )}
+              >
+                {errors.coverImage?.message}
               </p>
             </div>
           </>

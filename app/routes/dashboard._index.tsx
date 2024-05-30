@@ -16,23 +16,27 @@ export default function Dashboard() {
 
   return (
     <main className="flex w-full grow flex-col items-center justify-center overflow-scroll">
-      <Profile {...business}>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger className="self-end">
-              <Badge className="h-fit w-fit hover:bg-primary">
-                {addYears(business.createdAt, 1).toLocaleDateString("en-IN", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </Badge>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Validity</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+      <Profile
+        {...business}
+        headerChildren={
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger className="self-end">
+                <Badge className="h-fit w-fit hover:bg-primary">
+                  {addYears(business.createdAt, 1).toLocaleDateString("en-IN", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Validity</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        }
+      >
         <Button>
           <Link to="/dashboard/edit" prefetch="intent">
             Edit

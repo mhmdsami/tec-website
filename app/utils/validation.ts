@@ -47,6 +47,7 @@ export const BusinessSchema = object({
     minLength(5, "About must be at least 5 characters"),
   ]),
   logo: optional(string()),
+  coverImage: optional(string()),
   location: string([minLength(3, "Location must be at least 3 characters")]),
   instagram: string([
     minLength(3, "Instagram must be at least 3 characters"),
