@@ -24,7 +24,11 @@ export default function Auth() {
   return (
     <>
       <nav className="mx-5 flex h-20 items-center sm:mx-10">
-        <Link to="/" className="text-3xl font-bold text-primary" prefetch="viewport">
+        <Link
+          to="/"
+          className="text-3xl font-bold text-primary"
+          prefetch="viewport"
+        >
           <img src="/logomark.png" alt="TEC Logo" className="h-12 w-12" />
         </Link>
       </nav>

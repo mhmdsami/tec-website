@@ -1,11 +1,5 @@
 import { Form, Link, useLocation } from "@remix-run/react";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "~/components/ui/tooltip"
-import {
   BadgeCheck,
   Building,
   Calendar,
@@ -18,6 +12,12 @@ import {
   StickyNote,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
 import { cn } from "~/utils/helpers";
 
 interface SidebarProps {

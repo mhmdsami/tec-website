@@ -8,7 +8,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "~/components/ui/tooltip"
+} from "~/components/ui/tooltip";
 import { DashboardOutletContext } from "~/routes/dashboard";
 
 export default function Dashboard() {
@@ -34,7 +34,9 @@ export default function Dashboard() {
           </Tooltip>
         </TooltipProvider>
         <Button>
-          <Link to="/dashboard/edit" prefetch="intent">Edit</Link>
+          <Link to="/dashboard/edit" prefetch="intent">
+            Edit
+          </Link>
         </Button>
       </Profile>
     </main>

@@ -101,7 +101,9 @@ export default function Index() {
             libero non, finibus magna.
           </p>
           <Button asChild className="w-fit">
-            <Link to="/members" prefetch="intent">Search a Business</Link>
+            <Link to="/members" prefetch="intent">
+              Search a Business
+            </Link>
           </Button>
         </div>
         <div className="flex basis-1/2 flex-col items-center gap-5 rounded-2xl bg-secondary p-10 text-center">
@@ -114,7 +116,9 @@ export default function Index() {
             ultricies.
           </p>
           <Button asChild className="w-fit">
-            <Link to="/sign-up" prefetch="intent">Sign Up as a Business</Link>
+            <Link to="/sign-up" prefetch="intent">
+              Sign Up as a Business
+            </Link>
           </Button>
         </div>
       </div>
