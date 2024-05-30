@@ -28,6 +28,7 @@ import siteConfig from "~/site.config";
 import { getAllVerifiedBusinesses } from "~/utils/api.server";
 import { cn } from "~/utils/helpers";
 import { copyToClipboard } from "~/utils/helpers.client";
+import { CopiableInput } from "~/components/copiable-input";
 
 export const meta = () => [
   { title: `${siteConfig.name} | Admin Verification` },
@@ -195,22 +196,5 @@ function VerificationBadge({ isVerified }: { isVerified: boolean }) {
     <Badge className={cn(isVerified ? "bg-primary" : "bg-destructive")}>
       {isVerified ? "Verified" : "Not Verified"}
     </Badge>
-  );
-}
-
-function CopiableInput({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex flex-col gap-2">
-      <Label>{label}</Label>
-      <div
-        className="flex h-10 w-full justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background hover:cursor-pointer"
-        onClick={() =>
-          copyToClipboard(value, `Copied ${label.toLowerCase()} to clipboard`)
-        }
-      >
-        {value}
-        <Copy size={20} />
-      </div>
-    </div>
   );
 }

@@ -98,7 +98,7 @@ export default function BusinessProfile() {
   });
 
   return (
-    <main className="flex h-[80vh] w-full flex-col items-center justify-center gap-5 overflow-scroll">
+    <main className="flex min-h-[80vh] w-full flex-col items-center justify-center gap-5 overflow-scroll">
       <Profile {...business}>
         <Dialog>
           <DialogTrigger asChild>
