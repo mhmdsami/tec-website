@@ -42,7 +42,7 @@ export default function Dashboard() {
   return (
     <>
       <Sidebar />
-      <main className="ml-14 flex min-h-screen p-10">
+      <main className="flex min-h-screen sm:ml-14 sm:p-10">
         <Outlet
           context={{ user, business } as unknown as DashboardOutletContext}
         />

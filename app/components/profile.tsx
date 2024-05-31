@@ -1,4 +1,4 @@
-import { Business } from "@prisma-app/client";
+import { Business, Service } from "@prisma-app/client";
 import {
   Facebook,
   Instagram,
@@ -23,6 +23,7 @@ import { copyToClipboard } from "~/utils/helpers.client";
 interface ProfileProps extends Omit<Business, "createdAt"> {
   children?: ReactNode;
   headerChildren?: ReactNode;
+  services?: Array<Omit<Service, "createdAt"> & { createdAt: string }>;
 }
 
 export default function Profile({
@@ -40,11 +41,12 @@ export default function Profile({
   children,
   coverImage,
   headerChildren,
+  services,
 }: ProfileProps) {
   const url = `${siteConfig.baseUrl}/business/${id}`;
 
   return (
-    <Card className="md:w-[500px]">
+    <Card className="w-screen md:w-[500px]">
       <img
         src={coverImage || ""}
         alt={name}
@@ -62,7 +64,10 @@ export default function Profile({
         {headerChildren}
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <p>{about}</p>
+        <div className="flex flex-col gap-2">
+          <p className="text-xl font-bold">About</p>
+          <p>{about}</p>
+        </div>
         <div className="flex items-center gap-2">
           <a href={`tel:${phone}`}>
             <Phone />
@@ -101,15 +106,35 @@ export default function Profile({
           )}
         </div>
         {children}
+        {services && (
+          <div className="flex flex-col gap-2">
+            <p className="text-xl font-bold">Services</p>
+            <div className="flex flex-col gap-4">
+              {services.map(({ title, description, image }, idx) => (
+                <Card key={idx}>
+                  <CardHeader>
+                    <CardTitle className="text-xl">{title}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex flex-col gap-2">
+                    <p>{description}</p>
+                    {image && (
+                      <img src={image} alt={title} className="rounded-lg" />
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
         <CopiableInput value={url} />
         <div className="flex items-center justify-around gap-2 rounded-lg bg-secondary p-5">
           <img
             src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${url}`}
             alt="qrcode"
-            className="h-40 w-40 rounded-s"
+            className="h-24 w-24 rounded-s md:h-40 md:w-40"
           />
           <div className="flex flex-col items-center">
-            <Avatar className="h-32 w-32">
+            <Avatar className="h-20 w-20 md:h-32 md:w-32">
               {logo && <AvatarImage src={logo} alt={name} />}
               <AvatarFallback className="text-3xl">{name[0]}</AvatarFallback>
             </Avatar>

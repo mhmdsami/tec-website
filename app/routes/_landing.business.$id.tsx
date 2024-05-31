@@ -1,9 +1,9 @@
-import { Business } from "@prisma-app/client";
+import { Business, Service } from "@prisma-app/client";
 import {
   ActionFunction,
-  json,
   LoaderFunction,
   TypedResponse,
+  json,
 } from "@remix-run/node";
 import { Form, useLoaderData, useSubmit } from "@remix-run/react";
 import {
@@ -22,12 +22,17 @@ import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import { ActionResponse } from "~/types";
-import { getBusinessById, makeEnquiry } from "~/utils/api.server";
+import {
+  getBusinessById,
+  getServicesByBusinessId,
+  makeEnquiry,
+} from "~/utils/api.server";
 import { errorHandler } from "~/utils/error.server";
 import { EnquirySchema, validate } from "~/utils/validation";
 
 type LoaderData = {
   business: Business;
+  services: Service[];
 };
 
 export const loader: LoaderFunction = async ({
@@ -40,12 +45,13 @@ export const loader: LoaderFunction = async ({
   }
 
   const business = await getBusinessById(id);
-
   if (!business) {
     throw json({ message: "Business not found" }, { status: 404 });
   }
 
-  return json({ business });
+  const services = await getServicesByBusinessId(business.id);
+
+  return json({ business, services });
 };
 
 export const action: ActionFunction = async ({
@@ -76,7 +82,7 @@ export const action: ActionFunction = async ({
 
 export default function BusinessProfile() {
   const submit = useSubmit();
-  const { business } = useLoaderData<LoaderData>();
+  const { business, services } = useLoaderData<LoaderData>();
 
   const {
     register,
@@ -99,7 +105,7 @@ export default function BusinessProfile() {
 
   return (
     <main className="flex min-h-[80vh] w-full flex-col items-center justify-center gap-5 overflow-scroll">
-      <Profile {...business}>
+      <Profile {...business} services={services}>
         <Dialog>
           <DialogTrigger asChild>
             <Button>Enquire</Button>

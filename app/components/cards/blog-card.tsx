@@ -25,7 +25,7 @@ export default function EventCard({
     <Card className="h-fit">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
-        <CardDescription className="flex justify-between">
+        <CardDescription className="flex flex-col justify-between sm:flex-row">
           <h1 className="text-lg">{description}</h1>
           <h2 className="flex items-center gap-1">
             <Calendar size={16} />{" "}
