@@ -8,7 +8,6 @@ import {
   Home,
   LogOut,
   Menu,
-  Pencil,
   StickyNote,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -83,7 +82,11 @@ export default function Sidebar({ isAdmin = false }: SidebarProps) {
           text: "Enquires",
           icon: <CircleHelp size={22} />,
         },
-        { to: "/dashboard/edit", text: "Edit", icon: <Pencil size={22} /> },
+        {
+          to: "/dashboard/services",
+          text: "Add Service",
+          icon: <CirclePlus size={22} />,
+        },
       ];
 
   return (
@@ -104,8 +107,8 @@ export default function Sidebar({ isAdmin = false }: SidebarProps) {
             <img src="/logomark.png" alt="TEC Logo" className="h-8 w-8" />
           </Link>
           <div className="flex flex-col items-center gap-2">
-            {links.map(({ to, text, icon }) => (
-              <TooltipProvider>
+            {links.map(({ to, text, icon }, idx) => (
+              <TooltipProvider key={idx}>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Link

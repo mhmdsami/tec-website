@@ -215,3 +215,34 @@ export const getNumberOfVerifiedBusinesses = async () => {
 export const getNumberOfEvents = async () => {
   return db.event.count();
 };
+
+export const createService = async (
+  service: Omit<Prisma.ServiceCreateInput, "business">,
+  businessId: string,
+) => {
+  return db.service.create({
+    data: {
+      title: service.title,
+      description: service.description,
+      image: service.image,
+      business: {
+        connect: { id: businessId },
+      },
+    },
+  });
+};
+
+export const getServicesByBusinessId = async (businessId: string) => {
+  return db.service.findMany({ where: { businessId } });
+};
+
+export const updateService = async (
+  id: string,
+  data: Prisma.ServiceUpdateInput,
+) => {
+  return db.service.update({ where: { id }, data });
+};
+
+export const deleteService = async (id: string) => {
+  return db.service.delete({ where: { id } });
+};

@@ -1,9 +1,15 @@
 import { Business } from "@prisma-app/client";
-import { Instagram, MessageCircle, Phone } from "lucide-react";
+import {
+  Facebook,
+  Instagram,
+  Linkedin,
+  MapPin,
+  MessageCircle,
+  Phone,
+} from "lucide-react";
 import { ReactNode } from "react";
 import { CopiableInput } from "~/components/copiable-input";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
-import { Button } from "~/components/ui/button";
 import {
   Card,
   CardContent,
@@ -25,8 +31,11 @@ export default function Profile({
   tagline,
   about,
   logo,
+  location,
   instagram,
   whatsApp,
+  facebook,
+  linkedIn,
   phone,
   children,
   coverImage,
@@ -35,7 +44,7 @@ export default function Profile({
   const url = `${siteConfig.baseUrl}/business/${id}`;
 
   return (
-    <Card className="w-[500px]">
+    <Card className="md:w-[500px]">
       <img
         src={coverImage || ""}
         alt={name}
@@ -65,32 +74,40 @@ export default function Profile({
             {phone}
           </p>
         </div>
+        <div className="flex items-center gap-2">
+          <MapPin />
+          <p>{location}</p>
+        </div>
         <div className="flex gap-2">
-          <a href={instagram}>
-            <Instagram />
-          </a>
-          <a href={`https://wa.me/${whatsApp}`}>
-            <MessageCircle />
-          </a>
+          {instagram && (
+            <a href={instagram}>
+              <Instagram />
+            </a>
+          )}
+          {whatsApp && (
+            <a href={`https://wa.me/${whatsApp}`}>
+              <MessageCircle />
+            </a>
+          )}
+          {facebook && (
+            <a href={facebook}>
+              <Facebook />
+            </a>
+          )}
+          {linkedIn && (
+            <a href={linkedIn}>
+              <Linkedin />
+            </a>
+          )}
         </div>
         {children}
         <CopiableInput value={url} />
-        <div className="flex justify-around items-center gap-2 rounded-lg bg-secondary p-5">
-          <div className="flex flex-col gap-2">
-            <img
-              src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${url}`}
-              alt="qrcode"
-              className="h-40 w-40 rounded-s"
-            />
-            <Button asChild className="w-40">
-              <a
-                href={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${url}`}
-                download={`${name}-qr.png`}
-              >
-                Download
-              </a>
-            </Button>
-          </div>
+        <div className="flex items-center justify-around gap-2 rounded-lg bg-secondary p-5">
+          <img
+            src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${url}`}
+            alt="qrcode"
+            className="h-40 w-40 rounded-s"
+          />
           <div className="flex flex-col items-center">
             <Avatar className="h-32 w-32">
               {logo && <AvatarImage src={logo} alt={name} />}

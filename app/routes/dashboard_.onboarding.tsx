@@ -108,6 +108,8 @@ export default function OnboardingForm() {
       location: "",
       instagram: "",
       whatsApp: "",
+      facebook: "",
+      linkedIn: "",
       email: "",
       phone: "",
       ...business,
@@ -117,7 +119,7 @@ export default function OnboardingForm() {
   const fieldsToValidate: Array<Array<keyof Output<typeof BusinessSchema>>> = [
     ["name", "typeId"],
     ["tagline", "about", "logo", "coverImage"],
-    ["location", "instagram", "whatsApp"],
+    ["location", "instagram", "whatsApp", "facebook", "linkedIn"],
     ["email", "phone"],
   ];
 
@@ -249,6 +251,18 @@ export default function OnboardingForm() {
               name="whatsApp"
               label="WhatsApp Number"
               errorMessage={errors.whatsApp?.message}
+              register={register}
+            />
+            <Input
+              name="facebook"
+              label="Facebook"
+              errorMessage={errors.facebook?.message}
+              register={register}
+            />
+            <Input
+              name="linkedIn"
+              label="LinkedIn"
+              errorMessage={errors.linkedIn?.message}
               register={register}
             />
           </>

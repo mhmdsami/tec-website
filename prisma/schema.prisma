@@ -28,9 +28,11 @@ model Business {
   about      String
   logo       String?
   coverImage String?
-  location   String
-  instagram  String
-  whatsApp   String
+  location   String?
+  instagram  String?
+  whatsApp   String?
+  facebook   String?
+  linkedIn   String?
   email      String
   phone      String
   createdAt  DateTime @default(now())
@@ -44,6 +46,7 @@ model Business {
   ownerId String @unique
 
   Enquiry Enquiry[]
+  Service Service[]
 }
 
 model BusinessType {
@@ -87,5 +90,15 @@ model Blog {
   description String
   content     String
   image       String
+  createdAt   DateTime @default(now())
+}
+
+model Service {
+  id          String   @id @default(uuid()) @map("_id")
+  title       String
+  description String
+  image       String?
+  business    Business @relation(fields: [businessId], references: [id])
+  businessId  String
   createdAt   DateTime @default(now())
 }

@@ -7,8 +7,8 @@ import {
   getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { Copy } from "lucide-react";
 import { useState } from "react";
+import { CopiableInput } from "~/components/copiable-input";
 import { DataTable } from "~/components/data-table";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
@@ -23,12 +23,10 @@ import {
   DrawerTrigger,
 } from "~/components/ui/drawer";
 import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
 import siteConfig from "~/site.config";
 import { getAllVerifiedBusinesses } from "~/utils/api.server";
 import { cn } from "~/utils/helpers";
 import { copyToClipboard } from "~/utils/helpers.client";
-import { CopiableInput } from "~/components/copiable-input";
 
 export const meta = () => [
   { title: `${siteConfig.name} | Admin Verification` },

@@ -137,7 +137,9 @@ export default function MembersAll() {
           <SelectContent>
             <SelectItem value="all">All</SelectItem>
             {businessTypes.map(({ id, name }) => (
-              <SelectItem value={id}>{name}</SelectItem>
+              <SelectItem key={id} value={id}>
+                {name}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>

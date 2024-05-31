@@ -48,13 +48,17 @@ export const BusinessSchema = object({
   ]),
   logo: optional(string()),
   coverImage: optional(string()),
-  location: string([minLength(3, "Location must be at least 3 characters")]),
+  location: optional(
+    string([minLength(3, "Location must be at least 3 characters")]),
+  ),
   instagram: string([
     minLength(3, "Instagram must be at least 3 characters"),
     url("Please enter a valid URL"),
     includes("instagram.com", "Please enter a valid Instagram URL"),
   ]),
   whatsApp: string([length(10, "Enter a valid WhatsApp number")]),
+  facebook: optional(string()),
+  linkedIn: optional(string()),
   email: string("Email is required", [
     email("Please enter a valid email address"),
   ]),
@@ -130,6 +134,31 @@ export const AddBlogSchema = object({
 });
 
 export const DeleteBlogSchema = object({
+  id: string("ID is required", [minLength(1, "ID is required")]),
+});
+
+export const AddServiceSchema = object({
+  title: string("Title is required", [
+    minLength(3, "Title must be at least 3 characters"),
+  ]),
+  description: string("Description is required", [
+    minLength(5, "Description must be at least 5 characters"),
+  ]),
+  image: optional(string()),
+});
+
+export const EditServiceSchema = object({
+  id: string("ID is required", [minLength(1, "ID is required")]),
+  title: string("Title is required", [
+    minLength(3, "Title must be at least 3 characters"),
+  ]),
+  description: string("Description is required", [
+    minLength(5, "Description must be at least 5 characters"),
+  ]),
+  image: optional(string()),
+});
+
+export const DeleteServiceSchema = object({
   id: string("ID is required", [minLength(1, "ID is required")]),
 });
 
