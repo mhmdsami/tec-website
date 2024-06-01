@@ -56,6 +56,15 @@ function Layout({ children }: { children: ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta property="og:title" content="Tirunelveli Economic Chamber" />
+        <meta
+          property="og:description"
+          content="The official website of Tirunelveli Economic Chamber."
+        />
+        <meta property="og:url" content={siteConfig.baseUrl} />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="/logomark.png" />
+        <link rel="icon" type="image/png" href="/logomark.png" />
         <Meta />
         <Links />
         <title>{siteConfig.name}</title>

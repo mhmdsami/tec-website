@@ -126,6 +126,17 @@ export default function Profile({
             </div>
           </div>
         )}
+        <div>
+          <iframe
+            src={`https://maps.google.com/maps?q=${location}/&output=embed`}
+            style={{ border: 0 }}
+            width="100%"
+            height="400"
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
         <CopiableInput value={url} />
         <div className="flex items-center justify-around gap-2 rounded-lg bg-secondary p-5">
           <img

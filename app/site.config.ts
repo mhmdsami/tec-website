@@ -7,7 +7,7 @@ type SiteConfig = {
 
 const siteConfig: SiteConfig = {
   name: "Tirunelveli Economic Chamber",
-  baseUrl: "https://tec-website-omega.vercel.app",
+  baseUrl: "https://tirunelvelieconomicchamber.com",
   description: "The official website of Tirunelveli Economic Chamber.",
   sessionName: "__remix_template_session",
 };
