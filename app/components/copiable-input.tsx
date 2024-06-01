@@ -13,7 +13,7 @@ export function CopiableInput({
     <div className="flex flex-col gap-2">
       {label && <Label>{label}</Label>}
       <div
-        className="flex min-h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background hover:cursor-pointer"
+        className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background hover:cursor-pointer"
         onClick={() =>
           copyToClipboard(
             value,
@@ -23,8 +23,10 @@ export function CopiableInput({
           )
         }
       >
-        {value}
-        <Copy size={20} />
+        <p className="line-clamp-1">
+          {value}
+        </p>
+        <Copy size={32} className="active:scale-90 transition-all duration-100" />
       </div>
     </div>
   );

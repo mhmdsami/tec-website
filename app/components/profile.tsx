@@ -106,7 +106,7 @@ export default function Profile({
           )}
         </div>
         {children}
-        {services && (
+        {services && services.length > 0 && (
           <div className="flex flex-col gap-2">
             <p className="text-xl font-bold">Services</p>
             <div className="flex flex-col gap-4">
@@ -142,14 +142,14 @@ export default function Profile({
           <img
             src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${url}`}
             alt="qrcode"
-            className="h-24 w-24 rounded-s md:h-40 md:w-40"
+            className="h-20 w-20 rounded-s md:h-32 md:w-32"
           />
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center gap-2">
             <Avatar className="h-20 w-20 md:h-32 md:w-32">
               {logo && <AvatarImage src={logo} alt={name} />}
               <AvatarFallback className="text-3xl">{name[0]}</AvatarFallback>
             </Avatar>
-            <p className="font-bold">{name}</p>
+            <p className="text-xs font-bold">{name}</p>
           </div>
         </div>
       </CardContent>
