@@ -86,7 +86,7 @@ export default function Navbar({ isLoggedIn }: NavbarProps) {
             <DropdownMenuContent className="mr-10">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <Link to="/dashboard" prefetch="viewport">
+              <Link to="/dashboard" prefetch="render">
                 <DropdownMenuItem className="hover:cursor-pointer">
                   <LayoutDashboard className="mr-2 h-4 w-4" />{" "}
                   <span>Dashboard</span>
@@ -102,7 +102,7 @@ export default function Navbar({ isLoggedIn }: NavbarProps) {
           </DropdownMenu>
         ) : (
           <Button asChild className="hidden text-base font-semibold md:block">
-            <Link to="/sign-in">Sign In</Link>
+            <Link to="/sign-in" prefetch="render">Sign In</Link>
           </Button>
         )}
       </div>

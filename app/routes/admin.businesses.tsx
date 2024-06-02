@@ -14,10 +14,8 @@ import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
@@ -169,9 +167,9 @@ function BusinessDetails({
             <CopiableInput label="Tagline" value={tagline} />
             <CopiableInput label="Phone" value={phone} />
             <CopiableInput label="About" value={about} />
-            <CopiableInput label="Instagram" value={instagram} />
-            <CopiableInput label="WhatsApp" value={whatsApp} />
-            <CopiableInput label="Location" value={location} />
+            {instagram && <CopiableInput label="Instagram" value={instagram} />}
+            {whatsApp && <CopiableInput label="WhatsApp" value={whatsApp} />}
+            {location && <CopiableInput label="Location" value={location} />}
           </div>
           <h1 className="text-xl font-bold">Owner Information</h1>
           <div className="grid grid-cols-3 gap-5">
@@ -179,11 +177,6 @@ function BusinessDetails({
             <CopiableInput label="Owner Email" value={ownerEmail} />
           </div>
         </div>
-        <DrawerFooter>
-          <DrawerClose>
-            <Button variant="outline">Cancel</Button>
-          </DrawerClose>
-        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   );

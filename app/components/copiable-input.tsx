@@ -26,7 +26,7 @@ export function CopiableInput({
         <p className="line-clamp-1">
           {value}
         </p>
-        <Copy size={32} className="active:scale-90 transition-all duration-100" />
+        <Copy size={20} className="active:scale-90 transition-all duration-100" />
       </div>
     </div>
   );
