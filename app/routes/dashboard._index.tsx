@@ -2,13 +2,10 @@ import { valibotResolver } from "@hookform/resolvers/valibot";
 import { BusinessType } from "@prisma-app/client";
 import {
   ActionFunction,
-  LoaderFunction,
-  TypedResponse,
   json,
 } from "@remix-run/node";
 import {
   Form,
-  useLoaderData,
   useOutletContext,
   useSubmit,
 } from "@remix-run/react";
@@ -21,13 +18,6 @@ import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
 import {
   Sheet,
   SheetContent,
@@ -46,22 +36,10 @@ import {
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import { DashboardOutletContext } from "~/routes/dashboard";
 import { ActionResponse } from "~/types";
-import { getBusinessTypes, updateBusiness } from "~/utils/api.server";
+import { updateBusiness } from "~/utils/api.server";
 import { cn } from "~/utils/helpers";
 import { requireUserId } from "~/utils/session.server";
-import { BusinessSchema, validate } from "~/utils/validation";
-
-type LoaderData = {
-  businessTypes: BusinessType[];
-};
-
-export const loader: LoaderFunction = async (): Promise<
-  TypedResponse<LoaderData>
-> => {
-  const businessTypes = await getBusinessTypes();
-
-  return json({ businessTypes });
-};
+import { BusinessUpdateSchema, validate } from "~/utils/validation";
 
 export const action: ActionFunction = async ({ request }): ActionResponse => {
   const userId = await requireUserId(request);
@@ -69,7 +47,7 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
   const formData = await request.formData();
   const body = Object.fromEntries(formData.entries());
 
-  const parseRes = validate(body, BusinessSchema);
+  const parseRes = validate(body, BusinessUpdateSchema);
   if (parseRes.success) {
     await updateBusiness(userId, parseRes.data);
     return json({ message: "Business updated" });
@@ -81,9 +59,9 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
 export default function Dashboard() {
   const submit = useSubmit();
   const [isOpen, setIsOpen] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
+  const [isLogoUploading, setIsLogoUploading] = useState(false);
+  const [isCoverUploading, setIsCoverUploading] = useState(false);
   const { business } = useOutletContext<DashboardOutletContext>();
-  const { businessTypes } = useLoaderData<LoaderData>();
 
   useActionDataWithToast({
     onMessage: () => setIsOpen(false),
@@ -96,19 +74,18 @@ export default function Dashboard() {
     control,
     watch,
   } = useForm({
-    resolver: valibotResolver(BusinessSchema),
+    resolver: valibotResolver(BusinessUpdateSchema),
     defaultValues: {
       name: business?.name,
-      typeId: business?.typeId,
       tagline: business?.tagline,
       about: business?.about,
       logo: business?.logo,
-      coverImage: business?.coverImage,
+      coverImage: business?.coverImage || "",
       location: business?.location,
       instagram: business?.instagram,
       whatsApp: business?.whatsApp,
-      facebook: business?.facebook,
-      linkedIn: business?.linkedIn,
+      facebook: business?.facebook || "",
+      linkedIn: business?.linkedIn || "",
       email: business?.email,
       phone: business?.phone,
     },
@@ -155,35 +132,6 @@ export default function Dashboard() {
               )}
             >
               <Input name="name" label="Name" register={register} />
-              <div className="flex flex-col gap-2">
-                <Label>Business Type</Label>
-                <Controller
-                  render={({ field }) => (
-                    <Select onValueChange={field.onChange} {...field}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a business type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {businessTypes.map(({ id, name }) => (
-                          <SelectItem key={id} value={id}>
-                            {name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                  name="typeId"
-                  control={control}
-                />
-                <p
-                  className={cn(
-                    "hidden text-sm text-destructive",
-                    errors.typeId && "block",
-                  )}
-                >
-                  {errors.typeId?.message}
-                </p>
-              </div>
               <Input
                 name="tagline"
                 label="Tagline"
@@ -206,8 +154,8 @@ export default function Dashboard() {
                       imageUrl={watch("logo")}
                       onChange={field.onChange}
                       folder="logo"
-                      isUploading={isUploading}
-                      setIsUploading={setIsUploading}
+                      isUploading={isLogoUploading}
+                      setIsUploading={setIsLogoUploading}
                     />
                   )}
                 />
@@ -230,8 +178,8 @@ export default function Dashboard() {
                       imageUrl={watch("coverImage")}
                       onChange={field.onChange}
                       folder="coverImage"
-                      isUploading={isUploading}
-                      setIsUploading={setIsUploading}
+                      isUploading={isCoverUploading}
+                      setIsUploading={setIsCoverUploading}
                     />
                   )}
                 />
@@ -289,7 +237,7 @@ export default function Dashboard() {
               <Button
                 type="submit"
                 className="w-fit self-end"
-                disabled={!isDirty || isUploading}
+                disabled={!isDirty || isLogoUploading || isCoverUploading}
               >
                 Save
               </Button>

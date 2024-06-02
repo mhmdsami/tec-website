@@ -6,8 +6,33 @@ export const getUserById = async (id: string) => {
   return db.user.findUnique({ where: { id } });
 };
 
-export const createBusinessType = async (name: string) => {
-  return db.businessType.create({ data: { name, slug: slugify(name) } });
+export const createBusinessCategory = async (name: string) => {
+  return db.businessCategory.create({ data: { name, slug: slugify(name) } });
+};
+
+export const getBusinessCategoryBySlug = async (slug: string) => {
+  return db.businessCategory.findUnique({ where: { slug } });
+};
+
+export const getBusinessCategories = async () => {
+  return db.businessCategory.findMany();
+};
+
+export const getBusinessCategoryWithTypes = async () => {
+  return db.businessCategory.findMany({ include: { types: true } });
+}
+
+export const getBusinessCategoryWithTypeBySlug = async (slug: string) => {
+  return db.businessCategory.findUnique({ where: { slug }, include: { types: true } });
+}
+
+export const createBusinessType = async (
+  name: string,
+  businessCategoryId: string,
+) => {
+  return db.businessType.create({
+    data: { name, slug: slugify(name), businessCategoryId },
+  });
 };
 
 export const getBusinessTypes = async () => {
@@ -38,6 +63,9 @@ export const createBusiness = async (
       whatsApp: business.whatsApp,
       email: business.email,
       phone: business.phone,
+      coverImage: business.coverImage,
+      linkedIn: business.linkedIn,
+      facebook: business.facebook,
       type: {
         connect: { id: typeId },
       },
@@ -72,6 +100,10 @@ export const getBusinessByType = async (typeId: string) => {
     where: { typeId, isVerified: true },
     include: { owner: true },
   });
+};
+
+export const getBusinessCountByType = async (typeId: string) => {
+  return db.business.count({ where: { typeId } });
 };
 
 export const updateBusiness = async (

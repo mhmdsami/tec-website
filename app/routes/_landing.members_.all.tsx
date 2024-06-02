@@ -1,4 +1,9 @@
-import { Business, BusinessType, User } from "@prisma-app/client";
+import {
+  Business,
+  BusinessCategory,
+  BusinessType,
+  User,
+} from "@prisma-app/client";
 import { LoaderFunction, TypedResponse, json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import {
@@ -18,26 +23,38 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { getAllVerifiedBusinesses, getBusinessTypes } from "~/utils/api.server";
+import {
+  getAllVerifiedBusinesses,
+  getBusinessCategoryWithTypes,
+} from "~/utils/api.server";
 import { copyToClipboard } from "~/utils/helpers.client";
 
 type LoaderData = {
-  businessTypes: BusinessType[];
+  businessCategories: Array<BusinessCategory & { types: BusinessType[] }>;
   businesses: Array<Business & { owner: User }>;
 };
 
 export const loader: LoaderFunction = async ({
   params,
 }): Promise<TypedResponse<LoaderData>> => {
-  const businessTypes = await getBusinessTypes();
+  const businessCategories = await getBusinessCategoryWithTypes();
   const businesses = await getAllVerifiedBusinesses();
 
-  return json({ businessTypes, businesses });
+  return json({ businessCategories, businesses });
 };
 
 export default function MembersAll() {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const { businessTypes, businesses } = useLoaderData<LoaderData>();
+  const [category, setCategory] = useState<string | undefined>();
+  const { businessCategories, businesses } = useLoaderData<LoaderData>();
+
+  const businessTypes = businessCategories.flatMap((category) =>
+    category.types.map((type) => ({
+      ...type,
+      category: category.name,
+      categorySlug: category.slug,
+    })),
+  );
 
   const table = useReactTable({
     data: businesses,
@@ -73,11 +90,26 @@ export default function MembersAll() {
         ),
       },
       {
+        accessorKey: "category",
+        header: "Category",
+        cell: ({ row }) => {
+          const type = businessTypes.find(
+            (bt) => bt.id === row.getValue("typeId"),
+          );
+
+          return type ? type.category : "N/A";
+        },
+      },
+      {
         accessorKey: "typeId",
         header: "Type",
-        cell: ({ row }) =>
-          businessTypes.find((bt) => bt.id === row.getValue("typeId"))?.name ??
-          "N/A",
+        cell: ({ row }) => {
+          const type = businessTypes.find(
+            (bt) => bt.id === row.getValue("typeId"),
+          );
+
+          return type ? `${type.category}/${type.name}` : "N/A";
+        },
       },
       {
         accessorKey: "id",
@@ -130,19 +162,40 @@ export default function MembersAll() {
             className="w-full sm:w-[200px]"
           />
         </div>
-        <Select onValueChange={handleTypeFilterChange} defaultValue="all">
-          <SelectTrigger className="w-full sm:w-[250px]">
-            <SelectValue placeholder="Type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All</SelectItem>
-            {businessTypes.map(({ id, name }) => (
-              <SelectItem key={id} value={id}>
-                {name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div className="flex w-full flex-row flex-wrap items-center gap-2 sm:w-fit">
+          <Select onValueChange={setCategory} defaultValue="all">
+            <SelectTrigger className="w-full sm:w-[250px]">
+              <SelectValue placeholder="Type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All</SelectItem>
+              {businessCategories.map(({ id, name }) => (
+                <SelectItem key={id} value={id}>
+                  {name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select
+            onValueChange={handleTypeFilterChange}
+            defaultValue="all"
+            disabled={!category}
+          >
+            <SelectTrigger className="w-full sm:w-[250px]">
+              <SelectValue placeholder="Type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All</SelectItem>
+              {businessCategories
+                .find((c) => c.id === category)
+                ?.types.map(({ id, name }) => (
+                  <SelectItem key={id} value={id}>
+                    {name}
+                  </SelectItem>
+                ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
       <DataTable table={table} />
     </main>

@@ -49,10 +49,21 @@ model Business {
   Service Service[]
 }
 
+model BusinessCategory {
+  id   String @id @default(uuid()) @map("_id")
+  name String
+  slug String @unique
+
+  types BusinessType[]
+}
+
 model BusinessType {
   id   String @id @default(uuid()) @map("_id")
   name String
   slug String @unique
+
+  BusinessCategory   BusinessCategory @relation(fields: [businessCategoryId], references: [id])
+  businessCategoryId String
 
   Business Business[]
 }

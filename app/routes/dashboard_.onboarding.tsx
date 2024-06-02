@@ -1,5 +1,5 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { Business, BusinessType } from "@prisma-app/client";
+import { Business, BusinessCategory, BusinessType } from "@prisma-app/client";
 import {
   ActionFunction,
   LoaderFunction,
@@ -29,7 +29,7 @@ import { ActionResponse } from "~/types";
 import {
   createBusiness,
   getBusinessByOwnerId,
-  getBusinessTypes,
+  getBusinessCategoryWithTypes,
   getUserById,
 } from "~/utils/api.server";
 import { cn } from "~/utils/helpers";
@@ -48,14 +48,14 @@ export const meta: MetaFunction = () => {
 
 type LoaderData = {
   business: Business | null;
-  businessTypes: BusinessType[];
+  businessCategories: Array<BusinessCategory & { types: BusinessType[] }>;
 };
 
 export const loader: LoaderFunction = async ({
   request,
 }): Promise<TypedResponse<LoaderData>> => {
   const userId = await requireUserId(request);
-  const businessTypes = await getBusinessTypes();
+  const businessCategories = await getBusinessCategoryWithTypes();
 
   const user = await getUserById(userId);
   if (!user) return redirect("/sign-in");
@@ -63,7 +63,7 @@ export const loader: LoaderFunction = async ({
 
   const business = await getBusinessByOwnerId(user.id);
 
-  return json({ user, business, businessTypes });
+  return json({ user, business, businessCategories });
 };
 
 export const action: ActionFunction = async ({ request }): ActionResponse => {
@@ -88,8 +88,9 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
 export default function OnboardingForm() {
   const submit = useSubmit();
   const [screen, setScreen] = useState(0);
-  const [isUploading, setIsUploading] = useState(false);
-  const { business, businessTypes } = useLoaderData<LoaderData>();
+  const [isLogoUploading, setIsLogoUploading] = useState(false);
+  const [isCoverUploading, setIsCoverUploading] = useState(false);
+  const { business, businessCategories } = useLoaderData<LoaderData>();
 
   const {
     register,
@@ -102,6 +103,7 @@ export default function OnboardingForm() {
     resolver: valibotResolver(BusinessSchema),
     defaultValues: {
       name: "",
+      categoryId: "",
       typeId: "",
       tagline: "",
       about: "",
@@ -117,7 +119,7 @@ export default function OnboardingForm() {
   });
 
   const fieldsToValidate: Array<Array<keyof Output<typeof BusinessSchema>>> = [
-    ["name", "typeId"],
+    ["name", "typeId", "categoryId"],
     ["tagline", "about", "logo", "coverImage"],
     ["location", "instagram", "whatsApp", "facebook", "linkedIn"],
     ["email", "phone"],
@@ -139,6 +141,35 @@ export default function OnboardingForm() {
               register={register}
             />
             <div className="flex flex-col gap-2">
+              <Label>Business Category</Label>
+              <Controller
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} {...field}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a business category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {businessCategories.map(({ id, name }) => (
+                        <SelectItem key={id} value={id}>
+                          {name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+                name="categoryId"
+                control={control}
+              />
+              <p
+                className={cn(
+                  "hidden text-sm text-destructive",
+                  errors.categoryId && "block",
+                )}
+              >
+                {errors.categoryId?.message}
+              </p>
+            </div>
+            <div className="flex flex-col gap-2">
               <Label>Business Type</Label>
               <Controller
                 render={({ field }) => (
@@ -147,11 +178,13 @@ export default function OnboardingForm() {
                       <SelectValue placeholder="Select a business type" />
                     </SelectTrigger>
                     <SelectContent>
-                      {businessTypes.map(({ id, name }) => (
-                        <SelectItem key={id} value={id}>
-                          {name}
-                        </SelectItem>
-                      ))}
+                      {businessCategories
+                        .find((c) => c.id === watch("categoryId"))
+                        ?.types.map(({ id, name }) => (
+                          <SelectItem key={id} value={id}>
+                            {name}
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                 )}
@@ -193,8 +226,8 @@ export default function OnboardingForm() {
                     imageUrl={watch("logo")}
                     onChange={field.onChange}
                     folder="logo"
-                    isUploading={isUploading}
-                    setIsUploading={setIsUploading}
+                    isUploading={isLogoUploading}
+                    setIsUploading={setIsLogoUploading}
                   />
                 )}
               />
@@ -217,8 +250,8 @@ export default function OnboardingForm() {
                     imageUrl={watch("coverImage")}
                     onChange={field.onChange}
                     folder="coverImage"
-                    isUploading={isUploading}
-                    setIsUploading={setIsUploading}
+                    isUploading={isCoverUploading}
+                    setIsUploading={setIsCoverUploading}
                   />
                 )}
               />
@@ -299,7 +332,7 @@ export default function OnboardingForm() {
             </Button>
           ) : (
             <Button
-              disabled={isUploading}
+              disabled={isLogoUploading || isCoverUploading}
               type="button"
               className="w-fit self-end"
               onClick={async () => {

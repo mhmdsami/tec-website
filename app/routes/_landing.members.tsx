@@ -1,44 +1,40 @@
-import { BusinessType } from "@prisma-app/client";
+import { BusinessCategory } from "@prisma-app/client";
 import { json, LoaderFunction, TypedResponse } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import useWindowSize from "~/hooks/use-window-size";
-import { getBusinessTypes } from "~/utils/api.server";
+import { getBusinessCategories } from "~/utils/api.server";
+import { generateGrid } from "~/utils/helpers";
 
 type LoaderData = {
-  businessTypes: BusinessType[];
+  businessCategories: BusinessCategory[];
 };
 
 export const loader: LoaderFunction = async (): Promise<
   TypedResponse<LoaderData>
 > => {
-  const businessTypes = await getBusinessTypes();
+  const businessCategories = await getBusinessCategories();
 
-  return json({ businessTypes });
+  return json({ businessCategories });
 };
 
-function generateGrid(
-  types: Array<BusinessType>,
-  rowSize: [number, number] = [5, 4],
-) {
-  let grid: BusinessType[][] = [];
-  let counter = 0;
-
-  types = [...types, { id: "all", name: "All", slug: "all" }];
-
-  while (types.length > 0) {
-    let size = counter % 2 === 0 ? rowSize[0] : rowSize[1];
-    grid.push(types.splice(0, size));
-    counter++;
-  }
-
-  return grid;
-}
+type Category = {
+  name: string;
+  slug: string;
+};
 
 export default function Members() {
-  const { businessTypes } = useLoaderData<LoaderData>();
+  const { businessCategories } = useLoaderData<LoaderData>();
   const { width } = useWindowSize();
 
-  const grid = generateGrid(businessTypes, width > 768 ? [5, 4] : [2, 1]);
+  const categories = businessCategories.map(({ name, slug }) => ({
+    name,
+    slug,
+  }));
+
+  const grid = generateGrid(categories, width > 768 ? [5, 4] : [2, 1], {
+    name: "All",
+    slug: "all",
+  });
 
   return (
     <div className="mx-auto flex min-h-[70vh] flex-col justify-center">
@@ -55,7 +51,7 @@ export default function Members() {
             <Link
               key={slug}
               to={`/members/${slug}`}
-              className="hexagon flex h-32 w-28 items-center justify-center bg-secondary transition-all duration-300 hover:bg-primary hover:text-white"
+              className="hexagon line-clamp-3 flex h-32 w-28 items-center justify-center bg-secondary text-center transition-all duration-300 hover:bg-primary hover:text-white"
             >
               {name}
             </Link>
