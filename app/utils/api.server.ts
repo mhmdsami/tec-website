@@ -161,6 +161,38 @@ export const getBusinessEnquiriesByBusinessId = async (businessId: string) => {
   return db.businessEnquiry.findMany({ where: { businessId } });
 };
 
+export const makeGeneralEnquiry = async (
+  enquiry: Omit<Prisma.EnquiryCreateInput, "businessType" | "user">,
+  userId: string,
+  businessType: string,
+) => {
+  return db.enquiry.create({
+    data: {
+      name: enquiry.name,
+      email: enquiry.email,
+      phone: enquiry.phone,
+      message: enquiry.message,
+      businessType: {
+        connect: { slug: businessType },
+      },
+      user: {
+        connect: { id: userId },
+      },
+    },
+  });
+};
+
+export const getGeneralEnquiriesByUserId = async (userId: string) => {
+  return db.enquiry.findMany({ where: { userId } });
+};
+
+export const getGeneralEnquiriesByBusinessTypeId = async (id: string) => {
+  return db.enquiry.findMany({
+    where: { businessType: { id } },
+    include: { user: true },
+  });
+};
+
 export const toggleMarkEnquiryAsResolved = async (id: string) => {
   const enquiry = await db.businessEnquiry.findUnique({ where: { id } });
 

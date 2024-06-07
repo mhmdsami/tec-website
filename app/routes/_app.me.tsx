@@ -1,16 +1,21 @@
-import { BusinessEnquiry } from "@prisma-app/client";
-import { json, LoaderFunction, redirect, TypedResponse } from "@remix-run/node";
+import { BusinessEnquiry, Enquiry } from "@prisma-app/client";
+import { LoaderFunction, TypedResponse, json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { DataTable } from "~/components/data-table";
 import { Badge } from "~/components/ui/badge";
-import { getBusinessEnquiriesByUserId, getUserById } from "~/utils/api.server";
+import {
+  getBusinessEnquiriesByUserId,
+  getGeneralEnquiriesByUserId,
+  getUserById,
+} from "~/utils/api.server";
 import { copyToClipboard } from "~/utils/helpers.client";
 import { redirectToBasedOnRole } from "~/utils/helpers.server";
 import { requireUserId } from "~/utils/session.server";
 
 type LoaderData = {
-  enquiries: BusinessEnquiry[];
+  businessEnquiries: BusinessEnquiry[];
+  generalEnquiries: Enquiry[];
 };
 
 export const loader: LoaderFunction = async ({
@@ -23,16 +28,17 @@ export const loader: LoaderFunction = async ({
   const redirectTo = redirectToBasedOnRole(user, "USER");
   if (redirectTo) return redirect(redirectTo);
 
-  const enquiries = await getBusinessEnquiriesByUserId(userId);
+  const businessEnquiries = await getBusinessEnquiriesByUserId(userId);
+  const generalEnquiries = await getGeneralEnquiriesByUserId(userId);
 
-  return json({ enquiries });
+  return json({ businessEnquiries, generalEnquiries });
 };
 
 export default function Me() {
-  const { enquiries } = useLoaderData<LoaderData>();
+  const { businessEnquiries, generalEnquiries } = useLoaderData<LoaderData>();
 
-  const table = useReactTable({
-    data: enquiries,
+  const businessEnquiriesTable = useReactTable({
+    data: businessEnquiries,
     columns: [
       { accessorKey: "name", header: "Name" },
       {
@@ -79,10 +85,50 @@ export default function Me() {
     getCoreRowModel: getCoreRowModel(),
   });
 
+  const generalEnquiriesTable = useReactTable({
+    data: generalEnquiries,
+    columns: [
+      { accessorKey: "name", header: "Name" },
+      {
+        accessorKey: "email",
+        header: "Email",
+        cell: ({ row }) => (
+          <div
+            className="hover:cursor-pointer"
+            onClick={() =>
+              copyToClipboard(row.getValue("email"), "Copied to clipboard")
+            }
+          >
+            {row.getValue("email")}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "phone",
+        header: "Phone",
+        cell: ({ row }) => (
+          <div
+            className="hover:cursor-pointer"
+            onClick={() =>
+              copyToClipboard(row.getValue("phone"), "Copied to clipboard")
+            }
+          >
+            {row.getValue("phone")}
+          </div>
+        ),
+      },
+      { accessorKey: "message", header: "Message" },
+    ],
+    getCoreRowModel: getCoreRowModel(),
+  });
+
   return (
     <main className="flex grow flex-col gap-5">
       <h1 className="text-2xl font-bold">Your Enquiries</h1>
-      <DataTable table={table} />
+      <h2 className="text-lg font-bold">Business Enquiries</h2>
+      <DataTable table={businessEnquiriesTable} />
+      <h2 className="text-lg font-bold">General Enquiries</h2>
+      <DataTable table={generalEnquiriesTable} />
     </main>
   );
 }

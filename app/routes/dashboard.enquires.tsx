@@ -1,4 +1,4 @@
-import { BusinessEnquiry } from "@prisma-app/client";
+import { BusinessEnquiry, Enquiry } from "@prisma-app/client";
 import {
   ActionFunction,
   LoaderFunction,
@@ -16,6 +16,7 @@ import { ActionResponse } from "~/types";
 import {
   getBusinessByOwnerId,
   getBusinessEnquiriesByBusinessId,
+  getGeneralEnquiriesByBusinessTypeId,
   toggleMarkEnquiryAsResolved,
 } from "~/utils/api.server";
 import { copyToClipboard } from "~/utils/helpers.client";
@@ -28,7 +29,8 @@ export const meta = () => [
 ];
 
 type LoaderData = {
-  enquires: BusinessEnquiry[];
+  businessEnquiries: BusinessEnquiry[];
+  generalEnquiries: Enquiry[];
 };
 
 export const loader: LoaderFunction = async ({
@@ -41,9 +43,12 @@ export const loader: LoaderFunction = async ({
     throw redirect("/dashboard/onboarding");
   }
 
-  const enquires = await getBusinessEnquiriesByBusinessId(business.id);
+  const businessEnquiries = await getBusinessEnquiriesByBusinessId(business.id);
+  const generalEnquiries = await getGeneralEnquiriesByBusinessTypeId(
+    business.typeId,
+  );
 
-  return json({ enquires });
+  return json({ businessEnquiries, generalEnquiries });
 };
 
 export const action: ActionFunction = async ({ request }): ActionResponse => {
@@ -65,11 +70,11 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
 
 export default function DashboardEnquires() {
   const submit = useSubmit();
-  const { enquires } = useLoaderData<LoaderData>();
-  const actionData = useActionDataWithToast();
+  const { businessEnquiries, generalEnquiries } = useLoaderData<LoaderData>();
+  useActionDataWithToast();
 
-  const table = useReactTable({
-    data: enquires,
+  const businessEnquiriesTable = useReactTable({
+    data: businessEnquiries,
     columns: [
       {
         accessorKey: "id",
@@ -123,14 +128,57 @@ export default function DashboardEnquires() {
     ],
     getCoreRowModel: getCoreRowModel(),
   });
+  const generalEnquiriesTable = useReactTable({
+    data: generalEnquiries,
+    columns: [
+      {
+        accessorKey: "id",
+        header: "ID",
+        cell: ({ row }) => (row.getValue("id") as string).slice(0, 8),
+      },
+      { accessorKey: "name", header: "Name" },
+      {
+        accessorKey: "email",
+        header: "Email",
+        cell: ({ row }) => (
+          <div
+            className="hover:cursor-pointer"
+            onClick={() =>
+              copyToClipboard(row.getValue("email"), "Copied to clipboard")
+            }
+          >
+            {row.getValue("email")}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "phone",
+        header: "Phone",
+        cell: ({ row }) => (
+          <div
+            className="hover:cursor-pointer"
+            onClick={() =>
+              copyToClipboard(row.getValue("phone"), "Copied to clipboard")
+            }
+          >
+            {row.getValue("phone")}
+          </div>
+        ),
+      },
+      { accessorKey: "message", header: "Message" },
+    ],
+    getCoreRowModel: getCoreRowModel(),
+  });
 
   const markAsResolved = async (id: string) =>
     submit({ id }, { method: "POST" });
 
   return (
     <main className="flex grow flex-col gap-5">
-      <h1 className="text-2xl font-bold">Enquiries</h1>
-      <DataTable table={table} />
+      <h2 className="text-lg font-bold">Business Enquiries</h2>
+      <DataTable table={businessEnquiriesTable} />
+      <h2 className="text-lg font-bold">General Enquiries</h2>
+      <DataTable table={generalEnquiriesTable} />
     </main>
   );
 }
