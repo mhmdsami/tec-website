@@ -54,8 +54,6 @@ export default function Members() {
     businesses,
   } = useLoaderData<LoaderData>();
 
-  console.log(businesses)
-
   const table = useReactTable({
     data: businesses,
     columns: [
