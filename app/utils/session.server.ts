@@ -1,4 +1,4 @@
-import type { User } from "@prisma-app/client";
+import type { User, UserType } from "@prisma-app/client";
 import { createCookieSessionStorage, redirect } from "@remix-run/node";
 import bcrypt from "bcryptjs";
 import siteConfig from "~/site.config";
@@ -8,6 +8,7 @@ import { SESSION_SECRET } from "~/utils/env.server";
 export async function signUp(
   email: string,
   name: string,
+  type: UserType,
   password: string,
 ): Promise<
   { success: true; data: { user: User } } | { success: false; error: string }
@@ -22,7 +23,7 @@ export async function signUp(
 
   const passwordHash = await bcrypt.hash(password, 10);
   const user = await db.user.create({
-    data: { email, name, passwordHash },
+    data: { email, name, type, passwordHash },
   });
 
   return { success: true, data: { user: user as User } };
@@ -88,7 +89,7 @@ export async function requireUserId(request: Request) {
   const userId = await getUserId(request);
 
   if (!userId) {
-    throw redirect(`/sign-in`);
+    throw redirect("/sign-in");
   }
   return userId;
 }

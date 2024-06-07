@@ -1,34 +1,31 @@
 import { LoaderFunction, redirect } from "@remix-run/node";
-import { Outlet } from "@remix-run/react";
-import Sidebar from "~/components/sidebar";
-import siteConfig from "~/site.config";
+import { Outlet, useOutletContext } from "@remix-run/react";
+import Footer from "~/components/footer";
+import Navbar from "~/components/navbar";
+import { RootOutletContext } from "~/root";
 import { getUserById } from "~/utils/api.server";
 import { redirectToBasedOnRole } from "~/utils/helpers.server";
 import { requireUserId } from "~/utils/session.server";
-
-export const meta = () => [
-  { title: `${siteConfig.name} | Admin` },
-  { name: "description", content: siteConfig.description },
-];
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request);
 
   const user = await getUserById(userId);
   if (!user) return redirect("/sign-in");
-  const redirectTo = redirectToBasedOnRole(user, "ADMIN");
+  const redirectTo = redirectToBasedOnRole(user, "USER");
   if (redirectTo) return redirect(redirectTo);
 
   return null;
 };
 
-export default function Admin() {
+export default function Me() {
+  const { isLoggedIn } = useOutletContext<RootOutletContext>();
+
   return (
-    <>
-      <Sidebar isAdmin />
-      <main className="p-5 sm:ml-14 sm:p-10">
-        <Outlet />
-      </main>
-    </>
+    <div className="mx-5 flex min-h-screen flex-col sm:mx-10">
+      <Navbar isLoggedIn={isLoggedIn} />
+      <Outlet />
+      <Footer />
+    </div>
   );
 }

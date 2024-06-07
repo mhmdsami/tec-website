@@ -10,6 +10,7 @@ import {
   object,
   optional,
   parse,
+  picklist,
   pipe,
   string,
   url,
@@ -28,6 +29,7 @@ export const SignUpSchema = object({
     string("Password is required"),
     minLength(8, "Password must be at least 8 characters"),
   ),
+  type: optional(picklist(["USER", "BUSINESS"]), "USER"),
 });
 
 export const SignInSchema = object({

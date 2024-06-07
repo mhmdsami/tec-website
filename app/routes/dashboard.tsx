@@ -4,6 +4,7 @@ import { Outlet, useLoaderData } from "@remix-run/react";
 import Sidebar from "~/components/sidebar";
 import siteConfig from "~/site.config";
 import { getBusinessByOwnerId, getUserById } from "~/utils/api.server";
+import { redirectToBasedOnRole } from "~/utils/helpers.server";
 import { requireUserId } from "~/utils/session.server";
 
 export const meta = () => [
@@ -23,7 +24,8 @@ export const loader: LoaderFunction = async ({
 
   const user = await getUserById(userId);
   if (!user) return redirect("/sign-in");
-  if (user.isAdmin) return redirect("/admin");
+  const redirectTo = redirectToBasedOnRole(user, "BUSINESS");
+  if (redirectTo) return redirect(redirectTo);
 
   const business = await getBusinessByOwnerId(user.id);
   if (!business) return redirect("/dashboard/onboarding");

@@ -8,6 +8,7 @@ import { Input } from "~/components/ui/input";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import siteConfig from "~/site.config";
 import type { ActionResponse } from "~/types";
+import { redirectToBasedOnRole } from "~/utils/helpers.server";
 import { createUserSession, signIn } from "~/utils/session.server";
 import { SignInSchema, validate } from "~/utils/validation";
 
@@ -28,7 +29,10 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
     const res = await signIn(email, password);
     if (res.success) {
       const { user } = res.data;
-      return createUserSession(user.id, user.isAdmin ? "/admin" : "/dashboard");
+      return createUserSession(
+        user.id,
+        redirectToBasedOnRole(user) || "/dashboard",
+      );
     } else {
       return json({ error: res.error }, { status: 400 });
     }
@@ -39,7 +43,7 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
 
 export default function SignIn() {
   const submit = useSubmit();
-  const actionData = useActionDataWithToast();
+  useActionDataWithToast();
 
   const {
     register,

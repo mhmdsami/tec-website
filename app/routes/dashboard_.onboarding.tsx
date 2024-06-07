@@ -34,7 +34,7 @@ import {
 } from "~/utils/api.server";
 import { cn } from "~/utils/helpers";
 import { requireUserId } from "~/utils/session.server";
-import { BusinessSchema, Output, validate } from "~/utils/validation";
+import { BusinessSchema, InferOutput, validate } from "~/utils/validation";
 
 export const meta: MetaFunction = () => {
   return [
@@ -118,7 +118,9 @@ export default function OnboardingForm() {
     },
   });
 
-  const fieldsToValidate: Array<Array<keyof Output<typeof BusinessSchema>>> = [
+  const fieldsToValidate: Array<
+    Array<keyof InferOutput<typeof BusinessSchema>>
+  > = [
     ["name", "typeId", "categoryId"],
     ["tagline", "about", "logo", "coverImage"],
     ["location", "instagram", "whatsApp", "facebook", "linkedIn"],
