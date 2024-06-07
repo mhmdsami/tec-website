@@ -9,7 +9,7 @@ const siteConfig: SiteConfig = {
   name: "Tirunelveli Economic Chamber",
   baseUrl: "https://tirunelvelieconomicchamber.com",
   description: "The official website of Tirunelveli Economic Chamber.",
-  sessionName: "__remix_template_session",
+  sessionName: "__tec_session",
 };
 
 export default siteConfig;

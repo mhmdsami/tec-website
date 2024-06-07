@@ -1,4 +1,4 @@
-import { Enquiry } from "@prisma-app/client";
+import { BusinessEnquiry } from "@prisma-app/client";
 import {
   ActionFunction,
   LoaderFunction,
@@ -15,7 +15,7 @@ import siteConfig from "~/site.config";
 import { ActionResponse } from "~/types";
 import {
   getBusinessByOwnerId,
-  getEnquiriesByBusinessId,
+  getBusinessEnquiriesByBusinessId,
   toggleMarkEnquiryAsResolved,
 } from "~/utils/api.server";
 import { copyToClipboard } from "~/utils/helpers.client";
@@ -28,7 +28,7 @@ export const meta = () => [
 ];
 
 type LoaderData = {
-  enquires: Enquiry[];
+  enquires: BusinessEnquiry[];
 };
 
 export const loader: LoaderFunction = async ({
@@ -41,7 +41,7 @@ export const loader: LoaderFunction = async ({
     throw redirect("/dashboard/onboarding");
   }
 
-  const enquires = await getEnquiriesByBusinessId(business.id);
+  const enquires = await getBusinessEnquiriesByBusinessId(business.id);
 
   return json({ enquires });
 };

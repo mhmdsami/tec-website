@@ -129,8 +129,16 @@ export const toggleBusinessVerification = async (id: string) => {
   });
 };
 
-export const makeEnquiry = async (
-  enquiry: Omit<Prisma.BusinessEnquiryCreateInput, "business">,
+export const getBusinessEnquiriesByUserId = async (userId: string) => {
+  return db.businessEnquiry.findMany({
+    where: { userId },
+    include: { business: true },
+  });
+};
+
+export const makeBusinessEnquiry = async (
+  enquiry: Omit<Prisma.BusinessEnquiryCreateInput, "user" | "business">,
+  userId: string,
   businessId: string,
 ) => {
   return db.businessEnquiry.create({
@@ -139,6 +147,9 @@ export const makeEnquiry = async (
       email: enquiry.email,
       phone: enquiry.phone,
       message: enquiry.message,
+      user: {
+        connect: { id: userId },
+      },
       business: {
         connect: { id: businessId },
       },
@@ -146,7 +157,7 @@ export const makeEnquiry = async (
   });
 };
 
-export const getEnquiriesByBusinessId = async (businessId: string) => {
+export const getBusinessEnquiriesByBusinessId = async (businessId: string) => {
   return db.businessEnquiry.findMany({ where: { businessId } });
 };
 

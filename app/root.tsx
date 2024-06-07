@@ -1,9 +1,4 @@
-import type {
-  LinksFunction,
-  LoaderFunction,
-  TypedResponse,
-} from "@remix-run/node";
-import { json } from "@remix-run/node";
+import type { LinksFunction } from "@remix-run/node";
 import {
   Links,
   Meta,
@@ -11,7 +6,6 @@ import {
   Scripts,
   ScrollRestoration,
   isRouteErrorResponse,
-  useLoaderData,
   useNavigate,
   useRouteError,
 } from "@remix-run/react";
@@ -20,32 +14,13 @@ import { Toaster } from "react-hot-toast";
 import { Button } from "~/components/ui/button";
 import siteConfig from "~/site.config";
 import styles from "~/styles/globals.css?url";
-import { getUserId } from "~/utils/session.server";
 
 export const links: LinksFunction = () => [{ rel: "stylesheet", href: styles }];
 
-type LoaderData = {
-  isLoggedIn: boolean;
-};
-
-export const loader: LoaderFunction = async ({
-  request,
-}): Promise<TypedResponse<LoaderData>> => {
-  const isLoggedIn = !!(await getUserId(request));
-
-  return json({ isLoggedIn });
-};
-
-export type RootOutletContext = {
-  isLoggedIn: boolean;
-};
-
 export default function App() {
-  const { isLoggedIn } = useLoaderData<LoaderData>();
-
   return (
     <Layout>
-      <Outlet context={{ isLoggedIn } as RootOutletContext} />
+      <Outlet />
     </Layout>
   );
 }

@@ -9,7 +9,11 @@ import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import siteConfig from "~/site.config";
 import type { ActionResponse } from "~/types";
 import { redirectToBasedOnRole } from "~/utils/helpers.server";
-import { createUserSession, signIn } from "~/utils/session.server";
+import {
+  createUserSession,
+  redirectToCookie,
+  signIn,
+} from "~/utils/session.server";
 import { SignInSchema, validate } from "~/utils/validation";
 
 export const meta: MetaFunction = () => {
@@ -24,6 +28,10 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
   const body = Object.fromEntries(formData.entries());
   const parseRes = validate(body, SignInSchema);
 
+  const redirectTo = await redirectToCookie.parse(
+    request.headers.get("Cookie"),
+  );
+
   if (parseRes.success) {
     const { email, password } = parseRes.data;
     const res = await signIn(email, password);
@@ -31,7 +39,7 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
       const { user } = res.data;
       return createUserSession(
         user.id,
-        redirectToBasedOnRole(user) || "/dashboard",
+        redirectTo || redirectToBasedOnRole(user) || "/dashboard",
       );
     } else {
       return json({ error: res.error }, { status: 400 });

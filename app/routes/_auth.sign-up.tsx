@@ -18,7 +18,11 @@ import siteConfig from "~/site.config";
 import { ActionResponse } from "~/types";
 import { cn } from "~/utils/helpers";
 import { redirectToBasedOnRole } from "~/utils/helpers.server";
-import { createUserSession, signUp } from "~/utils/session.server";
+import {
+  createUserSession,
+  redirectToCookie,
+  signUp,
+} from "~/utils/session.server";
 import { SignUpSchema, validate } from "~/utils/validation";
 
 export const meta: MetaFunction = () => {
@@ -33,6 +37,10 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
   const body = Object.fromEntries(formData.entries());
   const parseRes = validate(body, SignUpSchema);
 
+  const redirectTo = await redirectToCookie.parse(
+    request.headers.get("Cookie"),
+  );
+
   if (parseRes.success) {
     const { email, name, password, type } = parseRes.data;
     const res = await signUp(email, name, type, password);
@@ -40,7 +48,7 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
       const { user } = res.data;
       return createUserSession(
         user.id,
-        redirectToBasedOnRole(user) || "/dashboard",
+        redirectTo || redirectToBasedOnRole(user) || "/dashboard",
       );
     } else {
       return json({ error: res.error }, { status: 400 });

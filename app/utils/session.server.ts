@@ -1,5 +1,9 @@
 import type { User, UserType } from "@prisma-app/client";
-import { createCookieSessionStorage, redirect } from "@remix-run/node";
+import {
+  createCookie,
+  createCookieSessionStorage,
+  redirect,
+} from "@remix-run/node";
 import bcrypt from "bcryptjs";
 import siteConfig from "~/site.config";
 import { db } from "~/utils/db.server";
@@ -62,15 +66,27 @@ const { commitSession, getSession, destroySession } =
     },
   });
 
+export const redirectToCookie = createCookie("redirect_to", {
+  secure: true,
+  secrets: [SESSION_SECRET],
+  sameSite: "lax",
+  path: "/",
+  maxAge: 60 * 2,
+  httpOnly: true,
+});
+
 export async function createUserSession(userId: string, redirectTo: string) {
   const session = await getSession();
   session.set("userId", userId);
 
-  return redirect(redirectTo, {
-    headers: {
-      "Set-Cookie": await commitSession(session),
-    },
-  });
+  const headers = new Headers();
+  headers.append("Set-Cookie", await commitSession(session));
+  headers.append(
+    "Set-Cookie",
+    await redirectToCookie.serialize(null, { maxAge: 1 }),
+  );
+
+  return redirect(redirectTo, { headers });
 }
 
 function getUserSession(request: Request) {
@@ -85,11 +101,15 @@ export async function getUserId(request: Request) {
   return userId;
 }
 
-export async function requireUserId(request: Request) {
+export async function requireUserId(request: Request, redirectTo?: string) {
   const userId = await getUserId(request);
 
   if (!userId) {
-    throw redirect("/sign-in");
+    throw redirect("/sign-in", {
+      headers: {
+        "Set-Cookie": await redirectToCookie.serialize(redirectTo),
+      },
+    });
   }
   return userId;
 }
@@ -97,9 +117,12 @@ export async function requireUserId(request: Request) {
 export async function signOut(request: Request) {
   const session = await getUserSession(request);
 
-  return redirect("/", {
-    headers: {
-      "Set-Cookie": await destroySession(session),
-    },
-  });
+  const headers = new Headers();
+  headers.append("Set-Cookie", await destroySession(session));
+  headers.append(
+    "Set-Cookie",
+    await redirectToCookie.serialize(null, { maxAge: 1 }),
+  );
+
+  return redirect("/", { headers });
 }

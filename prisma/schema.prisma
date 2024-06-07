@@ -19,7 +19,11 @@ model User {
   passwordHash String
   createdAt    DateTime @default(now())
 
-  isAdmin  Boolean   @default(false)
+  BusinessEnquiry BusinessEnquiry[]
+  Enquiry         Enquiry[]
+
+  isAdmin Boolean @default(false)
+
   Business Business?
 }
 
@@ -53,8 +57,8 @@ model Business {
   owner   User   @relation(fields: [ownerId], references: [id])
   ownerId String @unique
 
-  BusinessEnquiry BusinessEnquiry[]
-  Service         Service[]
+  businessEnquiry BusinessEnquiry[]
+  service         Service[]
 }
 
 model BusinessCategory {
@@ -73,7 +77,24 @@ model BusinessType {
   BusinessCategory   BusinessCategory @relation(fields: [businessCategoryId], references: [id])
   businessCategoryId String
 
-  Business Business[]
+  business Business[]
+  enquiry  Enquiry[]
+}
+
+model Enquiry {
+  id         String   @id @default(uuid()) @map("_id")
+  name       String
+  email      String
+  phone      String
+  message    String
+  isResolved Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  businessType   BusinessType @relation(fields: [businessTypeId], references: [id])
+  businessTypeId String
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
 }
 
 model BusinessEnquiry {
@@ -87,6 +108,9 @@ model BusinessEnquiry {
 
   business   Business @relation(fields: [businessId], references: [id])
   businessId String
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
 }
 
 type Image {
