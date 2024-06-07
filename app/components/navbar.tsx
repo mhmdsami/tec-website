@@ -102,7 +102,9 @@ export default function Navbar({ isLoggedIn }: NavbarProps) {
           </DropdownMenu>
         ) : (
           <Button asChild className="hidden text-base font-semibold md:block">
-            <Link to="/sign-in" prefetch="render">Sign In</Link>
+            <Link to="/sign-in" prefetch="render">
+              Sign In
+            </Link>
           </Button>
         )}
       </div>

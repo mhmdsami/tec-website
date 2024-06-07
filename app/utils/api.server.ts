@@ -20,11 +20,14 @@ export const getBusinessCategories = async () => {
 
 export const getBusinessCategoryWithTypes = async () => {
   return db.businessCategory.findMany({ include: { types: true } });
-}
+};
 
 export const getBusinessCategoryWithTypeBySlug = async (slug: string) => {
-  return db.businessCategory.findUnique({ where: { slug }, include: { types: true } });
-}
+  return db.businessCategory.findUnique({
+    where: { slug },
+    include: { types: true },
+  });
+};
 
 export const createBusinessType = async (
   name: string,
@@ -127,10 +130,10 @@ export const toggleBusinessVerification = async (id: string) => {
 };
 
 export const makeEnquiry = async (
-  enquiry: Omit<Prisma.EnquiryCreateInput, "business">,
+  enquiry: Omit<Prisma.BusinessEnquiryCreateInput, "business">,
   businessId: string,
 ) => {
-  return db.enquiry.create({
+  return db.businessEnquiry.create({
     data: {
       name: enquiry.name,
       email: enquiry.email,
@@ -144,17 +147,17 @@ export const makeEnquiry = async (
 };
 
 export const getEnquiriesByBusinessId = async (businessId: string) => {
-  return db.enquiry.findMany({ where: { businessId } });
+  return db.businessEnquiry.findMany({ where: { businessId } });
 };
 
 export const toggleMarkEnquiryAsResolved = async (id: string) => {
-  const enquiry = await db.enquiry.findUnique({ where: { id } });
+  const enquiry = await db.businessEnquiry.findUnique({ where: { id } });
 
   if (!enquiry) {
     throw new Error("Enquiry not found");
   }
 
-  return db.enquiry.update({
+  return db.businessEnquiry.update({
     where: { id },
     data: { isResolved: !enquiry.isResolved },
   });

@@ -14,7 +14,7 @@ export const slugify = (text: string) =>
 export function generateGrid<T>(
   types: Array<T>,
   rowSize: [number, number] = [5, 4],
-  extra?: T
+  extra?: T,
 ) {
   let grid: T[][] = [];
   let counter = 0;

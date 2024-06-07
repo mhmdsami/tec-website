@@ -1,14 +1,6 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { BusinessType } from "@prisma-app/client";
-import {
-  ActionFunction,
-  json,
-} from "@remix-run/node";
-import {
-  Form,
-  useOutletContext,
-  useSubmit,
-} from "@remix-run/react";
+import { ActionFunction, json } from "@remix-run/node";
+import { Form, useOutletContext, useSubmit } from "@remix-run/react";
 import { addYears } from "date-fns";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";

@@ -11,7 +11,10 @@ import { useState } from "react";
 import { DataTable } from "~/components/data-table";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { getBusinessByType, getBusinessCategoryWithTypeBySlug, getBusinessTypeBySlug } from "~/utils/api.server";
+import {
+  getBusinessByType,
+  getBusinessCategoryWithTypeBySlug,
+} from "~/utils/api.server";
 import { copyToClipboard } from "~/utils/helpers.client";
 
 type LoaderData = {
@@ -37,7 +40,7 @@ export const loader: LoaderFunction = async ({
     throw json({ message: "Invalid business category" }, { status: 404 });
   }
 
-  const businessType = businessCategory.types.find(t => t.slug === type)
+  const businessType = businessCategory.types.find((t) => t.slug === type);
   if (!businessType) {
     throw json({ message: "Invalid type of business" }, { status: 404 });
   }

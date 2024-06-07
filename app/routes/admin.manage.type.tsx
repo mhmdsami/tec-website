@@ -232,7 +232,7 @@ export default function AdminManageType() {
   return (
     <main className="flex flex-col gap-5">
       <h1 className="text-2xl font-bold">Manage Business Type</h1>
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <Select onValueChange={handleCategoryFilterChange} defaultValue="all">
           <SelectTrigger className="w-full sm:w-[250px]">
             <SelectValue placeholder="Type" />
