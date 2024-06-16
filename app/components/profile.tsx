@@ -46,7 +46,7 @@ export default function Profile({
   const url = `${siteConfig.baseUrl}/business/${id}`;
 
   return (
-    <Card className="w-screen md:w-[500px]">
+    <Card className="w-screen md:w-full overflow-hidden">
       <img
         src={coverImage || ""}
         alt={name}
@@ -54,7 +54,7 @@ export default function Profile({
       />
       <CardHeader className="flex flex-row justify-between">
         <div className="flex flex-col gap-2">
-          <Avatar className="-mt-20 h-32 w-32 self-start">
+          <Avatar className="-mt-20 h-32 w-32 lg:h-80 lg:w-80 lg:-mt-44 self-start">
             {logo && <AvatarImage src={logo} alt={name} />}
             <AvatarFallback className="text-3xl">{name[0]}</AvatarFallback>
           </Avatar>
