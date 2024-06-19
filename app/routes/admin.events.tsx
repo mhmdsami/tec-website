@@ -24,10 +24,8 @@ import {
 } from "~/components/ui/dialog";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
@@ -37,18 +35,21 @@ import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import siteConfig from "~/site.config";
+import { ActionResponse } from "~/types";
 import {
   addEventImage,
   createEvent,
   deleteEvent,
   getAllEvents,
   getEventById,
+  toggleEventCompletion,
 } from "~/utils/api.server";
-import { cn } from "~/utils/helpers";
+import { cn, slugify } from "~/utils/helpers";
 import {
   AddEventImageSchema,
   AddEventSchema,
   DeleteEventSchema,
+  ToggleEventCompletionSchema,
   validate,
 } from "~/utils/validation";
 
@@ -69,7 +70,8 @@ export const loader: LoaderFunction = async (): Promise<
   return json({ events });
 };
 
-export const action: ActionFunction = async ({ request }) => {
+export const action: ActionFunction = async ({ request }): ActionResponse => {
+  console.log("action triggered");
   const formData = await request.formData();
   const body = Object.fromEntries(formData.entries());
   const action = formData.get("action");
@@ -106,7 +108,7 @@ export const action: ActionFunction = async ({ request }) => {
         return json({ message: "Event deleted successfully" });
       }
 
-      return json({ message: "Failed to delete event" }, { status: 500 });
+      return json({ error: "Failed to delete event" }, { status: 500 });
     }
 
     case "addImage": {
@@ -131,14 +133,37 @@ export const action: ActionFunction = async ({ request }) => {
       return json({ message: "Failed to add image" }, { status: 500 });
     }
 
+    case "toggleCompleted": {
+      const parseRes = validate(body, ToggleEventCompletionSchema);
+
+      if (!parseRes.success) {
+        return json({ fieldErrors: parseRes.errors }, { status: 400 });
+      }
+
+      const event = await getEventById(parseRes.data.id);
+      if (!event) {
+        return json({ error: "Event not found" }, { status: 404 });
+      }
+
+      const updatedEvent = await toggleEventCompletion(parseRes.data.id);
+      if (updatedEvent) {
+        return json({
+          message: "Event completion status updated successfully",
+        });
+      }
+
+      return json({ error: "Failed to update event" });
+    }
+
     default:
-      return json({ message: "Invalid action" }, { status: 400 });
+      return json({ error: "Invalid action" }, { status: 400 });
   }
 };
 
 export default function AdminEvents() {
   const { events } = useLoaderData<LoaderData>();
   const submit = useSubmit();
+  const [isOpen, setIsOpen] = useState(false);
 
   const {
     register,
@@ -146,6 +171,7 @@ export default function AdminEvents() {
     formState: { errors },
     handleSubmit,
     reset,
+    watch,
   } = useForm({
     resolver: valibotResolver(AddEventSchema),
     defaultValues: {
@@ -156,7 +182,10 @@ export default function AdminEvents() {
   });
 
   const actionData = useActionDataWithToast({
-    onMessage: reset,
+    onMessage: () => {
+      reset();
+      setIsOpen(false);
+    },
   });
 
   const table = useReactTable({
@@ -194,7 +223,7 @@ export default function AdminEvents() {
   return (
     <main className="flex flex-col gap-5">
       <h1 className="text-2xl font-bold">Manage Events</h1>
-      <Dialog>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
           <Button className="w-fit self-end">Add Event</Button>
         </DialogTrigger>
@@ -222,6 +251,14 @@ export default function AdminEvents() {
               placeholder="Title"
               errorMessage={errors.title?.message}
               register={register}
+            />
+            <Input
+              label="Slug"
+              name="slug"
+              type="text"
+              required
+              value={slugify(watch("title"))}
+              readOnly
             />
             <Textarea
               name="description"
@@ -272,8 +309,8 @@ function ManageEvent({
   id,
   title,
   description,
-  date,
   images,
+  isCompleted,
 }: ManageEventProps) {
   const submit = useSubmit();
   const [isUploading, setIsUploading] = useState(false);
@@ -305,84 +342,93 @@ function ManageEvent({
           <DrawerDescription>{description}</DrawerDescription>
         </DrawerHeader>
         <div className="flex flex-col gap-5 overflow-scroll px-4">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button className="w-fit self-end">Add Image</Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Event image</DialogTitle>
-                <DialogDescription>Add event image</DialogDescription>
-              </DialogHeader>
-              <Form
-                className="flex flex-col gap-3"
-                onSubmit={handleSubmit((values) =>
-                  submit(
-                    { action: "addImage", ...values },
-                    {
-                      method: "POST",
-                    },
-                  ),
-                )}
-              >
-                <div className="flex flex-col gap-2">
-                  <Label>Image</Label>
-                  <Controller
-                    control={control}
-                    name="image"
-                    render={({ field }) => (
-                      <ImageUpload
-                        imageUrl={field.value}
-                        onChange={field.onChange}
-                        folder="events"
-                        isUploading={isUploading}
-                        setIsUploading={setIsUploading}
-                      />
-                    )}
-                  />
-                  <p
-                    className={cn(
-                      "hidden text-sm text-destructive",
-                      errors.image && "block",
-                    )}
-                  >
-                    {errors.image?.message}
-                  </p>
-                </div>
-                <Input
-                  name="description"
-                  label="Description"
-                  placeholder="Image description"
-                  errorMessage={errors.description?.message}
-                  register={register}
-                />
-                <Button
-                  type="submit"
-                  className="w-24 self-end"
-                  disabled={isUploading}
+          <div className="flex gap-2 self-end">
+            <Button
+              type="submit"
+              onClick={() =>
+                submit({ action: "toggleCompleted", id }, { method: "POST" })
+              }
+            >
+              Mark as {isCompleted ? "not completed" : "completed"}
+            </Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="w-fit self-end">Add Image</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Event image</DialogTitle>
+                  <DialogDescription>Add event image</DialogDescription>
+                </DialogHeader>
+                <Form
+                  className="flex flex-col gap-3"
+                  onSubmit={handleSubmit((values) =>
+                    submit(
+                      { action: "addImage", ...values },
+                      {
+                        method: "POST",
+                      },
+                    ),
+                  )}
                 >
-                  Add
-                </Button>
-              </Form>
-            </DialogContent>
-          </Dialog>
-          <h1 className="text-xl font-bold">Current Images</h1>
-          <div className="grid h-1/2 grid-cols-6 gap-5">
-            {images.map(({ url, description }, idx) => (
-              <img
-                key={idx}
-                className="w-[200px]"
-                src={url}
-                alt={description || ""}
-              />
-            ))}
+                  <div className="flex flex-col gap-2">
+                    <Label>Image</Label>
+                    <Controller
+                      control={control}
+                      name="image"
+                      render={({ field }) => (
+                        <ImageUpload
+                          imageUrl={field.value}
+                          onChange={field.onChange}
+                          folder="events"
+                          isUploading={isUploading}
+                          setIsUploading={setIsUploading}
+                        />
+                      )}
+                    />
+                    <p
+                      className={cn(
+                        "hidden text-sm text-destructive",
+                        errors.image && "block",
+                      )}
+                    >
+                      {errors.image?.message}
+                    </p>
+                  </div>
+                  <Input
+                    name="description"
+                    label="Description"
+                    placeholder="Image description"
+                    errorMessage={errors.description?.message}
+                    register={register}
+                  />
+                  <Button
+                    type="submit"
+                    className="w-24 self-end"
+                    disabled={isUploading}
+                  >
+                    Add
+                  </Button>
+                </Form>
+              </DialogContent>
+            </Dialog>
           </div>
+          {images.length > 0 && (
+            <>
+              <h1 className="text-xl font-bold">Current Images</h1>
+              <div className="grid h-1/2 grid-cols-6 gap-5">
+                {images.map(({ url, description }, idx) => (
+                  <img
+                    key={idx}
+                    className="w-[200px]"
+                    src={url}
+                    alt={description || ""}
+                  />
+                ))}
+              </div>
+            </>
+          )}
         </div>
-        <DrawerFooter>
-          <DrawerClose>
-            <Button variant="outline">Cancel</Button>
-          </DrawerClose>
-        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   );

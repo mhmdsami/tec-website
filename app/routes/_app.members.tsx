@@ -1,29 +1,10 @@
-import { BusinessCategory } from "@prisma-app/client";
-import { json, LoaderFunction, TypedResponse } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link, useOutletContext } from "@remix-run/react";
 import useWindowSize from "~/hooks/use-window-size";
-import { getBusinessCategories } from "~/utils/api.server";
+import { AppOutletContext } from "~/routes/_app";
 import { generateGrid } from "~/utils/helpers";
 
-type LoaderData = {
-  businessCategories: BusinessCategory[];
-};
-
-export const loader: LoaderFunction = async (): Promise<
-  TypedResponse<LoaderData>
-> => {
-  const businessCategories = await getBusinessCategories();
-
-  return json({ businessCategories });
-};
-
-type Category = {
-  name: string;
-  slug: string;
-};
-
 export default function Members() {
-  const { businessCategories } = useLoaderData<LoaderData>();
+  const { businessCategories } = useOutletContext<AppOutletContext>();
   const { width } = useWindowSize();
 
   const categories = businessCategories.map(({ name, slug }) => ({

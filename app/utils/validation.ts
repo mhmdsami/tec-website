@@ -186,6 +186,38 @@ export const AddEventSchema = object({
   date: date("Date is required"),
 });
 
+export const ToggleEventCompletionSchema = object({
+  id: pipe(string("ID is required"), minLength(1, "ID is required")),
+});
+
+export const AddEventRegistrationSchema = object({
+  eventId: pipe(string("Event ID is required"), minLength(1, "ID is required")),
+  name: pipe(
+    string("Name is required"),
+    minLength(3, "Name must be at least 3 characters"),
+  ),
+  email: pipe(
+    string("Email is required"),
+    email("Please enter a valid email address"),
+  ),
+  phone: pipe(
+    string("Phone is required"),
+    length(10, "Enter a valid Phone number"),
+  ),
+  businessName: pipe(
+    string("Business Name is required"),
+    minLength(3, "Business Name must be at least 3 characters"),
+  ),
+  categoryId: pipe(
+    string("Category is required"),
+    minLength(3, "Select a business category"),
+  ),
+  location: pipe(
+    string("Location is required"),
+    minLength(3, "Location must be at least 3 characters"),
+  ),
+});
+
 export const DeleteEventSchema = object({
   id: pipe(string("ID is required"), minLength(1, "ID is required")),
 });

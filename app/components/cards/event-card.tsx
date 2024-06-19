@@ -1,5 +1,6 @@
 import { Event } from "@prisma-app/client";
 import { Calendar } from "lucide-react";
+import React from "react";
 import {
   Card,
   CardContent,
@@ -18,6 +19,7 @@ import {
 interface EventCardProps extends Omit<Event, "date" | "createdAt"> {
   date: string;
   createdAt: string;
+  children?: React.ReactNode;
 }
 
 export default function EventCard({
@@ -25,6 +27,7 @@ export default function EventCard({
   description,
   images,
   date,
+  children,
 }: EventCardProps) {
   return (
     <Card className="h-fit">
@@ -63,6 +66,7 @@ export default function EventCard({
             </div>
           )}
         </Carousel>
+        {children}
       </CardContent>
     </Card>
   );

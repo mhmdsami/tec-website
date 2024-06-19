@@ -66,7 +66,8 @@ model BusinessCategory {
   name String
   slug String @unique
 
-  types BusinessType[]
+  types             BusinessType[]
+  EventRegistration EventRegistration[]
 }
 
 model BusinessType {
@@ -120,11 +121,31 @@ type Image {
 
 model Event {
   id          String   @id @default(uuid()) @map("_id")
+  slug        String   @unique
   title       String
   description String
   date        DateTime
   createdAt   DateTime @default(now())
   images      Image[]
+
+  isCompleted   Boolean             @default(false)
+  registrations EventRegistration[]
+}
+
+model EventRegistration {
+  id           String   @id @default(uuid()) @map("_id")
+  name         String
+  email        String
+  phone        String
+  businessName String
+  location     String
+  createdAt    DateTime @default(now())
+
+  category   BusinessCategory @relation(fields: [categoryId], references: [id])
+  categoryId String
+
+  event   Event  @relation(fields: [eventId], references: [id])
+  eventId String
 }
 
 model Blog {

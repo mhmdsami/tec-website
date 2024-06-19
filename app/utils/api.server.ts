@@ -206,26 +206,77 @@ export const toggleMarkEnquiryAsResolved = async (id: string) => {
   });
 };
 
-export const createEvent = async (event: Prisma.EventCreateInput) => {
+export const createEvent = async (
+  event: Omit<Prisma.EventCreateInput, "slug">,
+) => {
   return db.event.create({
     data: {
       title: event.title,
+      slug: slugify(event.title),
       description: event.description,
       date: event.date,
     },
   });
 };
 
+export const toggleEventCompletion = async (id: string) => {
+  const event = await db.event.findUnique({ where: { id } });
+
+  if (!event) {
+    throw new Error("Event not found");
+  }
+
+  return db.event.update({
+    where: { id },
+    data: { isCompleted: !event.isCompleted },
+  });
+};
+
 export const getLatestEvents = async () => {
-  return db.event.findMany({ take: 2, orderBy: { createdAt: "desc" } });
+  return db.event.findMany({
+    where: { isCompleted: true },
+    take: 2,
+    orderBy: { createdAt: "desc" },
+  });
 };
 
 export const getAllEvents = async () => {
   return db.event.findMany();
 };
 
+export const getAllCompletedEvents = async () => {
+  return db.event.findMany({ where: { isCompleted: true } });
+};
+
+export const getAllUpcomingEvents = async () => {
+  return db.event.findMany({ where: { isCompleted: false } });
+};
+
 export const getEventById = async (id: string) => {
   return db.event.findUnique({ where: { id } });
+};
+
+export const registerForEvent = async (
+  event: Omit<Prisma.EventRegistrationCreateInput, "category" | "event"> & {
+    categoryId: string;
+    eventId: string;
+  },
+) => {
+  return db.eventRegistration.create({
+    data: {
+      name: event.name,
+      email: event.email,
+      phone: event.phone,
+      businessName: event.businessName,
+      location: event.location,
+      category: {
+        connect: { id: event.categoryId },
+      },
+      event: {
+        connect: { id: event.eventId },
+      },
+    },
+  });
 };
 
 export const addEventImage = async (

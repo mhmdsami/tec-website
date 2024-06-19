@@ -5,7 +5,7 @@ import {
   User,
 } from "@prisma-app/client";
 import { LoaderFunction, TypedResponse, json } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData, useOutletContext } from "@remix-run/react";
 import {
   ColumnFiltersState,
   getCoreRowModel,
@@ -23,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { AppOutletContext } from "~/routes/_app";
 import {
   getAllVerifiedBusinesses,
   getBusinessCategoryWithTypes,
@@ -46,7 +47,8 @@ export const loader: LoaderFunction = async ({
 export default function MembersAll() {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [category, setCategory] = useState<string | undefined>();
-  const { businessCategories, businesses } = useLoaderData<LoaderData>();
+  const { businessCategories } = useOutletContext<AppOutletContext>();
+  const { businesses } = useLoaderData<LoaderData>();
 
   const businessTypes = businessCategories.flatMap((category) =>
     category.types.map((type) => ({
