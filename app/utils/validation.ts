@@ -187,6 +187,19 @@ export const AddEventSchema = object({
   date: date("Date is required"),
 });
 
+export const UpdateEventSchema = object({
+  id: pipe(string("ID is required"), minLength(1, "ID is required")),
+  title: pipe(
+    string("Title is required"),
+    minLength(3, "Title must be at least 3 characters"),
+  ),
+  description: pipe(
+    string("Description is required"),
+    minLength(5, "Description must be at least 5 characters"),
+  ),
+  date: date("Date is required"),
+});
+
 export const ToggleEventCompletionSchema = object({
   id: pipe(string("ID is required"), minLength(1, "ID is required")),
 });

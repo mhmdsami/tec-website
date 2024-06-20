@@ -26,6 +26,13 @@ export const loader: LoaderFunction = async ({
     throw json({ message: "Invalid business category" }, { status: 404 });
   }
 
+  if (!businessCategory.types.length) {
+    throw json(
+      { message: "No business types found for the selected category" },
+      { status: 404 },
+    );
+  }
+
   return json({ withType: false, businessCategory });
 };
 
@@ -41,7 +48,7 @@ export default function Members() {
   );
 
   return (
-    <div className="mx-auto flex min-h-[70vh] flex-col justify-center overflow-clip pb-24">
+    <div className="mx-auto flex min-h-[80vh] flex-col justify-center overflow-clip pb-24">
       {grid.map((row, idx) => (
         <div
           key={idx}

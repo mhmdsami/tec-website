@@ -15,6 +15,13 @@ import { DatePicker } from "~/components/date-picker";
 import ImageUpload from "~/components/image-upload";
 import { Button } from "~/components/ui/button";
 import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "~/components/ui/carousel";
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -22,16 +29,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "~/components/ui/drawer";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "~/components/ui/sheet";
 import { Textarea } from "~/components/ui/textarea";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import siteConfig from "~/site.config";
@@ -43,6 +50,7 @@ import {
   AddEventSchema,
   DeleteEventSchema,
   ToggleEventCompletionSchema,
+  UpdateEventSchema,
   validate,
 } from "~/utils/validation";
 
@@ -111,6 +119,37 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
       }
 
       return json({ error: "Failed to delete event" }, { status: 500 });
+    }
+
+    case "update": {
+      const parseRes = validate(
+        {
+          ...body,
+          date: new Date(body.date as string),
+        },
+        UpdateEventSchema,
+      );
+
+      if (!parseRes.success) {
+        return json({ fieldErrors: parseRes.errors }, { status: 400 });
+      }
+
+      const { id, ...data } = parseRes.data;
+      const event = await db.event.findUnique({ where: { id } });
+      if (!event) {
+        return json({ error: "Event not found" }, { status: 404 });
+      }
+
+      const updatedEvent = await db.event.update({
+        where: { id },
+        data,
+      });
+
+      if (updatedEvent) {
+        return json({ message: "Event updated successfully" });
+      }
+
+      return json({ message: "Failed to update event" }, { status: 500 });
     }
 
     case "addImage": {
@@ -194,7 +233,7 @@ export default function AdminEvents() {
     },
   });
 
-  const actionData = useActionDataWithToast({
+  useActionDataWithToast({
     onMessage: () => {
       reset();
       setIsOpen(false);
@@ -324,7 +363,137 @@ function ManageEvent({
   description,
   images,
   isCompleted,
+  date,
 }: ManageEventProps) {
+  const submit = useSubmit();
+  const {
+    register,
+    control,
+    formState: { errors, isDirty },
+    handleSubmit,
+    watch,
+  } = useForm({
+    resolver: valibotResolver(UpdateEventSchema),
+    defaultValues: {
+      id,
+      title,
+      description,
+      date: new Date(date),
+    },
+  });
+
+  return (
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button>Manage</Button>
+      </SheetTrigger>
+      <SheetContent className="flex flex-col gap-5 overflow-scroll">
+        <SheetHeader>
+          <SheetTitle className="flex items-center gap-5">
+            Manage Event: {title}
+          </SheetTitle>
+          <SheetDescription>Update event information</SheetDescription>
+          <div className="flex gap-2">
+            <Button
+              type="submit"
+              onClick={() =>
+                submit({ action: "toggleCompleted", id }, { method: "POST" })
+              }
+            >
+              Mark as {isCompleted ? "not completed" : "completed"}
+            </Button>
+            <AddImage id={id} />
+          </div>
+        </SheetHeader>
+        {images.length > 0 && (
+          <Carousel>
+            <CarouselContent>
+              {images.map(({ url, description }, idx) => (
+                <CarouselItem key={idx}>
+                  <img
+                    src={url}
+                    alt={description || ""}
+                    className="aspect-video object-contain"
+                  />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <div className="mt-5 flex items-center justify-center gap-3">
+              <CarouselPrevious className="static translate-y-0" />
+              <CarouselNext className="static translate-y-0" />
+            </div>
+          </Carousel>
+        )}
+        <Form
+          className="flex flex-col gap-3"
+          onSubmit={handleSubmit(
+            (values) =>
+              submit(
+                {
+                  action: "update",
+                  ...values,
+                  date: values.date.toISOString(),
+                },
+                { method: "POST" },
+              ),
+            () => console.log("submitted"),
+          )}
+        >
+          <input name="id" value={id} hidden />
+          <Input
+            name="title"
+            label="Title"
+            placeholder="Title"
+            errorMessage={errors.title?.message}
+            register={register}
+          />
+          <Input
+            label="Slug"
+            name="slug"
+            type="text"
+            required
+            value={slugify(watch("title"))}
+            readOnly
+          />
+          <Textarea
+            name="description"
+            label="Description"
+            placeholder="Event description"
+            errorMessage={errors.description?.message}
+            register={register}
+          />
+          <div className="flex flex-col gap-2">
+            <Label>Date</Label>
+            <Controller
+              control={control}
+              name="date"
+              render={({ field }) => (
+                <DatePicker
+                  date={field.value}
+                  onSelect={field.onChange}
+                  className="w-full"
+                />
+              )}
+            />
+            <p
+              className={cn(
+                "hidden text-sm text-destructive",
+                errors.date && "block",
+              )}
+            >
+              {errors.date?.message}
+            </p>
+          </div>
+          <Button type="submit" className="w-24 self-end" disabled={!isDirty}>
+            Update
+          </Button>
+        </Form>
+      </SheetContent>
+    </Sheet>
+  );
+}
+
+function AddImage({ id }: { id: string }) {
   const submit = useSubmit();
   const [isUploading, setIsUploading] = useState(false);
 
@@ -343,106 +512,66 @@ function ManageEvent({
   });
 
   return (
-    <Drawer>
-      <DrawerTrigger asChild>
-        <Button>Manage</Button>
-      </DrawerTrigger>
-      <DrawerContent className="h-2/3 px-10">
-        <DrawerHeader>
-          <DrawerTitle className="flex items-center gap-5">
-            <div className="text-2xl">{title}</div>
-          </DrawerTitle>
-          <DrawerDescription>{description}</DrawerDescription>
-        </DrawerHeader>
-        <div className="flex flex-col gap-5 overflow-scroll px-4">
-          <div className="flex gap-2 self-end">
-            <Button
-              type="submit"
-              onClick={() =>
-                submit({ action: "toggleCompleted", id }, { method: "POST" })
-              }
-            >
-              Mark as {isCompleted ? "not completed" : "completed"}
-            </Button>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className="w-fit self-end">Add Image</Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Event image</DialogTitle>
-                  <DialogDescription>Add event image</DialogDescription>
-                </DialogHeader>
-                <Form
-                  className="flex flex-col gap-3"
-                  onSubmit={handleSubmit((values) =>
-                    submit(
-                      { action: "addImage", ...values },
-                      {
-                        method: "POST",
-                      },
-                    ),
-                  )}
-                >
-                  <div className="flex flex-col gap-2">
-                    <Label>Image</Label>
-                    <Controller
-                      control={control}
-                      name="image"
-                      render={({ field }) => (
-                        <ImageUpload
-                          imageUrl={field.value}
-                          onChange={field.onChange}
-                          folder="events"
-                          isUploading={isUploading}
-                          setIsUploading={setIsUploading}
-                        />
-                      )}
-                    />
-                    <p
-                      className={cn(
-                        "hidden text-sm text-destructive",
-                        errors.image && "block",
-                      )}
-                    >
-                      {errors.image?.message}
-                    </p>
-                  </div>
-                  <Input
-                    name="description"
-                    label="Description"
-                    placeholder="Image description"
-                    errorMessage={errors.description?.message}
-                    register={register}
-                  />
-                  <Button
-                    type="submit"
-                    className="w-24 self-end"
-                    disabled={isUploading}
-                  >
-                    Add
-                  </Button>
-                </Form>
-              </DialogContent>
-            </Dialog>
-          </div>
-          {images.length > 0 && (
-            <>
-              <h1 className="text-xl font-bold">Current Images</h1>
-              <div className="grid h-1/2 grid-cols-6 gap-5">
-                {images.map(({ url, description }, idx) => (
-                  <img
-                    key={idx}
-                    className="w-[200px]"
-                    src={url}
-                    alt={description || ""}
-                  />
-                ))}
-              </div>
-            </>
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button className="w-fit self-end">Add Image</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Event image</DialogTitle>
+          <DialogDescription>Add event image</DialogDescription>
+        </DialogHeader>
+        <Form
+          className="flex flex-col gap-3"
+          onSubmit={handleSubmit((values) =>
+            submit(
+              { action: "addImage", ...values },
+              {
+                method: "POST",
+              },
+            ),
           )}
-        </div>
-      </DrawerContent>
-    </Drawer>
+        >
+          <div className="flex flex-col gap-2">
+            <Label>Image</Label>
+            <Controller
+              control={control}
+              name="image"
+              render={({ field }) => (
+                <ImageUpload
+                  imageUrl={field.value}
+                  onChange={field.onChange}
+                  folder="events"
+                  isUploading={isUploading}
+                  setIsUploading={setIsUploading}
+                />
+              )}
+            />
+            <p
+              className={cn(
+                "hidden text-sm text-destructive",
+                errors.image && "block",
+              )}
+            >
+              {errors.image?.message}
+            </p>
+          </div>
+          <Input
+            name="description"
+            label="Description"
+            placeholder="Image description"
+            errorMessage={errors.description?.message}
+            register={register}
+          />
+          <Button
+            type="submit"
+            className="w-24 self-end"
+            disabled={isUploading}
+          >
+            Add
+          </Button>
+        </Form>
+      </DialogContent>
+    </Dialog>
   );
 }
