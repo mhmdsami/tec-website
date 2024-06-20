@@ -104,6 +104,7 @@ export default function Events() {
       phone: "",
       businessName: "",
       location: "",
+      isMember: "false",
     },
   });
 
@@ -167,6 +168,36 @@ export default function Events() {
                           register={register}
                           errorMessage={errors.phone?.message}
                         />
+                        <div className="flex flex-col gap-2">
+                          <Label>Membership</Label>
+                          <Controller
+                            render={({ field }) => (
+                              <Select onValueChange={field.onChange} {...field}>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select a membership" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="true">
+                                    Member
+                                  </SelectItem>
+                                  <SelectItem value="false">
+                                    Non-Member
+                                  </SelectItem>
+                                </SelectContent>
+                              </Select>
+                            )}
+                            name="isMember"
+                            control={control}
+                          />
+                          <p
+                            className={cn(
+                              "hidden text-sm text-destructive",
+                              errors.isMember && "block",
+                            )}
+                          >
+                            {errors.isMember?.message}
+                          </p>
+                        </div>
                         <Input
                           name="businessName"
                           label="Business Name"

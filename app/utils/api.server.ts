@@ -268,6 +268,7 @@ export const registerForEvent = async (
       email: event.email,
       phone: event.phone,
       businessName: event.businessName,
+      isMember: event.isMember,
       location: event.location,
       category: {
         connect: { id: event.categoryId },

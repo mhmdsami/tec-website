@@ -19,9 +19,11 @@ export default function useWindowSize() {
       });
     };
 
+    window.addEventListener("load", handleResize);
     window.addEventListener("resize", handleResize);
 
     return () => {
+      window.removeEventListener("load", handleResize);
       window.removeEventListener("resize", handleResize);
     };
   }, []);

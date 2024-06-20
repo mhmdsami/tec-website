@@ -139,6 +139,7 @@ model EventRegistration {
   phone        String
   businessName String
   location     String
+  isMember     Boolean  @default(false)
   createdAt    DateTime @default(now())
 
   category   BusinessCategory @relation(fields: [categoryId], references: [id])

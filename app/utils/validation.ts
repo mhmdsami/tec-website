@@ -13,7 +13,7 @@ import {
   picklist,
   pipe,
   string,
-  url,
+  url, transform
 } from "valibot";
 
 export const SignUpSchema = object({
@@ -204,6 +204,7 @@ export const AddEventRegistrationSchema = object({
     string("Phone is required"),
     length(10, "Enter a valid Phone number"),
   ),
+  isMember: pipe(string("Membership status is required"), transform((value) => value === "true")),
   businessName: pipe(
     string("Business Name is required"),
     minLength(3, "Business Name must be at least 3 characters"),
