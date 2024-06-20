@@ -7,9 +7,13 @@ export function cn(...inputs: ClassValue[]) {
 
 export const slugify = (text: string) =>
   text
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
     .toLowerCase()
-    .replace(/ /g, "_")
-    .replace(/[^\w-]+/g, "");
+    .replace(/[^a-z0-9 -]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
 
 export function generateGrid<T>(
   types: Array<T>,
@@ -31,3 +35,7 @@ export function generateGrid<T>(
 
   return grid;
 }
+
+export const makeNameDisplayable = (name: string) => {
+  return name.split(/([&/ ])/).join(" ");
+};

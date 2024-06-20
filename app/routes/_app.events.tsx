@@ -177,9 +177,7 @@ export default function Events() {
                                   <SelectValue placeholder="Select a membership" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="true">
-                                    Member
-                                  </SelectItem>
+                                  <SelectItem value="true">Member</SelectItem>
                                   <SelectItem value="false">
                                     Non-Member
                                   </SelectItem>

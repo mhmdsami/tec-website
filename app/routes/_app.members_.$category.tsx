@@ -1,9 +1,9 @@
 import { BusinessCategory, BusinessType } from "@prisma-app/client";
 import { LoaderFunction, TypedResponse, json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
-import useWindowSize from "~/hooks/use-window-size";
+import useMediaQuery from "~/hooks/use-media-query";
 import { getBusinessCategoryWithTypeBySlug } from "~/utils/api.server";
-import { generateGrid } from "~/utils/helpers";
+import { generateGrid, makeNameDisplayable } from "~/utils/helpers";
 
 type LoaderData = {
   withType: false;
@@ -27,34 +27,36 @@ export const loader: LoaderFunction = async ({
 };
 
 export default function Members() {
-  const { width } = useWindowSize();
+  const isDesktop = useMediaQuery("(min-width: 768px)");
   const {
     businessCategory: { types, slug: categorySlug },
   } = useLoaderData<LoaderData>();
 
   const grid = generateGrid(
     types.map(({ id, name, slug }) => ({ id, name, slug })),
-    width > 768 ? [5, 4] : [2, 1],
+    isDesktop ? [5, 4] : [2, 1],
   );
 
   return (
-    <div className="mx-auto flex min-h-[70vh] flex-col justify-center">
+    <div className="mx-auto flex min-h-[70vh] flex-col justify-center overflow-clip pb-24">
       {grid.map((row, idx) => (
         <div
           key={idx}
           className="flex gap-4"
           style={{
             transform:
-              idx % 2 ? `translate(${idx * 3.5}rem, 3rem)` : "translateY(3rem)",
+              idx % 2
+                ? `translateX(${isDesktop ? idx * 4 : 4}rem)`
+                : "translateY(0.5rem)",
           }}
         >
           {row.map(({ name, slug }) => (
             <Link
               key={slug}
               to={`/members/${categorySlug}/${slug}`}
-              className="hexagon line-clamp-3 flex h-32 w-28 items-center justify-center bg-secondary text-center transition-all duration-300 hover:bg-primary hover:text-white"
+              className="hexagon line-clamp-3 flex h-32 w-28 items-center justify-center bg-secondary text-center text-sm transition-all duration-300 hover:bg-primary hover:text-white"
             >
-              {name}
+              {makeNameDisplayable(name)}
             </Link>
           ))}
         </div>

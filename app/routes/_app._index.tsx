@@ -48,7 +48,7 @@ export default function Index() {
 
   return (
     <main className="mb-10 flex flex-col gap-20">
-      <div className="flex h-[85vh] flex-col-reverse items-center justify-center gap-20 lg:gap-0 sm:flex-row">
+      <div className="flex h-[85vh] flex-col-reverse items-center justify-center gap-20 sm:flex-row lg:gap-0">
         <div className="sm:basis-1/2">
           <h1 className="text-4xl font-bold lg:text-7xl">
             Tirunelveli Economic Chamber
