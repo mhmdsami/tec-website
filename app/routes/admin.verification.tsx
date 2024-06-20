@@ -27,10 +27,7 @@ import {
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import siteConfig from "~/site.config";
 import { ActionData } from "~/types";
-import {
-  getAllBusinesses,
-  toggleBusinessVerification,
-} from "~/utils/api.server";
+import { db } from "~/utils/db.server";
 import { copyToClipboard } from "~/utils/helpers.client";
 import { VerifyBusinessSchema, validate } from "~/utils/validation";
 
@@ -46,7 +43,7 @@ type LoaderData = {
 export const loader: LoaderFunction = async (): Promise<
   TypedResponse<LoaderData>
 > => {
-  const businesses = await getAllBusinesses();
+  const businesses = await db.business.findMany({ include: { owner: true } });
 
   return json({ businesses });
 };
@@ -59,9 +56,18 @@ export const action: ActionFunction = async ({
   const parseRes = validate(body, VerifyBusinessSchema);
 
   if (parseRes.success) {
+    const { id } = parseRes.data;
     try {
-      const business = await toggleBusinessVerification(parseRes.data.id);
-      if (business.isVerified) {
+      const business = await db.business.findUnique({ where: { id } });
+      if (!business) {
+        return json({ error: "Business not found" }, { status: 404 });
+      }
+      const updateBusiness = await db.business.update({
+        where: { id },
+        data: { isVerified: !business.isVerified },
+      });
+
+      if (updateBusiness.isVerified) {
         return json(
           { success: true, message: "Business verified successfully" },
           { status: 200 },

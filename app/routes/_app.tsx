@@ -3,7 +3,7 @@ import { LoaderFunction, TypedResponse, json } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 import Footer from "~/components/footer";
 import Navbar from "~/components/navbar";
-import { getBusinessCategoryWithTypes } from "~/utils/api.server";
+import { db } from "~/utils/db.server";
 import { getUserId } from "~/utils/session.server";
 
 type LoaderData = {
@@ -15,7 +15,9 @@ export const loader: LoaderFunction = async ({
   request,
 }): Promise<TypedResponse<LoaderData>> => {
   const isLoggedIn = !!(await getUserId(request));
-  const businessCategories = await getBusinessCategoryWithTypes();
+  const businessCategories = await db.businessCategory.findMany({
+    include: { types: true },
+  });
 
   return json({ isLoggedIn, businessCategories });
 };

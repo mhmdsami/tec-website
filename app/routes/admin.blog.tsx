@@ -26,7 +26,7 @@ import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import { ActionResponse } from "~/types";
-import { createBlog, deleteBlog, getAllBlogs } from "~/utils/api.server";
+import { db } from "~/utils/db.server";
 import { cn } from "~/utils/helpers";
 import { AddBlogSchema, DeleteBlogSchema, validate } from "~/utils/validation";
 
@@ -37,7 +37,7 @@ type LoaderData = {
 export const loader: LoaderFunction = async (): Promise<
   TypedResponse<LoaderData>
 > => {
-  const blogs = await getAllBlogs();
+  const blogs = await db.blog.findMany();
 
   return json({ blogs });
 };
@@ -55,7 +55,9 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
         return json({ fieldErrors: parseRes.errors }, { status: 400 });
       }
 
-      const blog = await createBlog(parseRes.data);
+      const blog = await db.blog.create({
+        data: parseRes.data,
+      });
       if (blog) {
         return json({ message: "Blog created successfully" });
       }
@@ -69,7 +71,8 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
         return json({ fieldErrors: parseRes.errors }, { status: 400 });
       }
 
-      const blog = await deleteBlog(parseRes.data.id);
+      const { id } = parseRes.data;
+      const blog = await db.blog.delete({ where: { id } });
       if (blog) {
         return json({ message: "Blog deleted successfully" });
       }

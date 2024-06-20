@@ -37,12 +37,7 @@ import { Textarea } from "~/components/ui/textarea";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import { AppOutletContext } from "~/routes/_app";
 import { ActionResponse } from "~/types";
-import {
-  getAllCompletedEvents,
-  getAllUpcomingEvents,
-  getEventById,
-  registerForEvent,
-} from "~/utils/api.server";
+import { db } from "~/utils/db.server";
 import { cn } from "~/utils/helpers";
 import { AddEventRegistrationSchema, validate } from "~/utils/validation";
 
@@ -54,8 +49,10 @@ type LoaderData = {
 export const loader: LoaderFunction = async (): Promise<
   TypedResponse<LoaderData>
 > => {
-  const upcomingEvents = await getAllUpcomingEvents();
-  const pastEvents = await getAllCompletedEvents();
+  const upcomingEvents = await db.event.findMany({
+    where: { isCompleted: false },
+  });
+  const pastEvents = await db.event.findMany({ where: { isCompleted: true } });
 
   return json({ upcomingEvents, pastEvents });
 };
@@ -69,12 +66,24 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
     return json({ fieldErrors: parseRes.errors }, { status: 400 });
   }
 
-  const event = await getEventById(parseRes.data.eventId);
+  const { eventId, categoryId, ...details } = parseRes.data;
+
+  const event = await db.event.findUnique({ where: { id: eventId } });
   if (!event) {
     return json({ error: "Event not found" }, { status: 404 });
   }
 
-  const registration = await registerForEvent(parseRes.data);
+  const registration = await db.eventRegistration.create({
+    data: {
+      ...details,
+      category: {
+        connect: { id: categoryId },
+      },
+      event: {
+        connect: { id: eventId },
+      },
+    },
+  });
   if (!registration) {
     return json({ error: "Failed to register for event" }, { status: 500 });
   }

@@ -28,12 +28,8 @@ import { Textarea } from "~/components/ui/textarea";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import { AppOutletContext } from "~/routes/_app";
 import { ActionResponse } from "~/types";
-import {
-  getBusinessById,
-  getServicesByBusinessId,
-  makeBusinessEnquiry,
-} from "~/utils/api.server";
-import { errorHandler } from "~/utils/error.server";
+import { db } from "~/utils/db.server";
+import { errorHandler } from "~/utils/helpers.server";
 import { requireUserId } from "~/utils/session.server";
 import { EnquirySchema, validate } from "~/utils/validation";
 
@@ -51,12 +47,14 @@ export const loader: LoaderFunction = async ({
     throw json({ message: "Business id not found" }, { status: 400 });
   }
 
-  const business = await getBusinessById(id);
+  const business = await db.business.findUnique({ where: { id } });
   if (!business) {
     throw json({ message: "Business not found" }, { status: 404 });
   }
 
-  const services = await getServicesByBusinessId(business.id);
+  const services = await db.service.findMany({
+    where: { businessId: business.id },
+  });
 
   return json({ business, services });
 };
@@ -78,7 +76,17 @@ export const action: ActionFunction = async ({
 
   if (parseRes.success) {
     try {
-      await makeBusinessEnquiry(parseRes.data, userId, businessId);
+      await db.businessEnquiry.create({
+        data: {
+          ...parseRes.data,
+          user: {
+            connect: { id: userId },
+          },
+          business: {
+            connect: { id: businessId },
+          },
+        },
+      });
       return json({ message: "Enquiry sent" });
     } catch (error) {
       const { status, message } = errorHandler(error as Error);

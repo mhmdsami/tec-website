@@ -13,12 +13,7 @@ import { Button } from "~/components/ui/button";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import siteConfig from "~/site.config";
 import { ActionResponse } from "~/types";
-import {
-  getBusinessByOwnerId,
-  getBusinessEnquiriesByBusinessId,
-  getGeneralEnquiriesByBusinessTypeId,
-  toggleMarkEnquiryAsResolved,
-} from "~/utils/api.server";
+import { db } from "~/utils/db.server";
 import { copyToClipboard } from "~/utils/helpers.client";
 import { requireUserId } from "~/utils/session.server";
 import { ResolveEnquirySchema, validate } from "~/utils/validation";
@@ -37,16 +32,19 @@ export const loader: LoaderFunction = async ({
   request,
 }): Promise<TypedResponse<LoaderData>> => {
   const userId = await requireUserId(request);
-  const business = await getBusinessByOwnerId(userId);
+  const business = await db.business.findFirst({ where: { ownerId: userId } });
 
   if (!business) {
     throw redirect("/dashboard/onboarding");
   }
 
-  const businessEnquiries = await getBusinessEnquiriesByBusinessId(business.id);
-  const generalEnquiries = await getGeneralEnquiriesByBusinessTypeId(
-    business.typeId,
-  );
+  const businessEnquiries = await db.businessEnquiry.findMany({
+    where: { businessId: business.id },
+  });
+  const generalEnquiries = await db.enquiry.findMany({
+    where: { businessType: { id: business.typeId } },
+    include: { user: true },
+  });
 
   return json({ businessEnquiries, generalEnquiries });
 };
@@ -57,8 +55,17 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
   const parsedRes = validate(body, ResolveEnquirySchema);
 
   if (parsedRes.success) {
-    const enquiry = await toggleMarkEnquiryAsResolved(parsedRes.data.id);
-    if (enquiry.isResolved) {
+    const { id } = parsedRes.data;
+    const enquiry = await db.businessEnquiry.findUnique({ where: { id } });
+    if (!enquiry) {
+      throw new Error("Enquiry not found");
+    }
+
+    const resolvedEnquiry = await db.businessEnquiry.update({
+      where: { id },
+      data: { isResolved: !enquiry.isResolved },
+    });
+    if (resolvedEnquiry.isResolved) {
       return json({ message: "Enquiry marked as resolved" });
     } else {
       return json({ message: "Enquiry marked as not resolved" });

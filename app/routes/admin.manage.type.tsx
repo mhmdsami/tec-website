@@ -38,15 +38,7 @@ import useActionDataWithDisclosure from "~/hooks/use-action-data-with-disclosure
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import siteConfig from "~/site.config";
 import { ActionResponse } from "~/types";
-import {
-  createBusinessCategory,
-  createBusinessType,
-  deleteBusinessType,
-  getBusinessCategoryBySlug,
-  getBusinessCategoryWithTypes,
-  getBusinessCountByType,
-  getBusinessTypeBySlug,
-} from "~/utils/api.server";
+import { db } from "~/utils/db.server";
 import { cn, slugify } from "~/utils/helpers";
 import {
   AddBusinessCategorySchema,
@@ -67,7 +59,9 @@ type LoaderData = {
 export const loader: LoaderFunction = async (): Promise<
   TypedResponse<LoaderData>
 > => {
-  const businessCategories = await getBusinessCategoryWithTypes();
+  const businessCategories = await db.businessCategory.findMany({
+    include: { types: true },
+  });
 
   return json({ businessCategories });
 };
@@ -82,9 +76,10 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
       const parseRes = validate(body, AddBusinessCategorySchema);
 
       if (parseRes.success) {
-        const doesExist = await getBusinessCategoryBySlug(
-          slugify(parseRes.data.name),
-        );
+        const { name } = parseRes.data;
+        const doesExist = await db.businessCategory.findUnique({
+          where: { slug: slugify(name) },
+        });
         if (doesExist) {
           return json(
             { error: "Business Category already exists" },
@@ -92,7 +87,9 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
           );
         }
 
-        const businessType = await createBusinessCategory(parseRes.data.name);
+        const businessType = await db.businessCategory.create({
+          data: { name, slug: slugify(name) },
+        });
         if (businessType) {
           return json({
             message: "Business Category added successfully",
@@ -112,9 +109,10 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
       const parseRes = validate(body, AddBusinessTypeSchema);
 
       if (parseRes.success) {
-        const doesExist = await getBusinessTypeBySlug(
-          slugify(parseRes.data.name),
-        );
+        const { name, categoryId: businessCategoryId } = parseRes.data;
+        const doesExist = await db.businessType.findUnique({
+          where: { slug: slugify(name) },
+        });
         if (doesExist) {
           return json(
             { error: "Business Type already exists" },
@@ -122,10 +120,13 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
           );
         }
 
-        const businessType = await createBusinessType(
-          parseRes.data.name,
-          parseRes.data.categoryId,
-        );
+        const businessType = await db.businessType.create({
+          data: {
+            name,
+            slug: slugify(name),
+            businessCategoryId,
+          },
+        });
         if (businessType) {
           return json({
             message: "Business Type added successfully",
@@ -142,12 +143,13 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
       const parseRes = validate(body, DeleteBusinessTypeSchema);
 
       if (parseRes.success) {
-        const business = await getBusinessCountByType(parseRes.data.id);
+        const { id } = parseRes.data;
+        const business = await db.business.count({ where: { typeId: id } });
         if (business) {
           return json({ error: "Business type is in use" }, { status: 409 });
         }
 
-        const res = await deleteBusinessType(parseRes.data.id);
+        const res = await db.businessType.delete({ where: { id } });
         if (res) {
           return json({ message: "Business Type deleted successfully" });
         }

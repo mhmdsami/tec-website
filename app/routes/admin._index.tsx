@@ -4,13 +4,7 @@ import { BadgeCheck, Building, Calendar, CirclePlus } from "lucide-react";
 import { StatsCard } from "~/components/cards";
 import { Button } from "~/components/ui/button";
 import siteConfig from "~/site.config";
-import {
-  getNumberOfBlogs,
-  getNumberOfBusinesses,
-  getNumberOfBusinessTypes,
-  getNumberOfEvents,
-  getNumberOfVerifiedBusinesses,
-} from "~/utils/api.server";
+import { db } from "~/utils/db.server";
 
 type LoaderData = {
   numberOfBusinesses: number;
@@ -28,11 +22,13 @@ export const meta = () => [
 export const loader: LoaderFunction = async (): Promise<
   TypedResponse<LoaderData>
 > => {
-  const numberOfBusinesses = await getNumberOfBusinesses();
-  const numberOfVerifiedBusinesses = await getNumberOfVerifiedBusinesses();
-  const numberOfBusinessTypes = await getNumberOfBusinessTypes();
-  const numberOfEvents = await getNumberOfEvents();
-  const numberOfBlogs = await getNumberOfBlogs();
+  const numberOfBusinesses = await db.business.count();
+  const numberOfVerifiedBusinesses = await db.business.count({
+    where: { isVerified: true },
+  });
+  const numberOfBusinessTypes = await db.businessType.count();
+  const numberOfEvents = await db.event.count();
+  const numberOfBlogs = await db.blog.count();
 
   return json({
     numberOfBusinesses,

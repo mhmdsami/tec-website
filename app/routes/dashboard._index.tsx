@@ -28,7 +28,7 @@ import {
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import { DashboardOutletContext } from "~/routes/dashboard";
 import { ActionResponse } from "~/types";
-import { updateBusiness } from "~/utils/api.server";
+import { db } from "~/utils/db.server";
 import { cn } from "~/utils/helpers";
 import { requireUserId } from "~/utils/session.server";
 import { BusinessUpdateSchema, validate } from "~/utils/validation";
@@ -41,7 +41,10 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
 
   const parseRes = validate(body, BusinessUpdateSchema);
   if (parseRes.success) {
-    await updateBusiness(userId, parseRes.data);
+    await db.business.update({
+      where: { ownerId: userId },
+      data: parseRes.data,
+    });
     return json({ message: "Business updated" });
   }
 

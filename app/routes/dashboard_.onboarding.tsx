@@ -26,12 +26,7 @@ import {
 import { Textarea } from "~/components/ui/textarea";
 import siteConfig from "~/site.config";
 import { ActionResponse } from "~/types";
-import {
-  createBusiness,
-  getBusinessByOwnerId,
-  getBusinessCategoryWithTypes,
-  getUserById,
-} from "~/utils/api.server";
+import { db } from "~/utils/db.server";
 import { cn } from "~/utils/helpers";
 import { requireUserId } from "~/utils/session.server";
 import { BusinessSchema, InferOutput, validate } from "~/utils/validation";
@@ -55,13 +50,15 @@ export const loader: LoaderFunction = async ({
   request,
 }): Promise<TypedResponse<LoaderData>> => {
   const userId = await requireUserId(request);
-  const businessCategories = await getBusinessCategoryWithTypes();
+  const businessCategories = await db.businessCategory.findMany({
+    include: { types: true },
+  });
 
-  const user = await getUserById(userId);
+  const user = await db.user.findUnique({ where: { id: userId } });
   if (!user) return redirect("/sign-in");
   if (user.isAdmin) return redirect("/dashboard");
 
-  const business = await getBusinessByOwnerId(user.id);
+  const business = await db.business.findFirst({ where: { ownerId: userId } });
 
   return json({ user, business, businessCategories });
 };
@@ -69,7 +66,7 @@ export const loader: LoaderFunction = async ({
 export const action: ActionFunction = async ({ request }): ActionResponse => {
   const userId = await requireUserId(request);
 
-  const user = await getUserById(userId);
+  const user = await db.user.findUnique({ where: { id: userId } });
   if (!user) return redirect("/sign-in");
 
   const formData = await request.formData();
@@ -78,7 +75,17 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
   const parseRes = validate(body, BusinessSchema);
   if (parseRes.success) {
     const { typeId, ...business } = parseRes.data;
-    await createBusiness(business, typeId, user.id);
+    await db.business.create({
+      data: {
+        ...business,
+        type: {
+          connect: { id: typeId },
+        },
+        owner: {
+          connect: { id: user.id },
+        },
+      },
+    });
     return redirect("/dashboard");
   }
 

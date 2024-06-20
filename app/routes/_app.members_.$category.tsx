@@ -2,7 +2,7 @@ import { BusinessCategory, BusinessType } from "@prisma-app/client";
 import { LoaderFunction, TypedResponse, json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import useMediaQuery from "~/hooks/use-media-query";
-import { getBusinessCategoryWithTypeBySlug } from "~/utils/api.server";
+import { db } from "~/utils/db.server";
 import { generateGrid, makeNameDisplayable } from "~/utils/helpers";
 
 type LoaderData = {
@@ -18,7 +18,10 @@ export const loader: LoaderFunction = async ({
     throw json({ message: "Category not found" }, { status: 400 });
   }
 
-  const businessCategory = await getBusinessCategoryWithTypeBySlug(category);
+  const businessCategory = await db.businessCategory.findUnique({
+    where: { slug: category },
+    include: { types: true },
+  });
   if (!businessCategory) {
     throw json({ message: "Invalid business category" }, { status: 404 });
   }

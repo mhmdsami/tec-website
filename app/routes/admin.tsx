@@ -2,7 +2,7 @@ import { LoaderFunction, redirect } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
 import Sidebar from "~/components/sidebar";
 import siteConfig from "~/site.config";
-import { getUserById } from "~/utils/api.server";
+import { db } from "~/utils/db.server";
 import { redirectToBasedOnRole } from "~/utils/helpers.server";
 import { requireUserId } from "~/utils/session.server";
 
@@ -14,7 +14,7 @@ export const meta = () => [
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request);
 
-  const user = await getUserById(userId);
+  const user = await db.user.findUnique({ where: { id: userId } });
   if (!user) return redirect("/sign-in");
   const redirectTo = redirectToBasedOnRole(user, "ADMIN");
   if (redirectTo) return redirect(redirectTo);

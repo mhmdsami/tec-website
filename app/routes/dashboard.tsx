@@ -3,7 +3,7 @@ import { LoaderFunction, TypedResponse, json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 import Sidebar from "~/components/sidebar";
 import siteConfig from "~/site.config";
-import { getBusinessByOwnerId, getUserById } from "~/utils/api.server";
+import { db } from "~/utils/db.server";
 import { redirectToBasedOnRole } from "~/utils/helpers.server";
 import { requireUserId } from "~/utils/session.server";
 
@@ -22,12 +22,12 @@ export const loader: LoaderFunction = async ({
 }): Promise<TypedResponse<LoaderData>> => {
   const userId = await requireUserId(request);
 
-  const user = await getUserById(userId);
+  const user = await db.user.findUnique({ where: { id: userId } });
   if (!user) return redirect("/sign-in");
   const redirectTo = redirectToBasedOnRole(user, "BUSINESS");
   if (redirectTo) return redirect(redirectTo);
 
-  const business = await getBusinessByOwnerId(user.id);
+  const business = await db.business.findFirst({ where: { ownerId: userId } });
   if (!business) return redirect("/dashboard/onboarding");
 
   return json({ user, business });

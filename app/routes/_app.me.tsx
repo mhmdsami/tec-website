@@ -4,11 +4,7 @@ import { useLoaderData } from "@remix-run/react";
 import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { DataTable } from "~/components/data-table";
 import { Badge } from "~/components/ui/badge";
-import {
-  getBusinessEnquiriesByUserId,
-  getGeneralEnquiriesByUserId,
-  getUserById,
-} from "~/utils/api.server";
+import { db } from "~/utils/db.server";
 import { copyToClipboard } from "~/utils/helpers.client";
 import { redirectToBasedOnRole } from "~/utils/helpers.server";
 import { requireUserId } from "~/utils/session.server";
@@ -23,13 +19,16 @@ export const loader: LoaderFunction = async ({
 }): Promise<TypedResponse<LoaderData>> => {
   const userId = await requireUserId(request);
 
-  const user = await getUserById(userId);
+  const user = await db.user.findUnique({ where: { id: userId } });
   if (!user) return redirect("/sign-in");
   const redirectTo = redirectToBasedOnRole(user, "USER");
   if (redirectTo) return redirect(redirectTo);
 
-  const businessEnquiries = await getBusinessEnquiriesByUserId(userId);
-  const generalEnquiries = await getGeneralEnquiriesByUserId(userId);
+  const businessEnquiries = await db.businessEnquiry.findMany({
+    where: { userId },
+    include: { business: true },
+  });
+  const generalEnquiries = await db.enquiry.findMany({ where: { userId } });
 
   return json({ businessEnquiries, generalEnquiries });
 };

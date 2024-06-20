@@ -22,7 +22,7 @@ import {
 } from "~/components/ui/drawer";
 import { Input } from "~/components/ui/input";
 import siteConfig from "~/site.config";
-import { getAllVerifiedBusinesses } from "~/utils/api.server";
+import { db } from "~/utils/db.server";
 import { cn } from "~/utils/helpers";
 import { copyToClipboard } from "~/utils/helpers.client";
 
@@ -38,7 +38,10 @@ type LoaderData = {
 export const loader: LoaderFunction = async (): Promise<
   TypedResponse<LoaderData>
 > => {
-  const businesses = await getAllVerifiedBusinesses();
+  const businesses = await db.business.findMany({
+    where: { isVerified: true },
+    include: { owner: true },
+  });
 
   return json({ businesses });
 };

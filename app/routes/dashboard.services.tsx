@@ -33,13 +33,7 @@ import useActionDataWithDisclosure from "~/hooks/use-action-data-with-disclosure
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import siteConfig from "~/site.config";
 import { ActionResponse } from "~/types";
-import {
-  createService,
-  deleteService,
-  getBusinessByOwnerId,
-  getServicesByBusinessId,
-  updateService,
-} from "~/utils/api.server";
+import { db } from "~/utils/db.server";
 import { cn } from "~/utils/helpers";
 import { requireUserId } from "~/utils/session.server";
 import {
@@ -62,13 +56,15 @@ export const loader: LoaderFunction = async ({
   request,
 }): Promise<TypedResponse<LoaderData>> => {
   const userId = await requireUserId(request);
-  const business = await getBusinessByOwnerId(userId);
+  const business = await db.business.findFirst({ where: { ownerId: userId } });
 
   if (!business) {
     throw redirect("/dashboard/onboarding");
   }
 
-  const services = await getServicesByBusinessId(business.id);
+  const services = await db.service.findMany({
+    where: { businessId: business.id },
+  });
 
   return json({ services });
 };
@@ -81,7 +77,7 @@ export const action: ActionFunction = async ({
   const body = Object.fromEntries(formData.entries());
   const action = formData.get("action");
 
-  const business = await getBusinessByOwnerId(userId);
+  const business = await db.business.findFirst({ where: { ownerId: userId } });
   if (!business) {
     return json({ error: "Business not found" }, { status: 400 });
   }
@@ -91,7 +87,14 @@ export const action: ActionFunction = async ({
       const parseRes = validate(body, AddServiceSchema);
 
       if (parseRes.success) {
-        await createService(parseRes.data, business.id);
+        await db.service.create({
+          data: {
+            ...parseRes.data,
+            business: {
+              connect: { id: business.id },
+            },
+          },
+        });
         return json({ message: "Service added" });
       }
 
@@ -101,8 +104,8 @@ export const action: ActionFunction = async ({
       const parseRes = validate(body, EditServiceSchema);
 
       if (parseRes.success) {
-        const { id, ...service } = parseRes.data;
-        await updateService(id, service);
+        const { id, ...data } = parseRes.data;
+        await db.service.update({ where: { id }, data });
         return json({ message: "Service updated" });
       }
 
@@ -112,7 +115,7 @@ export const action: ActionFunction = async ({
       const parseRes = validate(body, DeleteServiceSchema);
 
       if (parseRes.success) {
-        await deleteService(parseRes.data.id);
+        await db.service.delete({ where: { id: parseRes.data.id } });
         return json({ message: "Service deleted" });
       }
 

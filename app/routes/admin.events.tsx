@@ -36,14 +36,7 @@ import { Textarea } from "~/components/ui/textarea";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import siteConfig from "~/site.config";
 import { ActionResponse } from "~/types";
-import {
-  addEventImage,
-  createEvent,
-  deleteEvent,
-  getAllEvents,
-  getEventById,
-  toggleEventCompletion,
-} from "~/utils/api.server";
+import { db } from "~/utils/db.server";
 import { cn, slugify } from "~/utils/helpers";
 import {
   AddEventImageSchema,
@@ -65,7 +58,7 @@ type LoaderData = {
 export const loader: LoaderFunction = async (): Promise<
   TypedResponse<LoaderData>
 > => {
-  const events = await getAllEvents();
+  const events = await db.event.findMany();
 
   return json({ events });
 };
@@ -89,7 +82,15 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
         return json({ fieldErrors: parseRes.errors }, { status: 400 });
       }
 
-      const event = await createEvent(parseRes.data);
+      const { title, ...details } = parseRes.data;
+
+      const event = await db.event.create({
+        data: {
+          title,
+          slug: slugify(title),
+          ...details,
+        },
+      });
       if (event) {
         return json({ message: "Event added successfully" });
       }
@@ -103,7 +104,8 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
         return json({ fieldErrors: parseRes.errors }, { status: 400 });
       }
 
-      const event = await deleteEvent(parseRes.data.id);
+      const { id } = parseRes.data;
+      const event = await db.event.delete({ where: { id } });
       if (event) {
         return json({ message: "Event deleted successfully" });
       }
@@ -118,13 +120,20 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
         return json({ fieldErrors: parseRes.errors }, { status: 400 });
       }
 
-      const event = await getEventById(parseRes.data.id);
+      const { id, image, description = "" } = parseRes.data;
+      const event = await db.event.findUnique({ where: { id } });
       if (!event) {
         return json({ error: "Event not found" }, { status: 404 });
       }
 
-      const { id, image, description = "" } = parseRes.data;
-      const updatedEvent = await addEventImage(id, image, description);
+      const updatedEvent = await db.event.update({
+        where: { id },
+        data: {
+          images: {
+            push: { url: image, description },
+          },
+        },
+      });
 
       if (updatedEvent) {
         return json({ message: "Image added successfully" });
@@ -140,12 +149,16 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
         return json({ fieldErrors: parseRes.errors }, { status: 400 });
       }
 
-      const event = await getEventById(parseRes.data.id);
+      const { id } = parseRes.data;
+      const event = await db.event.findUnique({ where: { id } });
       if (!event) {
         return json({ error: "Event not found" }, { status: 404 });
       }
 
-      const updatedEvent = await toggleEventCompletion(parseRes.data.id);
+      const updatedEvent = await db.event.update({
+        where: { id },
+        data: { isCompleted: !event.isCompleted },
+      });
       if (updatedEvent) {
         return json({
           message: "Event completion status updated successfully",

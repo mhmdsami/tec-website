@@ -2,7 +2,7 @@ import { Blog } from "@prisma-app/client";
 import { json, LoaderFunction, TypedResponse } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { BlogCard } from "~/components/cards";
-import { getAllBlogs } from "~/utils/api.server";
+import { db } from "~/utils/db.server";
 
 type LoaderData = {
   blogs: Blog[];
@@ -11,7 +11,7 @@ type LoaderData = {
 export const loader: LoaderFunction = async (): Promise<
   TypedResponse<LoaderData>
 > => {
-  const blogs = await getAllBlogs();
+  const blogs = await db.blog.findMany();
 
   return json({ blogs });
 };

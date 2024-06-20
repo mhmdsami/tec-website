@@ -17,7 +17,7 @@ import {
   CarouselPrevious,
 } from "~/components/ui/carousel";
 import siteConfig from "~/site.config";
-import { getLatestBlogs, getLatestEvents } from "~/utils/api.server";
+import { db } from "~/utils/db.server";
 
 export const meta: MetaFunction = () => {
   return [
@@ -37,8 +37,15 @@ type LoaderData = {
 export const loader: LoaderFunction = async (): Promise<
   TypedResponse<LoaderData>
 > => {
-  const events = await getLatestEvents();
-  const blogs = await getLatestBlogs();
+  const events = await db.event.findMany({
+    where: { isCompleted: true },
+    take: 2,
+    orderBy: { createdAt: "desc" },
+  });
+  const blogs = await db.blog.findMany({
+    take: 2,
+    orderBy: { createdAt: "desc" },
+  });
 
   return json({ events, blogs });
 };

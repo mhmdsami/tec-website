@@ -35,13 +35,9 @@ import { Textarea } from "~/components/ui/textarea";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import { AppOutletContext } from "~/routes/_app";
 import { ActionResponse } from "~/types";
-import {
-  getBusinessByType,
-  getBusinessCategoryWithTypeBySlug,
-  makeGeneralEnquiry,
-} from "~/utils/api.server";
-import { errorHandler } from "~/utils/error.server";
+import { db } from "~/utils/db.server";
 import { copyToClipboard } from "~/utils/helpers.client";
+import { errorHandler } from "~/utils/helpers.server";
 import { requireUserId } from "~/utils/session.server";
 import { EnquirySchema, validate } from "~/utils/validation";
 
@@ -63,7 +59,10 @@ export const loader: LoaderFunction = async ({
     throw json({ message: "Type not found" }, { status: 400 });
   }
 
-  const businessCategory = await getBusinessCategoryWithTypeBySlug(category);
+  const businessCategory = await db.businessCategory.findUnique({
+    where: { slug: category },
+    include: { types: true },
+  });
   if (!businessCategory) {
     throw json({ message: "Invalid business category" }, { status: 404 });
   }
@@ -73,7 +72,10 @@ export const loader: LoaderFunction = async ({
     throw json({ message: "Invalid type of business" }, { status: 404 });
   }
 
-  const businesses = await getBusinessByType(businessType.id);
+  const businesses = await db.business.findMany({
+    where: { typeId: businessType.id, isVerified: true },
+    include: { owner: true },
+  });
 
   return json({ businessType, businesses });
 };
@@ -100,7 +102,17 @@ export const action: ActionFunction = async ({
 
   if (parseRes.success) {
     try {
-      await makeGeneralEnquiry(parseRes.data, userId, type);
+      await db.enquiry.create({
+        data: {
+          ...parseRes.data,
+          businessType: {
+            connect: { slug: type },
+          },
+          user: {
+            connect: { id: userId },
+          },
+        },
+      });
       return json({ message: "Enquiry sent" });
     } catch (error) {
       const { status, message } = errorHandler(error as Error);

@@ -2,7 +2,7 @@ import { Blog } from "@prisma-app/client";
 import { json, LoaderFunction, TypedResponse } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { Calendar } from "lucide-react";
-import { getBlogById } from "~/utils/api.server";
+import { db } from "~/utils/db.server";
 
 type LoaderData = {
   blog: Blog;
@@ -17,7 +17,7 @@ export const loader: LoaderFunction = async ({
     throw new Error("Blog id not found");
   }
 
-  const blog = await getBlogById(id);
+  const blog = await db.blog.findUnique({ where: { id } });
 
   if (!blog) {
     throw new Error("Blog not found");

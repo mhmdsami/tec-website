@@ -24,10 +24,7 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { AppOutletContext } from "~/routes/_app";
-import {
-  getAllVerifiedBusinesses,
-  getBusinessCategoryWithTypes,
-} from "~/utils/api.server";
+import { db } from "~/utils/db.server";
 import { copyToClipboard } from "~/utils/helpers.client";
 
 type LoaderData = {
@@ -38,8 +35,13 @@ type LoaderData = {
 export const loader: LoaderFunction = async ({
   params,
 }): Promise<TypedResponse<LoaderData>> => {
-  const businessCategories = await getBusinessCategoryWithTypes();
-  const businesses = await getAllVerifiedBusinesses();
+  const businessCategories = await db.businessCategory.findMany({
+    include: { types: true },
+  });
+  const businesses = await db.business.findMany({
+    where: { isVerified: true },
+    include: { owner: true },
+  });
 
   return json({ businessCategories, businesses });
 };
