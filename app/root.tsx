@@ -38,7 +38,7 @@ function Layout({ children }: { children: ReactNode }) {
         />
         <meta property="og:url" content={siteConfig.baseUrl} />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="/logomark.png" />
+        <meta property="og:image" content="/tec.png" />
         <link rel="icon" type="image/png" href="/logomark.png" />
         <Meta />
         <Links />
