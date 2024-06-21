@@ -61,9 +61,8 @@ export default function Index() {
             Tirunelveli Economic Chamber
           </h1>
           <p className="text-sm text-muted-foreground">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris
-            porta imperdiet turpis nonvarius. Nam et neque lobortis, eleifend
-            libero non, finibus magna.
+            A chamber of commerce or business association to promote the
+            economic interests of its members and the broader community.
           </p>
         </div>
         <div className="sm:basis-1/2">
@@ -71,14 +70,27 @@ export default function Index() {
         </div>
       </div>
       <div className="flex flex-col gap-5 md:flex-row">
-        <div className="flex basis-1/2 flex-col">
+        <div className="flex basis-1/2 flex-col gap-2">
           <h1 className="text-2xl font-bold lg:text-3xl">About Us</h1>
+          <h2 className="text-2xl font-semibold">
+            Welcome to Tirunelveli Economic Chamber
+          </h2>
           <p className="text-lg">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris
-            porta imperdiet turpis nonvarius. Nam et neque lobortis, eleifend
-            libero non, finibus magna. Donec nec nisi vel nunc ultrices
-            fermentum. Donec auctor, libero ac ultricies ultricies, nunc nunc
-            ultricies.
+            At TEC, we are dedicated to provide business connections and promote
+            trade and investments. Since our inception in 2023, we have been
+            committed to provide platforms for business support and services
+            striving to create integrated sustainable development plan
+          </p>
+          <h2 className="text-2xl font-semibold">Vision</h2>
+          <p className="text-lg">
+            Fostering the creation and growth of every individual as the
+            cornerstone of societal advancement.
+          </p>
+          <h2 className="text-2xl font-semibold">Mission</h2>
+          <p className="text-lg">
+            Collaborating with others to advance society, fostering partnerships
+            instead of competition, and supporting the growth of those who
+            provide social services
           </p>
         </div>
         <Carousel className="basis-1/2">
@@ -100,12 +112,13 @@ export default function Index() {
         </Carousel>
       </div>
       <div className="flex flex-col gap-5 md:flex-row">
-        <div className="flex basis-1/2 flex-col items-center gap-5 rounded-2xl border-4 border-secondary p-10 text-center">
+        <div className="flex basis-1/2 flex-col items-center gap-5 rounded-2xl border-4 border-secondary p-10 text-justify">
           <h1 className="text-2xl font-bold lg:text-3xl">Search</h1>
           <p className="text-lg">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris
-            porta imperdiet turpis nonvarius. Nam et neque lobortis, eleifend
-            libero non, finibus magna.
+            Welcome to the Economic Chamber’s Search Facility! Our comprehensive
+            search tool is designed to help you quickly find the information,
+            resources, and connections you need to thrive in today’s dynamic
+            business environment.
           </p>
           <Button asChild className="w-fit">
             <Link to="/members" prefetch="intent">
@@ -113,14 +126,20 @@ export default function Index() {
             </Link>
           </Button>
         </div>
-        <div className="flex basis-1/2 flex-col items-center gap-5 rounded-2xl bg-secondary p-10 text-center">
+        <div className="flex basis-1/2 flex-col items-center gap-5 rounded-2xl bg-secondary p-10 text-justify">
           <h1 className="text-2xl font-bold lg:text-3xl">Join Us</h1>
           <p className="text-lg">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris
-            porta imperdiet turpis nonvarius. Nam et neque lobortis, eleifend
-            libero non, finibus magna. Donec nec nisi vel nunc ultrices
-            fermentum. Donec auctor, libero ac ultricies ultricies, nunc nunc
-            ultricies.
+            Become a member of Tirunelveli Economic Chamber!
+            <br /> <br />
+            At TEC, we believe that the strength of our community lies in the
+            diversity and engagement of our members. By joining us, you become
+            part of a vibrant network of businesses and professionals dedicated
+            to driving economic growth and development. Whether you are a
+            startup, SME, or a large enterprise, our chamber offers valuable
+            resources, opportunities, and support to help you succeed.
+            <br /> <br />
+            Joining our chamber is Easy-Peasy. Just sign in and become a member
+            and enjoy our services!
           </p>
           <Button asChild className="w-fit">
             <Link to="/sign-up" prefetch="intent">
