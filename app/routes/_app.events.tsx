@@ -144,14 +144,15 @@ export default function Events() {
                       <Button className="w-fit self-end">Register</Button>
                     </DialogTrigger>
                     <DialogContent>
-                      <DialogHeader>
+                      <DialogHeader className="px-2">
                         <DialogTitle>Event Registration</DialogTitle>
                         <DialogDescription>
-                          Register for {title}
+                          Register for{" "}
+                          <span className="font-semibold">{title}</span>
                         </DialogDescription>
                       </DialogHeader>
                       <Form
-                        className="flex flex-col gap-3"
+                        className="flex flex-col gap-3 overflow-y-scroll px-2 lg:max-h-[50vh]"
                         onSubmit={handleSubmit((values) =>
                           submit(
                             { ...values, eventId: id },

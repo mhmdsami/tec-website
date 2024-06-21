@@ -39,3 +39,13 @@ export function generateGrid<T>(
 export const makeNameDisplayable = (name: string) => {
   return name.split(/([&/ ])/).join(" ");
 };
+
+export function convertToCSV(arr: Array<any>) {
+  const array = [Object.keys(arr[0])].concat(arr);
+
+  return array
+    .map((values) => {
+      return Object.values(values).toString();
+    })
+    .join("\n");
+}

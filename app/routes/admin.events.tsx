@@ -72,7 +72,6 @@ export const loader: LoaderFunction = async (): Promise<
 };
 
 export const action: ActionFunction = async ({ request }): ActionResponse => {
-  console.log("action triggered");
   const formData = await request.formData();
   const body = Object.fromEntries(formData.entries());
   const action = formData.get("action");
@@ -256,6 +255,14 @@ export default function AdminEvents() {
         cell: ({ row }) => (
           <div className="flex gap-2">
             <ManageEvent {...row.original} />
+            <Button asChild>
+              <a
+                href={`/api/download/registrations/${row.original.id}`}
+                download={`${slugify(row.original.title)}-registrations`}
+              >
+                Registrations
+              </a>
+            </Button>
             <Button
               variant="destructive"
               onClick={() => deleteEvent(row.getValue("id"))}
