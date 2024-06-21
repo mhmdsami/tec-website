@@ -94,6 +94,7 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
 export default function Events() {
   const submit = useSubmit();
   const [isOpen, setIsOpen] = useState(false);
+  const [message, setMessage] = useState("");
   const { upcomingEvents, pastEvents } = useLoaderData<LoaderData>();
   const { businessCategories } = useOutletContext<AppOutletContext>();
 
@@ -120,7 +121,7 @@ export default function Events() {
   useActionDataWithToast({
     onMessage: () => {
       reset();
-      setIsOpen(false);
+      setMessage("Thank you for registering!");
     },
   });
 
@@ -151,106 +152,127 @@ export default function Events() {
                           <span className="font-semibold">{title}</span>
                         </DialogDescription>
                       </DialogHeader>
-                      <Form
-                        className="flex flex-col gap-3 overflow-y-scroll px-2 lg:max-h-[50vh]"
-                        onSubmit={handleSubmit((values) =>
-                          submit(
-                            { ...values, eventId: id },
-                            { method: "POST" },
-                          ),
-                        )}
-                      >
-                        <Input
-                          name="name"
-                          label="Name"
-                          register={register}
-                          errorMessage={errors.name?.message}
-                        />
-                        <Input
-                          name="email"
-                          label="Email"
-                          register={register}
-                          errorMessage={errors.email?.message}
-                        />
-                        <Input
-                          name="phone"
-                          label="Phone"
-                          register={register}
-                          errorMessage={errors.phone?.message}
-                        />
-                        <div className="flex flex-col gap-2">
-                          <Label>Membership</Label>
-                          <Controller
-                            render={({ field }) => (
-                              <Select onValueChange={field.onChange} {...field}>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select a membership" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="true">Member</SelectItem>
-                                  <SelectItem value="false">
-                                    Non-Member
-                                  </SelectItem>
-                                </SelectContent>
-                              </Select>
-                            )}
-                            name="isMember"
-                            control={control}
-                          />
-                          <p
-                            className={cn(
-                              "hidden text-sm text-destructive",
-                              errors.isMember && "block",
-                            )}
+                      {message ? (
+                        <div className="flex flex-col gap-3 px-2">
+                          <p>{message}</p>
+                          <Button
+                            className="w-24 self-end"
+                            onClick={() => {
+                              setIsOpen(false);
+                              setMessage("");
+                            }}
                           >
-                            {errors.isMember?.message}
-                          </p>
+                            Close
+                          </Button>
                         </div>
-                        <Input
-                          name="businessName"
-                          label="Business Name"
-                          register={register}
-                          errorMessage={errors.businessName?.message}
-                        />
-                        <div className="flex flex-col gap-2">
-                          <Label>Business Category</Label>
-                          <Controller
-                            render={({ field }) => (
-                              <Select onValueChange={field.onChange} {...field}>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select a business type" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {businessCategories.map(({ id, name }) => (
-                                    <SelectItem key={id} value={id}>
-                                      {name}
+                      ) : (
+                        <Form
+                          className="flex flex-col gap-3 overflow-y-scroll px-2 lg:max-h-[50vh]"
+                          onSubmit={handleSubmit((values) =>
+                            submit(
+                              { ...values, eventId: id },
+                              { method: "POST" },
+                            ),
+                          )}
+                        >
+                          <Input
+                            name="name"
+                            label="Name"
+                            register={register}
+                            errorMessage={errors.name?.message}
+                          />
+                          <Input
+                            name="email"
+                            label="Email"
+                            register={register}
+                            errorMessage={errors.email?.message}
+                          />
+                          <Input
+                            name="phone"
+                            label="Phone"
+                            register={register}
+                            errorMessage={errors.phone?.message}
+                          />
+                          <div className="flex flex-col gap-2">
+                            <Label>Membership</Label>
+                            <Controller
+                              render={({ field }) => (
+                                <Select
+                                  onValueChange={field.onChange}
+                                  {...field}
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select a membership" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="true">Member</SelectItem>
+                                    <SelectItem value="false">
+                                      Non-Member
                                     </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            )}
-                            name="categoryId"
-                            control={control}
+                                  </SelectContent>
+                                </Select>
+                              )}
+                              name="isMember"
+                              control={control}
+                            />
+                            <p
+                              className={cn(
+                                "hidden text-sm text-destructive",
+                                errors.isMember && "block",
+                              )}
+                            >
+                              {errors.isMember?.message}
+                            </p>
+                          </div>
+                          <Input
+                            name="businessName"
+                            label="Business Name"
+                            register={register}
+                            errorMessage={errors.businessName?.message}
                           />
-                          <p
-                            className={cn(
-                              "hidden text-sm text-destructive",
-                              errors.categoryId && "block",
-                            )}
-                          >
-                            {errors.categoryId?.message}
-                          </p>
-                        </div>
-                        <Textarea
-                          name="location"
-                          label="Location"
-                          register={register}
-                          errorMessage={errors.location?.message}
-                        />
-                        <Button type="submit" className="w-24 self-end">
-                          Add
-                        </Button>
-                      </Form>
+                          <div className="flex flex-col gap-2">
+                            <Label>Business Category</Label>
+                            <Controller
+                              render={({ field }) => (
+                                <Select
+                                  onValueChange={field.onChange}
+                                  {...field}
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select a business type" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {businessCategories.map(({ id, name }) => (
+                                      <SelectItem key={id} value={id}>
+                                        {name}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              )}
+                              name="categoryId"
+                              control={control}
+                            />
+                            <p
+                              className={cn(
+                                "hidden text-sm text-destructive",
+                                errors.categoryId && "block",
+                              )}
+                            >
+                              {errors.categoryId?.message}
+                            </p>
+                          </div>
+                          <Textarea
+                            name="location"
+                            label="Location"
+                            register={register}
+                            errorMessage={errors.location?.message}
+                          />
+                          <Button type="submit" className="w-24 self-end">
+                            Submit
+                          </Button>
+                        </Form>
+                      )}
                     </DialogContent>
                   </Dialog>
                 )}

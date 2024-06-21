@@ -25,12 +25,12 @@ interface NavbarProps {
   isLoggedIn: boolean;
 }
 
-type Links = Array<{ text: string; to: string }>;
+type Links = Array<{ text: string; to: string; isSamePage?: boolean }>;
 
 export default function Navbar({ isLoggedIn }: NavbarProps) {
   const desktopLinks: Links = [
     { text: "Home", to: "/" },
-    { text: "About Us", to: "/about" },
+    { text: "About Us", to: "/#about", isSamePage: true },
     {
       text: "Members",
       to: "/members",
@@ -42,7 +42,7 @@ export default function Navbar({ isLoggedIn }: NavbarProps) {
 
   const mobileLinks: Links = [
     { text: "Home", to: "/" },
-    { text: "About Us", to: "/about" },
+    { text: "About Us", to: "/#about" },
     { text: "Members", to: "/members" },
     { text: "Events", to: "/events" },
     { text: "Blog", to: "/blogs" },
@@ -133,9 +133,18 @@ interface NavbarItemsProps {
 function NavbarItems({ links }: NavbarItemsProps) {
   return (
     <>
-      {links.map((element) => (
-        <NavigationMenuItem key={element.text}>
-          <NavbarLink to={element.to}>{element.text}</NavbarLink>
+      {links.map(({ text, to, isSamePage }) => (
+        <NavigationMenuItem key={text}>
+          {isSamePage ? (
+            <a
+              className={cn(navigationMenuTriggerStyle(), "cursor-pointer")}
+              href={to}
+            >
+              {text}
+            </a>
+          ) : (
+            <NavbarLink to={to}>{text}</NavbarLink>
+          )}
         </NavigationMenuItem>
       ))}
     </>

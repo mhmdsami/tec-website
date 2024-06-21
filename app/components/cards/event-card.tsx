@@ -46,7 +46,7 @@ export default function EventCard({
           </h2>
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex flex-col gap-5">
         <Carousel>
           <CarouselContent>
             {images.map(({ url, description }, idx) => (
@@ -59,7 +59,7 @@ export default function EventCard({
               </CarouselItem>
             ))}
           </CarouselContent>
-          {images.length > 0 && (
+          {images.length > 1 && (
             <div className="mt-5 flex items-center justify-center gap-3">
               <CarouselPrevious className="static translate-y-0" />
               <CarouselNext className="static translate-y-0" />

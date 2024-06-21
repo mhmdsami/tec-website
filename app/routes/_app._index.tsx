@@ -5,7 +5,7 @@ import {
   TypedResponse,
   json,
 } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData, useOutletContext } from "@remix-run/react";
 import { BlogCard, EventCard } from "~/components/cards";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
@@ -18,6 +18,7 @@ import {
 } from "~/components/ui/carousel";
 import siteConfig from "~/site.config";
 import { db } from "~/utils/db.server";
+import { AppOutletContext } from "~/routes/_app";
 
 export const meta: MetaFunction = () => {
   return [
@@ -38,7 +39,6 @@ export const loader: LoaderFunction = async (): Promise<
   TypedResponse<LoaderData>
 > => {
   const events = await db.event.findMany({
-    where: { isCompleted: true },
     take: 2,
     orderBy: { createdAt: "desc" },
   });
@@ -52,6 +52,7 @@ export const loader: LoaderFunction = async (): Promise<
 
 export default function Index() {
   const { events, blogs } = useLoaderData<LoaderData>();
+  const { isLoggedIn } = useOutletContext<AppOutletContext>();
 
   return (
     <main className="mb-10 flex flex-col gap-20">
@@ -60,7 +61,7 @@ export default function Index() {
           <h1 className="text-4xl font-bold lg:text-7xl">
             Tirunelveli Economic Chamber
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-lg text-muted-foreground">
             A chamber of commerce or business association to promote the
             economic interests of its members and the broader community.
           </p>
@@ -69,7 +70,7 @@ export default function Index() {
           <img src="/tec.png" alt="TEC Logo" />
         </div>
       </div>
-      <div className="flex flex-col gap-5 md:flex-row">
+      <div className="flex flex-col gap-5 md:flex-row" id="about">
         <div className="flex basis-1/2 flex-col gap-2">
           <h1 className="text-2xl font-bold lg:text-3xl">About Us</h1>
           <h2 className="text-2xl font-semibold">
@@ -142,9 +143,15 @@ export default function Index() {
             and enjoy our services!
           </p>
           <Button asChild className="w-fit">
-            <Link to="/sign-up" prefetch="intent">
-              Sign Up as a Business
-            </Link>
+            {isLoggedIn ? (
+              <Link to="/dashboard" prefetch="intent">
+                Dashboard
+              </Link>
+              ) : (
+              <Link to="/sign-up" prefetch="intent">
+                Sign Up
+              </Link>
+            )}
           </Button>
         </div>
       </div>
@@ -152,7 +159,13 @@ export default function Index() {
         <h1 className="text-2xl font-bold lg:text-3xl">Latest Events</h1>
         <div className="grid gap-10 md:grid-cols-2">
           {events.map((event, idx) => (
-            <EventCard key={idx} {...event} />
+            <EventCard key={idx} {...event}>
+              <Button asChild className="self-end">
+                <Link to="/events" prefetch="intent">
+                  View Event
+                </Link>
+              </Button>
+            </EventCard>
           ))}
         </div>
       </div>
