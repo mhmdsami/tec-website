@@ -51,10 +51,10 @@ model Business {
 
   isVerified Boolean @default(false)
 
-  type   BusinessType @relation(fields: [typeId], references: [id])
+  type   BusinessType @relation(fields: [typeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   typeId String
 
-  owner   User   @relation(fields: [ownerId], references: [id])
+  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   ownerId String @unique
 
   businessEnquiry BusinessEnquiry[]
@@ -62,11 +62,11 @@ model Business {
 }
 
 model BusinessCategory {
-  id   String @id @default(uuid()) @map("_id")
-  name String
-  slug String @unique
+  id    String         @id @default(uuid()) @map("_id")
+  name  String
+  slug  String         @unique
+  types BusinessType[]
 
-  types             BusinessType[]
   EventRegistration EventRegistration[]
 }
 
@@ -75,7 +75,7 @@ model BusinessType {
   name String
   slug String @unique
 
-  BusinessCategory   BusinessCategory @relation(fields: [businessCategoryId], references: [id])
+  BusinessCategory   BusinessCategory @relation(fields: [businessCategoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   businessCategoryId String
 
   business Business[]
@@ -91,10 +91,10 @@ model Enquiry {
   isResolved Boolean  @default(false)
   createdAt  DateTime @default(now())
 
-  businessType   BusinessType @relation(fields: [businessTypeId], references: [id])
+  businessType   BusinessType @relation(fields: [businessTypeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   businessTypeId String
 
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
 }
 
@@ -107,10 +107,10 @@ model BusinessEnquiry {
   isResolved Boolean  @default(false)
   createdAt  DateTime @default(now())
 
-  business   Business @relation(fields: [businessId], references: [id])
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   businessId String
 
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
 }
 
@@ -127,8 +127,8 @@ model Event {
   date        DateTime
   createdAt   DateTime @default(now())
   images      Image[]
+  isCompleted Boolean  @default(false)
 
-  isCompleted   Boolean             @default(false)
   registrations EventRegistration[]
 }
 
@@ -142,10 +142,10 @@ model EventRegistration {
   isMember     Boolean  @default(false)
   createdAt    DateTime @default(now())
 
-  category   BusinessCategory @relation(fields: [categoryId], references: [id])
+  category   BusinessCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   categoryId String
 
-  event   Event  @relation(fields: [eventId], references: [id])
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   eventId String
 }
 
@@ -163,7 +163,8 @@ model Service {
   title       String
   description String
   image       String?
-  business    Business @relation(fields: [businessId], references: [id])
-  businessId  String
   createdAt   DateTime @default(now())
+
+  business   Business @relation(fields: [businessId], references: [id])
+  businessId String
 }

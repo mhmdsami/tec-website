@@ -71,8 +71,10 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
   const body = Object.fromEntries(formData.entries());
   const action = formData.get("action");
 
+  console.log("action", action);
+
   switch (action) {
-    case "add-category": {
+    case "addCategory": {
       const parseRes = validate(body, AddBusinessCategorySchema);
 
       if (parseRes.success) {
@@ -140,6 +142,7 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
     }
 
     case "delete": {
+      console.log("delete triggered");
       const parseRes = validate(body, DeleteBusinessTypeSchema);
 
       if (parseRes.success) {
@@ -172,13 +175,10 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
 };
 
 export default function AdminManageType() {
-  const submit = useSubmit();
   const { businessCategories } = useLoaderData<LoaderData>();
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-  useActionDataWithToast({
-    onMessage: () => {},
-  });
+  useActionDataWithToast();
 
   const businessTypes = businessCategories.flatMap((category) =>
     category.types.map((type) => ({
@@ -201,15 +201,7 @@ export default function AdminManageType() {
       {
         accessorKey: "id",
         header: "Actions",
-        cell: ({ row }) => (
-          <Button
-            variant="destructive"
-            type="button"
-            onClick={() => deleteBusinessType(row.getValue("id"))}
-          >
-            Delete
-          </Button>
-        ),
+        cell: ({ row }) => <DeleteBusinessType id={row.original.id} />,
       },
     ],
     getCoreRowModel: getCoreRowModel(),
@@ -227,9 +219,6 @@ export default function AdminManageType() {
       table.getColumn("category")?.setFilterValue(value);
     }
   };
-
-  const deleteBusinessType = (id: string) =>
-    submit({ action: "delete", id }, { method: "POST" });
 
   return (
     <main className="flex flex-col gap-5">
@@ -295,7 +284,7 @@ function AddBusinessCategory() {
         <Form
           className="flex flex-col gap-3"
           onSubmit={handleSubmit((values) =>
-            submit({ action: "add-category", ...values }, { method: "POST" }),
+            submit({ action: "addCategory", ...values }, { method: "POST" }),
           )}
         >
           <Input
@@ -417,5 +406,19 @@ function AddBusinessType({
         </Form>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function DeleteBusinessType({ id }: { id: string }) {
+  const submit = useSubmit();
+
+  return (
+    <Button
+      variant="destructive"
+      type="button"
+      onClick={() => submit({ action: "delete", id }, { method: "POST" })}
+    >
+      Delete
+    </Button>
   );
 }
