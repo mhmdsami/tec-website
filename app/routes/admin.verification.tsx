@@ -26,7 +26,7 @@ import {
 } from "~/components/ui/select";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import siteConfig from "~/site.config";
-import { ActionData } from "~/types";
+import { ActionData } from "~/utils/types";
 import { db } from "~/utils/db.server";
 import { copyToClipboard } from "~/utils/helpers.client";
 import { VerifyBusinessSchema, validate } from "~/utils/validation";

@@ -32,7 +32,7 @@ import { Label } from "~/components/ui/label";
 import useActionDataWithDisclosure from "~/hooks/use-action-data-with-disclosure";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import siteConfig from "~/site.config";
-import { ActionResponse } from "~/types";
+import { ActionResponse } from "~/utils/types";
 import { db } from "~/utils/db.server";
 import { cn } from "~/utils/helpers";
 import { requireUserId } from "~/utils/session.server";

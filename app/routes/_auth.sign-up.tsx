@@ -15,7 +15,7 @@ import {
 } from "~/components/ui/select";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import siteConfig from "~/site.config";
-import { ActionResponse } from "~/types";
+import { ActionResponse } from "~/utils/types";
 import { cn } from "~/utils/helpers";
 import { redirectToBasedOnRole } from "~/utils/helpers.server";
 import {

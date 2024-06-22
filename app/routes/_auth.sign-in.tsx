@@ -7,7 +7,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import siteConfig from "~/site.config";
-import type { ActionResponse } from "~/types";
+import type { ActionResponse } from "~/utils/types";
 import { redirectToBasedOnRole } from "~/utils/helpers.server";
 import {
   createUserSession,

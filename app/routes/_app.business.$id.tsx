@@ -27,7 +27,7 @@ import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import { AppOutletContext } from "~/routes/_app";
-import { ActionResponse } from "~/types";
+import { ActionResponse } from "~/utils/types";
 import { db } from "~/utils/db.server";
 import { errorHandler } from "~/utils/helpers.server";
 import { requireUserId } from "~/utils/session.server";

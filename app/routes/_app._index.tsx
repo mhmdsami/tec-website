@@ -71,7 +71,7 @@ export default function Index() {
           className="sm:basis-1/2"
           plugins={[
             Autoplay({
-              delay: 5000,
+              delay: 3000,
               stopOnInteraction: true,
               stopOnMouseEnter: true,
             }),
@@ -133,7 +133,7 @@ export default function Index() {
           className="basis-1/2"
           plugins={[
             Autoplay({
-              delay: 5000,
+              delay: 3000,
             }),
           ]}
         >

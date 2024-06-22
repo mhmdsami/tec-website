@@ -1,6 +1,6 @@
 import { useActionData } from "@remix-run/react";
 import { useEffect, useState } from "react";
-import { ActionData } from "~/types";
+import { ActionData } from "~/utils/types";
 
 export default function useActionDataWithDisclosure() {
   const [isOpen, setIsOpen] = useState(false);

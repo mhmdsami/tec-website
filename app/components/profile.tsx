@@ -1,4 +1,5 @@
 import { Business, Service } from "@prisma-app/client";
+import Autoplay from "embla-carousel-autoplay";
 import {
   Facebook,
   Instagram,
@@ -17,7 +18,15 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "~/components/ui/carousel";
 import siteConfig from "~/site.config";
+import { cn } from "~/utils/helpers";
 import { copyToClipboard } from "~/utils/helpers.client";
 
 interface ProfileProps extends Omit<Business, "createdAt"> {
@@ -46,7 +55,7 @@ export default function Profile({
   const url = `${siteConfig.baseUrl}/business/${id}`;
 
   return (
-    <Card className="w-screen overflow-hidden md:w-full">
+    <Card className="w-screen overflow-hidden md:w-[1000px]">
       <img
         src={coverImage || ""}
         alt={name}
@@ -109,21 +118,44 @@ export default function Profile({
         {services && services.length > 0 && (
           <div className="flex flex-col gap-2">
             <p className="text-xl font-bold">Services</p>
-            <div className="flex flex-col gap-4">
-              {services.map(({ title, description, image }, idx) => (
-                <Card key={idx}>
-                  <CardHeader>
-                    <CardTitle className="text-xl">{title}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex flex-col gap-2">
-                    <p>{description}</p>
-                    {image && (
-                      <img src={image} alt={title} className="rounded-lg" />
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            <Carousel
+              plugins={[
+                Autoplay({
+                  delay: 3000,
+                }),
+              ]}
+            >
+              <CarouselContent>
+                {services.map(({ title, description, image }, idx) => (
+                  <CarouselItem
+                    key={idx}
+                    className={cn(services.length > 1 && "basis-1/2")}
+                  >
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-xl">{title}</CardTitle>
+                      </CardHeader>
+                      <CardContent className="flex flex-col gap-2">
+                        {image && (
+                          <img
+                            src={image}
+                            alt={title}
+                            className="aspect-video object-contain"
+                          />
+                        )}
+                        <p>{description}</p>
+                      </CardContent>
+                    </Card>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              {services.length > 2 && (
+                <div className="mt-5 flex items-center justify-center gap-3">
+                  <CarouselPrevious className="static translate-y-0" />
+                  <CarouselNext className="static translate-y-0" />
+                </div>
+              )}
+            </Carousel>
           </div>
         )}
         <div>

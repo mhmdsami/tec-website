@@ -1,7 +1,7 @@
 import { useActionData } from "@remix-run/react";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
-import { ActionData } from "~/types";
+import { ActionData } from "~/utils/types";
 
 interface UseActionDataWithToastProps {
   onError?: () => void;
