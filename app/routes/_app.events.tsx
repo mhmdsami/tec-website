@@ -36,9 +36,11 @@ import {
 import { Textarea } from "~/components/ui/textarea";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import { AppOutletContext } from "~/routes/_app";
-import { ActionResponse } from "~/utils/types";
+import { sendEmail } from "~/services/mailer";
+import EventRegistration from "~/templates/event-registration";
 import { db } from "~/utils/db.server";
 import { cn } from "~/utils/helpers";
+import { ActionResponse } from "~/utils/types";
 import { AddEventRegistrationSchema, validate } from "~/utils/validation";
 
 type LoaderData = {
@@ -86,6 +88,22 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
   });
   if (!registration) {
     return json({ error: "Failed to register for event" }, { status: 500 });
+  }
+
+  try {
+    await sendEmail(
+      EventRegistration,
+      {
+        name: registration.name,
+        eventName: event.title,
+        description: event.description,
+        imageUrl: event.images[0].url,
+      },
+      details.email,
+      "Event Registration",
+    );
+  } catch (error) {
+    console.error("Failed to send email", error);
   }
 
   return json({ message: "Successfully registered for event" });
