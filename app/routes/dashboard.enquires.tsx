@@ -12,10 +12,10 @@ import { DataTable } from "~/components/data-table";
 import { Button } from "~/components/ui/button";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import siteConfig from "~/site.config";
-import { ActionResponse } from "~/utils/types";
 import { db } from "~/utils/db.server";
 import { copyToClipboard } from "~/utils/helpers.client";
 import { requireUserId } from "~/utils/session.server";
+import { ActionResponse } from "~/utils/types";
 import { ResolveEnquirySchema, validate } from "~/utils/validation";
 
 export const meta = () => [

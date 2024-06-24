@@ -26,9 +26,9 @@ import {
 } from "~/components/ui/select";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import siteConfig from "~/site.config";
-import { ActionData } from "~/utils/types";
 import { db } from "~/utils/db.server";
 import { copyToClipboard } from "~/utils/helpers.client";
+import { ActionData } from "~/utils/types";
 import { VerifyBusinessSchema, validate } from "~/utils/validation";
 
 export const meta = () => [
@@ -92,7 +92,7 @@ export const action: ActionFunction = async ({
 export default function AdminVerification() {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const { businesses } = useLoaderData<LoaderData>();
-  const actionData = useActionDataWithToast();
+  useActionDataWithToast();
 
   const table = useReactTable({
     data: businesses,
@@ -170,7 +170,7 @@ export default function AdminVerification() {
   return (
     <main className="flex flex-col gap-5">
       <h1 className="text-2xl font-bold">Admin Verification</h1>
-      <div className="flex flex-row items-center justify-between gap-2">
+      <div className="flex flex-row flex-wrap items-center justify-between gap-2">
         <Input
           name="email"
           placeholder="Filter emails..."
@@ -178,9 +178,10 @@ export default function AdminVerification() {
           onChange={(event) =>
             table.getColumn("email")?.setFilterValue(event.target.value)
           }
+          className="w-full sm:w-[250px]"
         />
         <Select onValueChange={handleStatusFilterChange} defaultValue="all">
-          <SelectTrigger className="w-[130px]">
+          <SelectTrigger className="w-full sm:w-[130px]">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
@@ -204,7 +205,7 @@ const VerifyButton = ({
 }) => {
   return (
     <Form method="POST">
-      <input hidden name="id" value={id} />
+      <input hidden name="id" value={id} readOnly />
       <Button type="submit" className="w-24">
         {isVerified ? "Unverify" : "Verify"}
       </Button>

@@ -37,9 +37,9 @@ import {
 import useActionDataWithDisclosure from "~/hooks/use-action-data-with-disclosure";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import siteConfig from "~/site.config";
-import { ActionResponse } from "~/utils/types";
 import { db } from "~/utils/db.server";
 import { cn, slugify } from "~/utils/helpers";
+import { ActionResponse } from "~/utils/types";
 import {
   AddBusinessCategorySchema,
   AddBusinessTypeSchema,
@@ -70,8 +70,6 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
   const formData = await request.formData();
   const body = Object.fromEntries(formData.entries());
   const action = formData.get("action");
-
-  console.log("action", action);
 
   switch (action) {
     case "addCategory": {
@@ -142,7 +140,6 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
     }
 
     case "delete": {
-      console.log("delete triggered");
       const parseRes = validate(body, DeleteBusinessTypeSchema);
 
       if (parseRes.success) {
@@ -194,11 +191,6 @@ export default function AdminManageType() {
       { accessorKey: "name", header: "Name" },
       { accessorKey: "category", header: "Category" },
       {
-        accessorKey: "slug",
-        header: "Slug",
-        cell: ({ row }) => `${row.original.categorySlug}/${row.original.slug}`,
-      },
-      {
         accessorKey: "id",
         header: "Actions",
         cell: ({ row }) => <DeleteBusinessType id={row.original.id} />,
@@ -223,7 +215,7 @@ export default function AdminManageType() {
   return (
     <main className="flex flex-col gap-5">
       <h1 className="text-2xl font-bold">Manage Business Type</h1>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <Select onValueChange={handleCategoryFilterChange} defaultValue="all">
           <SelectTrigger className="w-full sm:w-[250px]">
             <SelectValue placeholder="Type" />
@@ -237,7 +229,7 @@ export default function AdminManageType() {
             ))}
           </SelectContent>
         </Select>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <AddBusinessCategory />
           <AddBusinessType businessCategories={businessCategories} />
         </div>
@@ -274,7 +266,9 @@ function AddBusinessCategory() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="w-fit self-end">Add Business Category</Button>
+        <Button className="w-full self-end sm:w-fit">
+          Add Business Category
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -343,7 +337,7 @@ function AddBusinessType({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="w-fit self-end">Add Business Type</Button>
+        <Button className="w-full self-end sm:w-fit">Add Business Type</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

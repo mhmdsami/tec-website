@@ -107,7 +107,7 @@ export default function AdminBusinesses() {
   return (
     <main className="flex flex-col gap-5">
       <h1 className="text-2xl font-bold">Verified Businesses</h1>
-      <div className="flex gap-3">
+      <div className="flex flex-wrap gap-3">
         <Input
           name="name"
           placeholder="Filter name..."
@@ -115,7 +115,7 @@ export default function AdminBusinesses() {
           onChange={(event) =>
             table.getColumn("name")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
+          className="w-full sm:w-[250px]"
         />
         <Input
           name="email"
@@ -124,7 +124,7 @@ export default function AdminBusinesses() {
           onChange={(event) =>
             table.getColumn("email")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
+          className="w-full sm:w-[250px]"
         />
       </div>
       <DataTable table={table} />

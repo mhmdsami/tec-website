@@ -19,18 +19,21 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "~/components/ui/navigation-menu";
+import useMediaQuery from "~/hooks/use-media-query";
 import { cn } from "~/utils/helpers";
 
 interface NavbarProps {
   isLoggedIn: boolean;
 }
 
-type Links = Array<{ text: string; to: string; isSamePage?: boolean }>;
+type Links = Array<{ text: string; to: string }>;
 
 export default function Navbar({ isLoggedIn }: NavbarProps) {
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+
   const desktopLinks: Links = [
     { text: "Home", to: "/" },
-    { text: "About Us", to: "/#about", isSamePage: true },
+    { text: "About Us", to: "/#about" },
     {
       text: "Members",
       to: "/members",
@@ -61,22 +64,22 @@ export default function Navbar({ isLoggedIn }: NavbarProps) {
         <img src="/logomark.png" alt="TEC Logo" className="h-12 w-12" />
       </Link>
       <div className="flex flex-row-reverse gap-3 md:flex-row">
-        <NavigationMenu>
-          <NavigationMenu className="list-none md:hidden">
-            <NavigationMenuItem>
-              <NavigationMenuTrigger showChevron={false}>
-                <Menu />
-              </NavigationMenuTrigger>
-              <NavigationMenuContent className="p-2">
+        <NavigationMenu className="list-none md:hidden">
+          <NavigationMenuItem>
+            <NavigationMenuTrigger showChevron={false}>
+              <Menu />
+            </NavigationMenuTrigger>
+            <NavigationMenuContent className="p-2">
+              <NavigationMenuList className="flex flex-col">
                 <NavbarItems links={mobileLinks} />
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-          </NavigationMenu>
-          <NavigationMenu className="hidden md:flex">
-            <NavigationMenuList>
-              <NavbarItems links={desktopLinks} />
-            </NavigationMenuList>
-          </NavigationMenu>
+              </NavigationMenuList>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+        </NavigationMenu>
+        <NavigationMenu className="hidden md:flex">
+          <NavigationMenuList>
+            <NavbarItems links={desktopLinks} />
+          </NavigationMenuList>
         </NavigationMenu>
         {isLoggedIn ? (
           <DropdownMenu>
@@ -115,15 +118,17 @@ export default function Navbar({ isLoggedIn }: NavbarProps) {
 interface NavbarLinkProps {
   to: string;
   children: ReactNode;
-  className?: string;
 }
 
-const NavbarLink = ({ to, children, className }: NavbarLinkProps) => (
-  <Link to={to} prefetch="intent">
-    <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), className)}>
+const NavbarLink = ({ to, children }: NavbarLinkProps) => (
+  <NavigationMenuLink
+    className={cn(navigationMenuTriggerStyle(), "w-28 lg:w-fit")}
+    asChild
+  >
+    <Link to={to} prefetch="intent">
       {children}
-    </NavigationMenuLink>
-  </Link>
+    </Link>
+  </NavigationMenuLink>
 );
 
 interface NavbarItemsProps {
@@ -131,22 +136,9 @@ interface NavbarItemsProps {
 }
 
 function NavbarItems({ links }: NavbarItemsProps) {
-  return (
-    <>
-      {links.map(({ text, to, isSamePage }) => (
-        <NavigationMenuItem key={text}>
-          {isSamePage ? (
-            <a
-              className={cn(navigationMenuTriggerStyle(), "cursor-pointer")}
-              href={to}
-            >
-              {text}
-            </a>
-          ) : (
-            <NavbarLink to={to}>{text}</NavbarLink>
-          )}
-        </NavigationMenuItem>
-      ))}
-    </>
-  );
+  return links.map(({ text, to }) => (
+    <NavigationMenuItem key={text}>
+      <NavbarLink to={to}>{text}</NavbarLink>
+    </NavigationMenuItem>
+  ));
 }

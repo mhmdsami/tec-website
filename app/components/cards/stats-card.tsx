@@ -36,8 +36,8 @@ const StatsCard = ({
             <Hash size={24} className="text-muted-foreground" />
           )}
         </CardTitle>
-        <CardDescription>
-          <p className="text-muted-foreground">{description}</p>
+        <CardDescription className="text-muted-foreground">
+          {description}
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col">

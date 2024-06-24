@@ -22,5 +22,5 @@ export const {
   AWS_SECRET_ACCESS_KEY,
   AWS_REGION,
   FROM_NAME,
-  FROM_MAIL
+  FROM_MAIL,
 } = parse(EnvSchema, process.env);

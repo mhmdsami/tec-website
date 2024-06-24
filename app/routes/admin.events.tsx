@@ -42,9 +42,9 @@ import {
 import { Textarea } from "~/components/ui/textarea";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import siteConfig from "~/site.config";
-import { ActionResponse } from "~/utils/types";
 import { db } from "~/utils/db.server";
 import { cn, slugify } from "~/utils/helpers";
+import { ActionResponse } from "~/utils/types";
 import {
   AddEventImageSchema,
   AddEventSchema,
@@ -284,7 +284,7 @@ export default function AdminEvents() {
       <h1 className="text-2xl font-bold">Manage Events</h1>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
-          <Button className="w-fit self-end">Add Event</Button>
+          <Button className="w-full sm:w-fit self-end">Add Event</Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
@@ -433,17 +433,15 @@ function ManageEvent({
         )}
         <Form
           className="flex flex-col gap-3"
-          onSubmit={handleSubmit(
-            (values) =>
-              submit(
-                {
-                  action: "update",
-                  ...values,
-                  date: values.date.toISOString(),
-                },
-                { method: "POST" },
-              ),
-            () => console.log("submitted"),
+          onSubmit={handleSubmit((values) =>
+            submit(
+              {
+                action: "update",
+                ...values,
+                date: values.date.toISOString(),
+              },
+              { method: "POST" },
+            ),
           )}
         >
           <input name="id" value={id} hidden />

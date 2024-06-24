@@ -26,8 +26,8 @@ export default function EventCard({
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         <CardDescription className="flex flex-col justify-between sm:flex-row">
-          <h1 className="text-lg">{description}</h1>
-          <h2 className="flex items-center gap-1">
+          <span className="text-lg">{description}</span>
+          <span className="flex items-center gap-1">
             <Calendar size={16} />{" "}
             {new Date(createdAt).toLocaleDateString("en-IN", {
               weekday: "long",
@@ -35,7 +35,7 @@ export default function EventCard({
               month: "long",
               day: "numeric",
             })}
-          </h2>
+          </span>
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-2">

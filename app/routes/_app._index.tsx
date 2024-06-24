@@ -143,7 +143,7 @@ export default function Index() {
                 <img
                   src={`/images/${index + 1}.jpeg`}
                   alt="about us image"
-                  className="aspect-video object-cover rounded-lg"
+                  className="aspect-video rounded-lg object-cover"
                 />
               </CarouselItem>
             ))}
