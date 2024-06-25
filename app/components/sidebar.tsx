@@ -66,6 +66,11 @@ export default function Sidebar({ isAdmin = false }: SidebarProps) {
           icon: <CirclePlus size={22} />,
         },
         {
+          to: "/admin/enquiries",
+          text: "Resolve Enquiries",
+          icon: <CircleHelp size={22} />,
+        },
+        {
           to: "/admin/events",
           text: "Events",
           icon: <Calendar size={22} />,

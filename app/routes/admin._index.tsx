@@ -1,6 +1,6 @@
 import { json, LoaderFunction, TypedResponse } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
-import { BadgeCheck, Building, Calendar, CirclePlus } from "lucide-react";
+import { BadgeCheck, Building, Calendar, CircleHelp, CirclePlus } from "lucide-react";
 import { StatsCard } from "~/components/cards";
 import { Button } from "~/components/ui/button";
 import siteConfig from "~/site.config";
@@ -10,6 +10,7 @@ type LoaderData = {
   numberOfBusinesses: number;
   numberOfVerifiedBusinesses: number;
   numberOfBusinessTypes: number;
+  numberOfEnquiries: number;
   numberOfEvents: number;
   numberOfBlogs: number;
 };
@@ -27,6 +28,7 @@ export const loader: LoaderFunction = async (): Promise<
     where: { isVerified: true },
   });
   const numberOfBusinessTypes = await db.businessType.count();
+  const numberOfEnquiries = await db.contact.count();
   const numberOfEvents = await db.event.count();
   const numberOfBlogs = await db.blog.count();
 
@@ -34,6 +36,7 @@ export const loader: LoaderFunction = async (): Promise<
     numberOfBusinesses,
     numberOfVerifiedBusinesses,
     numberOfBusinessTypes,
+    numberOfEnquiries,
     numberOfEvents,
     numberOfBlogs,
   });
@@ -44,6 +47,7 @@ export default function Admin() {
     numberOfBusinesses,
     numberOfVerifiedBusinesses,
     numberOfBusinessTypes,
+    numberOfEnquiries,
     numberOfEvents,
     numberOfBlogs,
   } = useLoaderData<LoaderData>();
@@ -84,6 +88,18 @@ export default function Admin() {
         <Button className="self-end">
           <Link to="/admin/manage/type" prefetch="intent">
             Manage Business Types
+          </Link>
+        </Button>
+      </StatsCard>
+      <StatsCard
+        title="Enqiuries"
+        description="Contact us enquiries"
+        value={numberOfEnquiries}
+        Icon={CircleHelp}
+      >
+        <Button className="self-end">
+          <Link to="/admin/enquiries" prefetch="intent">
+            View Enquiries
           </Link>
         </Button>
       </StatsCard>

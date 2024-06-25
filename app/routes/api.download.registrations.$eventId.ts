@@ -21,7 +21,11 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   });
   const data = convertToCSV(
     registrations.map((r) => ({
-      ...r,
+      name: r.name,
+      email: r.email,
+      phone: r.phone,
+      businessName: r.businessName,
+      isMember: r.isMember ? "Yes" : "No",
       event: r.event.title,
       category: r.category.name,
     })),

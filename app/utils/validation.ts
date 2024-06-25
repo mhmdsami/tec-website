@@ -44,6 +44,29 @@ export const SignInSchema = object({
   ),
 });
 
+export const ContactFormSchema = object({
+  name: pipe(
+    string("Name is required"),
+    minLength(3, "Name must be at least 3 characters"),
+  ),
+  email: pipe(
+    string("Email is required"),
+    email("Please enter a valid email address"),
+  ),
+  phone: pipe(
+    string("Phone is required"),
+    length(10, "Enter a valid Phone number"),
+  ),
+  message: pipe(
+    string("Message is required"),
+    minLength(5, "Message must be at least 5 characters"),
+  ),
+});
+
+export const ResolveContactSchema = object({
+  id: pipe(string("ID is required"), minLength(1, "ID is required")),
+});
+
 export const BusinessSchema = object({
   name: pipe(
     string("Name is required"),
