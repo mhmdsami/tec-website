@@ -5,16 +5,9 @@ import {
   User,
 } from "@prisma-app/client";
 import { LoaderFunction, TypedResponse, json } from "@remix-run/node";
-import { Link, useLoaderData, useOutletContext } from "@remix-run/react";
-import {
-  ColumnFiltersState,
-  getCoreRowModel,
-  getFilteredRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
+import { useLoaderData, useOutletContext } from "@remix-run/react";
 import { useState } from "react";
-import { DataTable } from "~/components/data-table";
-import { Button } from "~/components/ui/button";
+import BusinessCard from "~/components/cards/business-card";
 import { Input } from "~/components/ui/input";
 import {
   Select,
@@ -25,7 +18,6 @@ import {
 } from "~/components/ui/select";
 import { AppOutletContext } from "~/routes/_app";
 import { db } from "~/utils/db.server";
-import { copyToClipboard } from "~/utils/helpers.client";
 
 type LoaderData = {
   businessCategories: Array<BusinessCategory & { types: BusinessType[] }>;
@@ -47,11 +39,8 @@ export const loader: LoaderFunction = async ({
 };
 
 export default function MembersAll() {
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [category, setCategory] = useState<string | undefined>();
   const { businessCategories } = useOutletContext<AppOutletContext>();
-  const { businesses } = useLoaderData<LoaderData>();
-
+  const { businesses: data } = useLoaderData<LoaderData>();
   const businessTypes = businessCategories.flatMap((category) =>
     category.types.map((type) => ({
       ...type,
@@ -60,87 +49,37 @@ export default function MembersAll() {
     })),
   );
 
-  const table = useReactTable({
-    data: businesses,
-    columns: [
-      { accessorKey: "name", header: "Name" },
-      { accessorKey: "owner.name", header: "Owner" },
-      {
-        accessorKey: "phone",
-        header: "Phone",
-        cell: ({ row }) => (
-          <div
-            className="hover:cursor-pointer"
-            onClick={() =>
-              copyToClipboard(row.getValue("phone"), "Copied to clipboard")
-            }
-          >
-            {row.getValue("phone")}
-          </div>
-        ),
-      },
-      {
-        accessorKey: "email",
-        header: "Email",
-        cell: ({ row }) => (
-          <div
-            className="hover:cursor-pointer"
-            onClick={() =>
-              copyToClipboard(row.getValue("email"), "Copied to clipboard")
-            }
-          >
-            {row.getValue("email")}
-          </div>
-        ),
-      },
-      {
-        accessorKey: "category",
-        header: "Category",
-        cell: ({ row }) => {
-          const type = businessTypes.find(
-            (bt) => bt.id === row.getValue("typeId"),
-          );
+  const [businesses, setBusinesses] = useState(data);
+  const [category, setCategory] = useState<string>("all");
 
-          return type ? type.category : "N/A";
-        },
-      },
-      {
-        accessorKey: "typeId",
-        header: "Type",
-        cell: ({ row }) => {
-          const type = businessTypes.find(
-            (bt) => bt.id === row.getValue("typeId"),
-          );
-
-          return type ? `${type.category}/${type.name}` : "N/A";
-        },
-      },
-      {
-        accessorKey: "id",
-        header: "Details",
-        cell: ({ row }) => (
-          <Button>
-            <Link to={`/business/${row.getValue("id")}`} prefetch="intent">
-              View
-            </Link>
-          </Button>
-        ),
-      },
-    ],
-    getCoreRowModel: getCoreRowModel(),
-    onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
-    state: {
-      columnFilters,
-    },
-  });
-
-  const handleTypeFilterChange = (value: string) => {
-    if (value === "all") {
-      table.getColumn("typeId")?.setFilterValue(undefined);
-    } else {
-      table.getColumn("typeId")?.setFilterValue(value);
+  const handleCategoryFilterChange = (category: string) => {
+    setCategory(category);
+    if (category === "all") {
+      setBusinesses(data);
+      return;
     }
+
+    const types = businessCategories
+      .find((c) => c.slug === category)
+      ?.types.map((t) => t.id);
+    if (!types) return;
+
+    const filteredBusinesses = data.filter((business) =>
+      types.includes(business.typeId),
+    );
+    setBusinesses(filteredBusinesses);
+  };
+
+  const handleTypeFilterChange = (type: string) => {
+    if (category === "all") return;
+
+    const typeId = businessTypes.find((bt) => bt.slug === type)?.id;
+    if (!typeId) return;
+
+    const filteredBusinesses = data.filter(
+      (business) => business.typeId === typeId,
+    );
+    setBusinesses(filteredBusinesses);
   };
 
   return (
@@ -150,31 +89,26 @@ export default function MembersAll() {
           <Input
             name="name"
             placeholder="Search by name"
-            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("name")?.setFilterValue(event.target.value)
-            }
             className="w-full sm:w-[250px]"
-          />
-          <Input
-            name="email"
-            placeholder="Search by email"
-            value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("email")?.setFilterValue(event.target.value)
-            }
-            className="w-full sm:w-[200px]"
+            onChange={(e) => {
+              const value = e.target.value.toLowerCase();
+              setBusinesses(
+                businesses.filter((business) =>
+                  business.name.toLowerCase().includes(value),
+                ),
+              );
+            }}
           />
         </div>
         <div className="flex w-full flex-row flex-wrap items-center gap-2 sm:w-fit">
-          <Select onValueChange={setCategory} defaultValue="all">
+          <Select onValueChange={handleCategoryFilterChange} defaultValue="all">
             <SelectTrigger className="w-full sm:w-[250px]">
               <SelectValue placeholder="Type" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All</SelectItem>
-              {businessCategories.map(({ id, name }) => (
-                <SelectItem key={id} value={id}>
+              {businessCategories.map(({ slug, name }) => (
+                <SelectItem key={slug} value={slug}>
                   {name}
                 </SelectItem>
               ))}
@@ -183,17 +117,17 @@ export default function MembersAll() {
           <Select
             onValueChange={handleTypeFilterChange}
             defaultValue="all"
-            disabled={!category}
+            disabled={category === "all"}
           >
-            <SelectTrigger className="w-full sm:w-[250px]">
+            <SelectTrigger className="w-full sm:w-[250px]" defaultValue="all">
               <SelectValue placeholder="Type" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All</SelectItem>
               {businessCategories
-                .find((c) => c.id === category)
-                ?.types.map(({ id, name }) => (
-                  <SelectItem key={id} value={id}>
+                .find((c) => c.slug === category)
+                ?.types.map(({ slug, name }) => (
+                  <SelectItem key={slug} value={slug}>
                     {name}
                   </SelectItem>
                 ))}
@@ -201,7 +135,15 @@ export default function MembersAll() {
           </Select>
         </div>
       </div>
-      <DataTable table={table} />
+      {businesses.length > 0 ? (
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+          {businesses.map(({ owner: { name }, typeId, ...business }, idx) => (
+            <BusinessCard {...business} owner={name} />
+          ))}
+        </div>
+      ) : (
+        <p>No businesses found</p>
+      )}
     </main>
   );
 }

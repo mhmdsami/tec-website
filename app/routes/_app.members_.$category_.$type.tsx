@@ -8,20 +8,13 @@ import {
 } from "@remix-run/node";
 import {
   Form,
-  Link,
   useLoaderData,
   useOutletContext,
   useSubmit,
 } from "@remix-run/react";
-import {
-  ColumnFiltersState,
-  getCoreRowModel,
-  getFilteredRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { DataTable } from "~/components/data-table";
+import BusinessCard from "~/components/cards/business-card";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -35,7 +28,6 @@ import { Textarea } from "~/components/ui/textarea";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import { AppOutletContext } from "~/routes/_app";
 import { db } from "~/utils/db.server";
-import { copyToClipboard } from "~/utils/helpers.client";
 import { errorHandler } from "~/utils/helpers.server";
 import { requireUserId } from "~/utils/session.server";
 import { ActionResponse } from "~/utils/types";
@@ -127,11 +119,11 @@ export default function Members() {
   const { isLoggedIn } = useOutletContext<AppOutletContext>();
   const submit = useSubmit();
   const [isOpen, setIsOpen] = useState(false);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const {
     businessType: { name },
-    businesses,
+    businesses: data,
   } = useLoaderData<LoaderData>();
+  const [businesses, setBusinesses] = useState(data);
 
   const {
     register,
@@ -155,71 +147,22 @@ export default function Members() {
     },
   });
 
-  const table = useReactTable({
-    data: businesses,
-    columns: [
-      { accessorKey: "name", header: "Name" },
-      { accessorKey: "owner.name", header: "Owner" },
-      {
-        accessorKey: "phone",
-        header: "Phone",
-        cell: ({ row }) => (
-          <div
-            className="hover:cursor-pointer"
-            onClick={() =>
-              copyToClipboard(row.getValue("phone"), "Copied to clipboard")
-            }
-          >
-            {row.getValue("phone")}
-          </div>
-        ),
-      },
-      {
-        accessorKey: "email",
-        header: "Email",
-        cell: ({ row }) => (
-          <div
-            className="hover:cursor-pointer"
-            onClick={() =>
-              copyToClipboard(row.getValue("email"), "Copied to clipboard")
-            }
-          >
-            {row.getValue("email")}
-          </div>
-        ),
-      },
-      {
-        accessorKey: "id",
-        header: "Details",
-        cell: ({ row }) => (
-          <Button>
-            <Link to={`/business/${row.getValue("id")}`} prefetch="intent">
-              View
-            </Link>
-          </Button>
-        ),
-      },
-    ],
-    getCoreRowModel: getCoreRowModel(),
-    onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
-    state: {
-      columnFilters,
-    },
-  });
-
   return (
     <main className="flex flex-col gap-5">
       <h1 className="text-2xl font-bold">{name}</h1>
       <div className="flex items-center justify-between">
         <Input
-          name="email"
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
+          name="name"
+          placeholder="Search by name"
+          className="w-full sm:w-[250px]"
+          onChange={(e) => {
+            const value = e.target.value.toLowerCase();
+            setBusinesses(
+              businesses.filter((business) =>
+                business.name.toLowerCase().includes(value),
+              ),
+            );
+          }}
         />
         {isLoggedIn ? (
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -276,7 +219,15 @@ export default function Members() {
           </Form>
         )}
       </div>
-      <DataTable table={table} />
+      {businesses.length > 0 ? (
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+          {businesses.map(({ owner: { name }, typeId, ...business }, idx) => (
+            <BusinessCard {...business} owner={name} />
+          ))}
+        </div>
+      ) : (
+        <p>No businesses found</p>
+      )}
     </main>
   );
 }
