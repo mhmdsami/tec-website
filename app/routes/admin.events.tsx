@@ -284,7 +284,7 @@ export default function AdminEvents() {
       <h1 className="text-2xl font-bold">Manage Events</h1>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
-          <Button className="w-full sm:w-fit self-end">Add Event</Button>
+          <Button className="w-full self-end sm:w-fit">Add Event</Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>

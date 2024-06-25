@@ -1,4 +1,4 @@
-import { Business, Service } from "@prisma-app/client";
+import { Business } from "@prisma-app/client";
 import Autoplay from "embla-carousel-autoplay";
 import {
   Facebook,
@@ -32,7 +32,6 @@ import { copyToClipboard } from "~/utils/helpers.client";
 interface ProfileProps extends Omit<Business, "createdAt"> {
   children?: ReactNode;
   headerChildren?: ReactNode;
-  services?: Array<Omit<Service, "createdAt"> & { createdAt: string }>;
 }
 
 export default function Profile({
@@ -51,19 +50,27 @@ export default function Profile({
   coverImage,
   headerChildren,
   services,
+  gallery,
 }: ProfileProps) {
   const url = `${siteConfig.baseUrl}/business/${id}`;
 
   return (
-    <Card className="w-screen overflow-hidden md:w-[1000px]">
-      <img
-        src={coverImage || ""}
-        alt={name}
-        className="aspect-video rounded-t-lg object-cover"
-      />
+    <Card className="w-[90vw] md:max-w-[1000px]">
+      {coverImage && (
+        <img
+          src={coverImage}
+          alt={name}
+          className="aspect-video rounded-t-lg object-cover"
+        />
+      )}
       <CardHeader className="flex flex-row justify-between">
         <div className="flex flex-col gap-2">
-          <Avatar className="-mt-20 h-32 w-32 self-start lg:-mt-44 lg:h-80 lg:w-80">
+          <Avatar
+            className={cn(
+              "h-32 w-32 self-start lg:h-80 lg:w-80",
+              coverImage && "-mt-20 lg:-mt-44",
+            )}
+          >
             {logo && <AvatarImage src={logo} alt={name} />}
             <AvatarFallback className="text-3xl">{name[0]}</AvatarFallback>
           </Avatar>
@@ -88,7 +95,7 @@ export default function Profile({
             {phone}
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <MapPin />
           <p>{location}</p>
         </div>
@@ -115,7 +122,7 @@ export default function Profile({
           )}
         </div>
         {children}
-        {services && services.length > 0 && (
+        {services.length > 0 && (
           <div className="flex flex-col gap-2">
             <p className="text-xl font-bold">Services</p>
             <Carousel
@@ -129,7 +136,7 @@ export default function Profile({
                 {services.map(({ title, description, image }, idx) => (
                   <CarouselItem
                     key={idx}
-                    className={cn(services.length > 1 && "basis-1/2")}
+                    className={cn(services.length > 1 && "sm:basis-1/2")}
                   >
                     <Card>
                       <CardHeader>
@@ -146,6 +153,36 @@ export default function Profile({
                         <p>{description}</p>
                       </CardContent>
                     </Card>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              {services.length > 2 && (
+                <div className="mt-5 flex items-center justify-center gap-3">
+                  <CarouselPrevious className="static translate-y-0" />
+                  <CarouselNext className="static translate-y-0" />
+                </div>
+              )}
+            </Carousel>
+          </div>
+        )}
+        {gallery.length > 0 && (
+          <div className="flex flex-col gap-2">
+            <p className="text-xl font-bold">Gallery</p>
+            <Carousel
+              plugins={[
+                Autoplay({
+                  delay: 3000,
+                }),
+              ]}
+            >
+              <CarouselContent>
+                {gallery.map(({ url, description }, idx) => (
+                  <CarouselItem key={idx}>
+                    <img
+                      src={url}
+                      alt={description || "gallery image"}
+                      className="aspect-video rounded-lg object-cover"
+                    />
                   </CarouselItem>
                 ))}
               </CarouselContent>

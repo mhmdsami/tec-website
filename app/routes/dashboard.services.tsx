@@ -1,13 +1,7 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import { Service } from "@prisma-app/client";
-import {
-  ActionFunction,
-  LoaderFunction,
-  TypedResponse,
-  json,
-  redirect,
-} from "@remix-run/node";
-import { Form, useLoaderData, useSubmit } from "@remix-run/react";
+import { ActionFunction, json } from "@remix-run/node";
+import { Form, useOutletContext, useSubmit } from "@remix-run/react";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import ImageUpload from "~/components/image-upload";
@@ -31,6 +25,7 @@ import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import useActionDataWithDisclosure from "~/hooks/use-action-data-with-disclosure";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
+import { DashboardOutletContext } from "~/routes/dashboard";
 import siteConfig from "~/site.config";
 import { db } from "~/utils/db.server";
 import { cn } from "~/utils/helpers";
@@ -47,27 +42,6 @@ export const meta = () => [
   { title: `${siteConfig.name} | Services` },
   { name: "description", content: siteConfig.description },
 ];
-
-type LoaderData = {
-  services: Service[];
-};
-
-export const loader: LoaderFunction = async ({
-  request,
-}): Promise<TypedResponse<LoaderData>> => {
-  const userId = await requireUserId(request);
-  const business = await db.business.findFirst({ where: { ownerId: userId } });
-
-  if (!business) {
-    throw redirect("/dashboard/onboarding");
-  }
-
-  const services = await db.service.findMany({
-    where: { businessId: business.id },
-  });
-
-  return json({ services });
-};
 
 export const action: ActionFunction = async ({
   request,
@@ -87,11 +61,11 @@ export const action: ActionFunction = async ({
       const parseRes = validate(body, AddServiceSchema);
 
       if (parseRes.success) {
-        await db.service.create({
+        await db.business.update({
+          where: { id: business.id },
           data: {
-            ...parseRes.data,
-            business: {
-              connect: { id: business.id },
+            services: {
+              push: parseRes.data,
             },
           },
         });
@@ -105,7 +79,16 @@ export const action: ActionFunction = async ({
 
       if (parseRes.success) {
         const { id, ...data } = parseRes.data;
-        await db.service.update({ where: { id }, data });
+        await db.business.update({
+          where: { id: business.id },
+          data: {
+            services: {
+              set: business.services.map((s) =>
+                s.id === id ? { ...s, ...data } : s,
+              ),
+            },
+          },
+        });
         return json({ message: "Service updated" });
       }
 
@@ -115,7 +98,14 @@ export const action: ActionFunction = async ({
       const parseRes = validate(body, DeleteServiceSchema);
 
       if (parseRes.success) {
-        await db.service.delete({ where: { id: parseRes.data.id } });
+        await db.business.update({
+          where: { id: business.id },
+          data: {
+            services: {
+              set: business.services.filter((s) => s.id !== parseRes.data.id),
+            },
+          },
+        });
         return json({ message: "Service deleted" });
       }
 
@@ -128,7 +118,9 @@ export const action: ActionFunction = async ({
 
 export default function DashboardServices() {
   const submit = useSubmit();
-  const { services } = useLoaderData<LoaderData>();
+  const {
+    business: { services },
+  } = useOutletContext<DashboardOutletContext>();
   const [isOpen, setIsOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -217,18 +209,22 @@ export default function DashboardServices() {
           </Form>
         </DialogContent>
       </Dialog>
-      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-        {services.map((service, idx) => (
-          <ServiceCard key={idx} {...service} />
-        ))}
-      </div>
+      {services.length > 0 ? (
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+          {services.map((service, idx) => (
+            <ServiceCard key={idx} {...service} />
+          ))}
+        </div>
+      ) : (
+        <p className="flex grow items-center justify-center">
+          No services added
+        </p>
+      )}
     </main>
   );
 }
 
-interface ServiceCardProps extends Omit<Service, "createdAt"> {
-  createdAt: string;
-}
+interface ServiceCardProps extends Service {}
 
 function ServiceCard({ id, title, description, image }: ServiceCardProps) {
   const submit = useSubmit();

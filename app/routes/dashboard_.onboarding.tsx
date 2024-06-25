@@ -74,7 +74,7 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
 
   const parseRes = validate(body, BusinessSchema);
   if (parseRes.success) {
-    const { typeId, ...business } = parseRes.data;
+    const { typeId, categoryId, ...business } = parseRes.data;
     await db.business.create({
       data: {
         ...business,

@@ -147,7 +147,7 @@ export default function AdminBlog() {
       <h1 className="text-2xl font-bold">Manage Blogs</h1>
       <Dialog>
         <DialogTrigger asChild>
-          <Button className="w-full sm:w-fit self-end">Add Blog</Button>
+          <Button className="w-full self-end sm:w-fit">Add Blog</Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>

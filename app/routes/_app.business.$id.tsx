@@ -1,5 +1,5 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { Business, Service } from "@prisma-app/client";
+import { Business } from "@prisma-app/client";
 import {
   ActionFunction,
   LoaderFunction,
@@ -35,7 +35,6 @@ import { EnquirySchema, validate } from "~/utils/validation";
 
 type LoaderData = {
   business: Business;
-  services: Service[];
 };
 
 export const loader: LoaderFunction = async ({
@@ -52,11 +51,7 @@ export const loader: LoaderFunction = async ({
     throw json({ message: "Business not found" }, { status: 404 });
   }
 
-  const services = await db.service.findMany({
-    where: { businessId: business.id },
-  });
-
-  return json({ business, services });
+  return json({ business });
 };
 
 export const action: ActionFunction = async ({
@@ -101,7 +96,7 @@ export default function BusinessProfile() {
   const { isLoggedIn } = useOutletContext<AppOutletContext>();
   const submit = useSubmit();
   const [isOpen, setIsOpen] = useState(false);
-  const { business, services } = useLoaderData<LoaderData>();
+  const { business } = useLoaderData<LoaderData>();
 
   const {
     register,
@@ -127,7 +122,7 @@ export default function BusinessProfile() {
 
   return (
     <main className="flex min-h-[80vh] w-full flex-col items-center justify-center gap-5 overflow-scroll">
-      <Profile {...business} services={services}>
+      <Profile {...business}>
         {isLoggedIn ? (
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>

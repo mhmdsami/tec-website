@@ -33,6 +33,18 @@ enum UserType {
   ADMIN
 }
 
+type Service {
+  id          String  @default(uuid())
+  title       String
+  description String
+  image       String?
+}
+
+type Image {
+  url         String
+  description String?
+}
+
 model Business {
   id         String   @id @default(uuid()) @map("_id")
   name       String
@@ -47,6 +59,7 @@ model Business {
   linkedIn   String?
   email      String
   phone      String
+  gallery    Image[]
   createdAt  DateTime @default(now())
 
   isVerified Boolean @default(false)
@@ -58,7 +71,7 @@ model Business {
   ownerId String @unique
 
   businessEnquiry BusinessEnquiry[]
-  service         Service[]
+  services        Service[]
 }
 
 model BusinessCategory {
@@ -114,11 +127,6 @@ model BusinessEnquiry {
   userId String
 }
 
-type Image {
-  url         String
-  description String?
-}
-
 model Event {
   id          String   @id @default(uuid()) @map("_id")
   slug        String   @unique
@@ -156,15 +164,4 @@ model Blog {
   content     String
   image       String
   createdAt   DateTime @default(now())
-}
-
-model Service {
-  id          String   @id @default(uuid()) @map("_id")
-  title       String
-  description String
-  image       String?
-  createdAt   DateTime @default(now())
-
-  business   Business @relation(fields: [businessId], references: [id])
-  businessId String
 }

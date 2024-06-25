@@ -65,8 +65,8 @@ export const BusinessSchema = object({
     string("About is required"),
     minLength(5, "About must be at least 5 characters"),
   ),
-  logo: optional(string()),
-  coverImage: optional(string()),
+  logo: optional(string(), ""),
+  coverImage: optional(string(), ""),
   location: optional(
     pipe(string(), minLength(3, "Location must be at least 3 characters")),
   ),
@@ -264,6 +264,11 @@ export const AddBlogSchema = object({
 
 export const DeleteBlogSchema = object({
   id: pipe(string("ID is required"), minLength(1, "ID is required")),
+});
+
+export const AddImageSchema = object({
+  url: string("Image is required"),
+  description: optional(string()),
 });
 
 export const AddServiceSchema = object({

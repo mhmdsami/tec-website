@@ -6,6 +6,7 @@ import {
   CircleHelp,
   CirclePlus,
   Home,
+  Image,
   LogOut,
   Menu,
   StickyNote,
@@ -86,6 +87,11 @@ export default function Sidebar({ isAdmin = false }: SidebarProps) {
           to: "/dashboard/services",
           text: "Add Service",
           icon: <CirclePlus size={22} />,
+        },
+        {
+          to: "/dashboard/gallery",
+          text: "Gallery",
+          icon: <Image size={22} />,
         },
       ];
 
