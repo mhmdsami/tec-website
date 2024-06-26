@@ -9,7 +9,7 @@ import { Link, useLoaderData, useOutletContext } from "@remix-run/react";
 import Autoplay from "embla-carousel-autoplay";
 import { BlogCard, EventCard } from "~/components/cards";
 import { Button } from "~/components/ui/button";
-import { Card, CardContent } from "~/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import {
   Carousel,
   CarouselContent,
@@ -86,6 +86,9 @@ export default function Index() {
                 images.length > 0 && (
                   <CarouselItem key={idx}>
                     <Card>
+                      <CardHeader>
+                        <CardTitle>Upcoming Event</CardTitle>
+                      </CardHeader>
                       <CardContent className="flex aspect-video flex-col items-center justify-center gap-2 p-6">
                         <img
                           src={images[0].url}
@@ -94,7 +97,7 @@ export default function Index() {
                         />
                         <Button asChild className="self-end">
                           <Link to="/events" prefetch="intent">
-                            View Event
+                            View Details
                           </Link>
                         </Button>
                       </CardContent>

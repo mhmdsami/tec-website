@@ -5,7 +5,7 @@ export default function Footer() {
         <p className="text-sm text-muted-foreground">
           &copy; {new Date().getFullYear()} Tirunelveli Economic Chamber
         </p>
-        <img src="/tec.png" alt="TEC Logo" className="my-2 w-32" />
+        <img src="/tec.png" alt="TEC Logo" className="my-3 w-32" />
       </div>
     </footer>
   );

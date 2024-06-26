@@ -5,7 +5,7 @@ import {
   json,
   type LoaderFunction,
 } from "@remix-run/node";
-import { Form, useLoaderData, useSubmit } from "@remix-run/react";
+import { Form, useLoaderData } from "@remix-run/react";
 import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { CheckCircle2, XCircle } from "lucide-react";
 import { DataTable } from "~/components/data-table";
@@ -143,7 +143,7 @@ export default function AdminEnquiry() {
   });
 
   return (
-    <main className="flex flex-col gap-5 px-10 py-5">
+    <main className="flex flex-col gap-5">
       <h1 className="text-2xl font-bold">Admin Enquiry</h1>
       <DataTable table={table} />
     </main>
@@ -156,8 +156,6 @@ interface MarkAsResolvedProps {
 }
 
 const MarkAsResolved = ({ id, isResolved }: MarkAsResolvedProps) => {
-  const submit = useSubmit();
-
   return (
     <Form method="POST">
       <input name="id" value={id} hidden readOnly />
