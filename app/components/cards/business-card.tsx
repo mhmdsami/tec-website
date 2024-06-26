@@ -10,6 +10,8 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import { copyToClipboard } from "~/utils/helpers.client";
+import { cn } from "~/utils/helpers";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 
 interface BusinessCardProps extends Omit<Business, "typeId" | "createdAt"> {
   owner: string;
@@ -21,14 +23,21 @@ export default function BusinessCard({
   owner,
   phone,
   email,
+  logo,
 }: BusinessCardProps) {
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>{name}</CardTitle>
-        <CardDescription className="text-muted-foreground">
-          {owner}
-        </CardDescription>
+      <CardHeader className="flex flex-row gap-2">
+        <Avatar className="size-24">
+          {logo && <AvatarImage src={logo} alt={name} />}
+          <AvatarFallback className="text-3xl">{name[0]}</AvatarFallback>
+        </Avatar>
+        <div className="flex flex-col">
+          <CardTitle>{name}</CardTitle>
+          <CardDescription className="text-muted-foreground">
+            {owner}
+          </CardDescription>
+        </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <div className="flex items-center gap-2">

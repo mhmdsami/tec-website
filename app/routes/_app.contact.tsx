@@ -45,10 +45,24 @@ export default function Contact() {
     onMessage: reset,
   });
 
+  const address =
+    "17C/4 South Mount Road, Raja Tower 2nd floor, Tirunelveli Town, Tirunelveli - 627006";
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col lg:flex-row">
-        <p className="basis-1/2">Address goes here</p>
+        <div className="basis-1/2">
+          <h1 className="text-2xl font-bold">Contact us</h1>
+          <h2 className="text-lg font-semibold">Address</h2>
+          <p>
+            {address.split(",").map((line) => (
+              <>
+                {line}
+                <br />
+              </>
+            ))}
+          </p>
+        </div>
         <Form
           method="POST"
           className="mx-auto flex w-full grow flex-col justify-center gap-5"
@@ -82,7 +96,7 @@ export default function Contact() {
         </Form>
       </div>
       <iframe
-        src={`https://maps.google.com/maps?q=Chennai/&output=embed`}
+        src={`https://maps.google.com/maps?q=${encodeURIComponent(address)}/&output=embed`}
         style={{ border: 0 }}
         width="100%"
         height="400"
