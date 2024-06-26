@@ -31,28 +31,33 @@ export const sendEmail = async <T extends object>(
   email: string,
   subject: string,
 ) => {
-  const emailHtml = render(<Template {...props} />);
-  const client = await getSesClient();
+  try {
+    const emailHtml = render(<Template {...props} />);
+    const client = await getSesClient();
 
-  const command = new SendEmailCommand({
-    Source: `${FROM_NAME} <${FROM_MAIL}>`,
-    Destination: {
-      ToAddresses: [email],
-    },
-    Message: {
-      Subject: {
-        Charset: "UTF-8",
-        Data: subject,
+    const command = new SendEmailCommand({
+      Source: `${FROM_NAME} <${FROM_MAIL}>`,
+      Destination: {
+        ToAddresses: [email],
       },
-      Body: {
-        Html: {
+      Message: {
+        Subject: {
           Charset: "UTF-8",
-          Data: emailHtml,
+          Data: subject,
+        },
+        Body: {
+          Html: {
+            Charset: "UTF-8",
+            Data: emailHtml,
+          },
         },
       },
-    },
-  });
+    });
 
-  const res = await client.send(command);
-  return res.$metadata.httpStatusCode;
+    const res = await client.send(command);
+    return res.$metadata.httpStatusCode;
+  } catch (error) {
+    console.error("Failed to send email", error);
+    return 500;
+  }
 };

@@ -90,21 +90,17 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
     return json({ error: "Failed to register for event" }, { status: 500 });
   }
 
-  try {
-    await sendEmail(
-      EventRegistration,
-      {
-        name: registration.name,
-        eventName: event.title,
-        description: event.description,
-        imageUrl: event.images[0].url,
-      },
-      details.email,
-      "Event Registration",
-    );
-  } catch (error) {
-    console.error("Failed to send email", error);
-  }
+  await sendEmail(
+    EventRegistration,
+    {
+      name: registration.name,
+      eventName: event.title,
+      description: event.description,
+      imageUrl: event.images[0].url,
+    },
+    details.email,
+    "Event Registration",
+  );
 
   return json({ message: "Successfully registered for event" });
 };
