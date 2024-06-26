@@ -1,6 +1,12 @@
 import { json, LoaderFunction, TypedResponse } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
-import { BadgeCheck, Building, Calendar, CircleHelp, CirclePlus } from "lucide-react";
+import {
+  BadgeCheck,
+  Building,
+  Calendar,
+  CircleHelp,
+  CirclePlus,
+} from "lucide-react";
 import { StatsCard } from "~/components/cards";
 import { Button } from "~/components/ui/button";
 import siteConfig from "~/site.config";

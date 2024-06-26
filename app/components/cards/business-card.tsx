@@ -1,6 +1,7 @@
 import { Business } from "@prisma-app/client";
 import { Link } from "@remix-run/react";
 import { Mail, Phone } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
 import {
   Card,
@@ -10,8 +11,6 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import { copyToClipboard } from "~/utils/helpers.client";
-import { cn } from "~/utils/helpers";
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 
 interface BusinessCardProps extends Omit<Business, "typeId" | "createdAt"> {
   owner: string;

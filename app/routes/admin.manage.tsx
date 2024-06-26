@@ -471,7 +471,9 @@ function DeleteBusinessCategory({ id }: { id: string }) {
     <Button
       variant="destructive"
       type="button"
-      onClick={() => submit({ action: "deleteCategory", id }, { method: "POST" })}
+      onClick={() =>
+        submit({ action: "deleteCategory", id }, { method: "POST" })
+      }
     >
       Delete
     </Button>

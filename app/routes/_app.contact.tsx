@@ -1,12 +1,14 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import { ActionFunction, json } from "@remix-run/node";
 import { Form, useSubmit } from "@remix-run/react";
+import { MapPin, Phone } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import { db } from "~/utils/db.server";
+import { copyToClipboard } from "~/utils/helpers.client";
 import { ActionResponse } from "~/utils/types";
 import { ContactFormSchema, validate } from "~/utils/validation";
 
@@ -53,9 +55,25 @@ export default function Contact() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col lg:flex-row">
-        <div className="basis-1/2">
+        <div className="flex basis-1/2 flex-col gap-2">
           <h1 className="text-2xl font-bold">Contact us</h1>
-          <h2 className="text-lg font-semibold">Address</h2>
+          <h2 className="flex flex-row items-center gap-2 text-lg font-semibold">
+            <Phone /> Phone
+          </h2>
+          <p
+            className="cursor-pointer"
+            onClick={() =>
+              copyToClipboard(
+                "+91 98431 91526",
+                "Copied phone number to clipboard",
+              )
+            }
+          >
+            +91 98431 91526
+          </p>
+          <h2 className="flex flex-row items-center gap-2 text-lg font-semibold">
+            <MapPin /> Address
+          </h2>
           <p>
             {address.split(",").map((line) => (
               <>
