@@ -105,6 +105,26 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
       return json({ fieldErrors: parseRes.errors }, { status: 400 });
     }
 
+    case "deleteCategory": {
+      const parseRes = validate(body, DeleteBusinessTypeSchema);
+
+      if (!parseRes.success) {
+        return json({ fieldErrors: parseRes.errors }, { status: 400 });
+      }
+
+      const { id } = parseRes.data;
+      const res = await db.businessCategory.delete({ where: { id } });
+
+      if (res) {
+        return json({ message: "Business Category deleted successfully" });
+      }
+
+      return json(
+        { error: "Failed to delete Business Category" },
+        { status: 500 },
+      );
+    }
+
     case "add": {
       const parseRes = validate(body, AddBusinessTypeSchema);
 
@@ -171,12 +191,48 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
   }
 };
 
-export default function AdminManageType() {
-  const { businessCategories } = useLoaderData<LoaderData>();
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-
+export default function AdminManage() {
   useActionDataWithToast();
 
+  return (
+    <main className="flex flex-col gap-5">
+      <h1 className="text-2xl font-bold">Manage Category/Type</h1>
+      <div className="flex flex-wrap gap-2 self-end">
+        <AddBusinessCategory />
+        <AddBusinessType />
+      </div>
+      <ManageBusinessCategory />
+      <ManageBusinessType />
+    </main>
+  );
+}
+
+function ManageBusinessCategory() {
+  const { businessCategories } = useLoaderData<LoaderData>();
+  const table = useReactTable({
+    data: businessCategories,
+    columns: [
+      { accessorKey: "name", header: "Name" },
+      {
+        accessorKey: "id",
+        header: "Actions",
+        cell: ({ row }) => <DeleteBusinessCategory id={row.original.id} />,
+      },
+    ],
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+  });
+
+  return (
+    <div className="flex flex-col gap-5">
+      <h1 className="text-xl font-bold">Business Category</h1>
+      <DataTable table={table} />
+    </div>
+  );
+}
+
+function ManageBusinessType() {
+  const { businessCategories } = useLoaderData<LoaderData>();
   const businessTypes = businessCategories.flatMap((category) =>
     category.types.map((type) => ({
       ...type,
@@ -184,7 +240,7 @@ export default function AdminManageType() {
       categorySlug: category.slug,
     })),
   );
-
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const table = useReactTable({
     data: businessTypes,
     columns: [
@@ -213,29 +269,23 @@ export default function AdminManageType() {
   };
 
   return (
-    <main className="flex flex-col gap-5">
-      <h1 className="text-2xl font-bold">Manage Business Type</h1>
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <Select onValueChange={handleCategoryFilterChange} defaultValue="all">
-          <SelectTrigger className="w-full sm:w-[250px]">
-            <SelectValue placeholder="Type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All</SelectItem>
-            {businessCategories.map(({ slug, name }) => (
-              <SelectItem key={slug} value={slug}>
-                {name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <div className="flex flex-wrap gap-2">
-          <AddBusinessCategory />
-          <AddBusinessType businessCategories={businessCategories} />
-        </div>
-      </div>
+    <div className="flex flex-col gap-5">
+      <h1 className="text-xl font-bold">Business Type</h1>
+      <Select onValueChange={handleCategoryFilterChange} defaultValue="all">
+        <SelectTrigger className="w-full sm:w-[250px]">
+          <SelectValue placeholder="Type" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">All</SelectItem>
+          {businessCategories.map(({ slug, name }) => (
+            <SelectItem key={slug} value={slug}>
+              {name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
       <DataTable table={table} />
-    </main>
+    </div>
   );
 }
 
@@ -305,11 +355,8 @@ function AddBusinessCategory() {
   );
 }
 
-function AddBusinessType({
-  businessCategories,
-}: {
-  businessCategories: BusinessCategory[];
-}) {
+function AddBusinessType() {
+  const { businessCategories } = useLoaderData<LoaderData>();
   const submit = useSubmit();
   const {
     register,
@@ -411,6 +458,20 @@ function DeleteBusinessType({ id }: { id: string }) {
       variant="destructive"
       type="button"
       onClick={() => submit({ action: "delete", id }, { method: "POST" })}
+    >
+      Delete
+    </Button>
+  );
+}
+
+function DeleteBusinessCategory({ id }: { id: string }) {
+  const submit = useSubmit();
+
+  return (
+    <Button
+      variant="destructive"
+      type="button"
+      onClick={() => submit({ action: "deleteCategory", id }, { method: "POST" })}
     >
       Delete
     </Button>

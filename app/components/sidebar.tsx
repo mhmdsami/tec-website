@@ -61,8 +61,8 @@ export default function Sidebar({ isAdmin = false }: SidebarProps) {
           icon: <BadgeCheck size={22} />,
         },
         {
-          to: "/admin/manage/type",
-          text: "Add Business Type",
+          to: "/admin/manage",
+          text: "Manage Business Category/Type",
           icon: <CirclePlus size={22} />,
         },
         {

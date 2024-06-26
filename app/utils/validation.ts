@@ -160,6 +160,10 @@ export const AddBusinessCategorySchema = object({
   ),
 });
 
+export const DeleteBusinessCategorySchema = object({
+  id: pipe(string("ID is required"), minLength(1, "ID is required")),
+});
+
 export const AddBusinessTypeSchema = object({
   categoryId: pipe(
     string("Category is required"),

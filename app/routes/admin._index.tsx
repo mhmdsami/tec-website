@@ -86,7 +86,7 @@ export default function Admin() {
         Icon={CirclePlus}
       >
         <Button className="self-end">
-          <Link to="/admin/manage/type" prefetch="intent">
+          <Link to="/admin/manage" prefetch="intent">
             Manage Business Types
           </Link>
         </Button>
