@@ -1,6 +1,6 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import { ActionFunction, json } from "@remix-run/node";
-import { Form } from "@remix-run/react";
+import { Form, useSubmit } from "@remix-run/react";
 import { useForm } from "react-hook-form";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -27,10 +27,12 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
 };
 
 export default function Contact() {
+  const submit = useSubmit();
   const {
     register,
     formState: { errors },
     reset,
+    handleSubmit,
   } = useForm({
     resolver: valibotResolver(ContactFormSchema),
     defaultValues: {
@@ -64,7 +66,11 @@ export default function Contact() {
           </p>
         </div>
         <Form
-          method="POST"
+          onSubmit={handleSubmit((data) =>
+            submit(data, {
+              method: "POST",
+            }),
+          )}
           className="mx-auto flex w-full grow flex-col justify-center gap-5"
         >
           <h1 className="text-left text-xl font-bold">Contact us</h1>
