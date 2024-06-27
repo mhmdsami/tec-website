@@ -26,13 +26,13 @@ const getSesClient = async () => {
 };
 
 export const sendEmail = async <T extends object>(
-  Template: React.FunctionComponent<T>,
+  Template: (props: T) => React.ReactElement,
   props: T,
   email: string,
   subject: string,
 ) => {
   try {
-    const emailHtml = render(<Template {...props} />);
+    const emailHtml = render(Template(props));
     const client = await getSesClient();
 
     const command = new SendEmailCommand({

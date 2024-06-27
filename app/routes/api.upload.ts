@@ -8,7 +8,8 @@ import {
   redirect,
   UploadHandler,
 } from "@remix-run/node";
-import { uploadImage } from "~/utils/upload.server";
+import * as crypto from "node:crypto";
+import { uploadImage } from "~/services/upload.server";
 
 export const loader: LoaderFunction = async () => redirect("/sign-in");
 
@@ -26,8 +27,11 @@ export const action: ActionFunction = async ({ params, request }) => {
         return undefined;
       }
 
-      const uploadedImage = await uploadImage(data, folder);
-      return uploadedImage.secure_url;
+      const uploadedImage = await uploadImage(
+        data,
+        `${folder}/${crypto.randomUUID()}`,
+      );
+      return uploadedImage.Location;
     },
     createMemoryUploadHandler(),
   );

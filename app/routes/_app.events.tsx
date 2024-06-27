@@ -36,7 +36,7 @@ import {
 import { Textarea } from "~/components/ui/textarea";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import { AppOutletContext } from "~/routes/_app";
-import { sendEmail } from "~/services/mailer";
+import { sendEmail } from "~/services/mailer.server";
 import EventRegistration from "~/templates/event-registration";
 import { db } from "~/utils/db.server";
 import { cn } from "~/utils/helpers";
