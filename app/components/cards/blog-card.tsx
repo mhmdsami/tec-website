@@ -40,8 +40,10 @@ export default function EventCard({
       </CardHeader>
       <CardContent className="flex flex-col gap-2">
         <p className="line-clamp-3">{content}</p>
-        <Button className="self-end">
-          <Link to={`/blog/${id}`}>Read More</Link>
+        <Button className="self-end" asChild>
+          <Link to={`/blog/${id}`} prefetch="intent">
+            Read More
+          </Link>
         </Button>
       </CardContent>
     </Card>

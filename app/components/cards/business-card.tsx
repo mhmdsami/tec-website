@@ -39,7 +39,7 @@ export default function BusinessCard({
         </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <a href={`tel:${phone}`}>
             <Phone />
           </a>
@@ -50,7 +50,7 @@ export default function BusinessCard({
             {phone}
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <a href={`tel:${phone}`}>
             <Mail />
           </a>

@@ -19,7 +19,6 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "~/components/ui/navigation-menu";
-import useMediaQuery from "~/hooks/use-media-query";
 import { cn } from "~/utils/helpers";
 
 interface NavbarProps {
@@ -29,8 +28,6 @@ interface NavbarProps {
 type Links = Array<{ text: string; to: string }>;
 
 export default function Navbar({ isLoggedIn }: NavbarProps) {
-  const isDesktop = useMediaQuery("(min-width: 768px)");
-
   const desktopLinks: Links = [
     { text: "Home", to: "/" },
     { text: "About Us", to: "/#about" },
@@ -59,7 +56,7 @@ export default function Navbar({ isLoggedIn }: NavbarProps) {
       <Link
         to="/"
         className="text-3xl font-bold text-primary"
-        prefetch="viewport"
+        prefetch="intent"
       >
         <img src="/logomark.png" alt="TEC Logo" className="h-12 w-12" />
       </Link>
