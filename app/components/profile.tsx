@@ -35,8 +35,8 @@ interface ProfileProps extends Omit<Business, "createdAt"> {
 }
 
 export default function Profile({
-  id,
   name,
+  slug,
   tagline,
   about,
   logo,
@@ -52,7 +52,7 @@ export default function Profile({
   services,
   gallery,
 }: ProfileProps) {
-  const url = `${siteConfig.baseUrl}/business/${id}`;
+  const url = `${siteConfig.baseUrl}/business/${slug}`;
 
   return (
     <Card className="w-[90vw] md:max-w-[1000px]">
@@ -142,12 +142,12 @@ export default function Profile({
                       <CardHeader>
                         <CardTitle className="text-xl">{title}</CardTitle>
                       </CardHeader>
-                      <CardContent className="flex flex-col gap-2">
+                      <CardContent className="flex flex-col gap-3">
                         {image && (
                           <img
                             src={image}
                             alt={title}
-                            className="aspect-video object-contain"
+                            className="aspect-video rounded-lg object-cover"
                           />
                         )}
                         <p>{description}</p>
@@ -177,7 +177,10 @@ export default function Profile({
             >
               <CarouselContent>
                 {gallery.map(({ url, description }, idx) => (
-                  <CarouselItem key={idx}>
+                  <CarouselItem
+                    key={idx}
+                    className="aspect-video overflow-clip"
+                  >
                     <img
                       src={url}
                       alt={description || "gallery image"}

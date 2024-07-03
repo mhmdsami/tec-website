@@ -48,6 +48,7 @@ type Image {
 model Business {
   id         String   @id @default(uuid()) @map("_id")
   name       String
+  slug       String   @unique
   tagline    String
   about      String
   logo       String?

@@ -40,13 +40,13 @@ type LoaderData = {
 export const loader: LoaderFunction = async ({
   params,
 }): Promise<TypedResponse<LoaderData>> => {
-  const id = params.id;
+  const slug = params.slug;
 
-  if (!id) {
-    throw json({ message: "Business id not found" }, { status: 400 });
+  if (!slug) {
+    throw json({ message: "Slug not found" }, { status: 400 });
   }
 
-  const business = await db.business.findUnique({ where: { id } });
+  const business = await db.business.findUnique({ where: { slug } });
   if (!business) {
     throw json({ message: "Business not found" }, { status: 404 });
   }
@@ -58,38 +58,42 @@ export const action: ActionFunction = async ({
   request,
   params,
 }): ActionResponse => {
-  const businessId = params.id;
-  if (!businessId) {
-    return json({ message: "Business id not found" }, { status: 400 });
+  const slug = params.slug;
+  if (!slug) {
+    return json({ message: "Slug not found" }, { status: 400 });
   }
 
-  const userId = await requireUserId(request, `/business/${businessId}`);
-
+  const userId = await requireUserId(request, `/business/${slug}`);
   const formData = await request.formData();
   const body = Object.fromEntries(formData.entries());
   const parseRes = validate(body, EnquirySchema);
 
-  if (parseRes.success) {
-    try {
-      await db.businessEnquiry.create({
-        data: {
-          ...parseRes.data,
-          user: {
-            connect: { id: userId },
-          },
-          business: {
-            connect: { id: businessId },
-          },
-        },
-      });
-      return json({ message: "Enquiry sent" });
-    } catch (error) {
-      const { status, message } = errorHandler(error as Error);
-      return json({ error: message }, { status });
-    }
+  if (!parseRes.success) {
+    return json({ fieldErrors: parseRes.errors }, { status: 400 });
   }
 
-  return json({ fieldErrors: parseRes.errors }, { status: 400 });
+  const business = await db.business.findUnique({ where: { slug } });
+  if (!business) {
+    return json({ message: "Business not found" }, { status: 404 });
+  }
+
+  try {
+    await db.businessEnquiry.create({
+      data: {
+        ...parseRes.data,
+        user: {
+          connect: { id: userId },
+        },
+        business: {
+          connect: { id: business.id },
+        },
+      },
+    });
+    return json({ message: "Enquiry sent" });
+  } catch (error) {
+    const { status, message } = errorHandler(error as Error);
+    return json({ error: message }, { status });
+  }
 };
 
 export default function BusinessProfile() {

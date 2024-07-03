@@ -24,9 +24,10 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { Textarea } from "~/components/ui/textarea";
+import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import siteConfig from "~/site.config";
 import { db } from "~/utils/db.server";
-import { cn } from "~/utils/helpers";
+import { cn, slugify } from "~/utils/helpers";
 import { requireUserId } from "~/utils/session.server";
 import { ActionResponse } from "~/utils/types";
 import { BusinessSchema, InferOutput, validate } from "~/utils/validation";
@@ -73,23 +74,37 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
   const body = Object.fromEntries(formData.entries());
 
   const parseRes = validate(body, BusinessSchema);
-  if (parseRes.success) {
-    const { typeId, categoryId, ...business } = parseRes.data;
-    await db.business.create({
-      data: {
-        ...business,
-        type: {
-          connect: { id: typeId },
-        },
-        owner: {
-          connect: { id: user.id },
-        },
-      },
-    });
-    return redirect("/dashboard");
+  if (!parseRes.success) {
+    return json({ fieldErrors: parseRes.errors }, { status: 400 });
   }
 
-  return json({ fieldErrors: parseRes.errors }, { status: 400 });
+  const { typeId, categoryId, ...business } = parseRes.data;
+  const businessWithSlug = await db.business.findUnique({
+    where: { slug: slugify(business.name) },
+  });
+  if (businessWithSlug) {
+    return json(
+      {
+        error: "Business with this name already exists",
+        fieldErrors: { name: "Business with this name already exists" },
+      },
+      { status: 400 },
+    );
+  }
+
+  await db.business.create({
+    data: {
+      ...business,
+      slug: slugify(business.name),
+      type: {
+        connect: { id: typeId },
+      },
+      owner: {
+        connect: { id: user.id },
+      },
+    },
+  });
+  return redirect("/dashboard");
 };
 
 export default function OnboardingForm() {
@@ -134,6 +149,8 @@ export default function OnboardingForm() {
     ["email", "phone"],
   ];
 
+  const actionData = useActionDataWithToast();
+
   return (
     <div className="flex w-full flex-col gap-5 p-10">
       <h1 className="text-2xl font-bold">Business Onboarding</h1>
@@ -146,9 +163,23 @@ export default function OnboardingForm() {
             <Input
               name="name"
               label="Business Name"
-              errorMessage={errors.name?.message}
+              errorMessage={
+                errors.name?.message || actionData?.fieldErrors?.name
+              }
               register={register}
             />
+            <Input
+              name="slug"
+              value={slugify(watch("name"))}
+              label="Slug"
+              readOnly
+            />
+            <p className="text-sm">
+              Once created your profile will be accessible at{" "}
+              <span className="text-primary">
+                {siteConfig.baseUrl}/business/{slugify(watch("name")) || "slug"}
+              </span>
+            </p>
             <div className="flex flex-col gap-2">
               <Label>Business Category</Label>
               <Controller

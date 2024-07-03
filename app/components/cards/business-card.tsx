@@ -17,8 +17,8 @@ interface BusinessCardProps extends Omit<Business, "typeId" | "createdAt"> {
 }
 
 export default function BusinessCard({
-  id,
   name,
+  slug,
   owner,
   phone,
   email,
@@ -62,7 +62,7 @@ export default function BusinessCard({
           </p>
         </div>
         <Button asChild>
-          <Link to={`/business/${id}`} prefetch="intent">
+          <Link to={`/business/${slug}`} prefetch="intent">
             View
           </Link>
         </Button>
