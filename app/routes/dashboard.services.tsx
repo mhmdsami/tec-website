@@ -119,7 +119,7 @@ export const action: ActionFunction = async ({
 export default function DashboardServices() {
   const submit = useSubmit();
   const {
-    business: { services },
+    business: { slug, services },
   } = useOutletContext<DashboardOutletContext>();
   const [isOpen, setIsOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -188,7 +188,7 @@ export default function DashboardServices() {
                   <ImageUpload
                     imageUrl={watch("image")}
                     onChange={field.onChange}
-                    folder="coverImage"
+                    folder={`services/${slug}`}
                     isUploading={isUploading}
                     setIsUploading={setIsUploading}
                   />
