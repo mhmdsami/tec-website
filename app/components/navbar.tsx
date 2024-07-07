@@ -119,7 +119,7 @@ interface NavbarLinkProps {
 
 const NavbarLink = ({ to, children }: NavbarLinkProps) => (
   <NavigationMenuLink
-    className={cn(navigationMenuTriggerStyle(), "w-28 lg:w-fit")}
+    className={cn(navigationMenuTriggerStyle(), "w-20 sm:w-fit")}
     asChild
   >
     <Link to={to} prefetch="intent">
