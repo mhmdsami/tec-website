@@ -77,13 +77,22 @@ export default function SignIn() {
         errorMessage={errors.email?.message}
         register={register}
       />
-      <Input
-        name="password"
-        label="Password"
-        errorMessage={errors.password?.message}
-        type="password"
-        register={register}
-      />
+      <div className="flex flex-col gap-1">
+        <Input
+          name="password"
+          label="Password"
+          errorMessage={errors.password?.message}
+          type="password"
+          register={register}
+        />
+        <Link
+          prefetch="intent"
+          to="/forgot-password"
+          className="text-xs text-primary underline"
+        >
+          Forgot Password? Reset it now!
+        </Link>
+      </div>
       <Button type="submit" className="text-base font-semibold">
         Sign In
       </Button>

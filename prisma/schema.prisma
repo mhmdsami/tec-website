@@ -27,6 +27,13 @@ model User {
   Business Business?
 }
 
+model ResetRequest {
+  id        String   @id @default(uuid()) @map("_id")
+  email     String
+  token     String   @unique
+  createdAt DateTime @default(now())
+}
+
 enum UserType {
   USER
   BUSINESS

@@ -55,9 +55,9 @@ export const sendEmail = async <T extends object>(
     });
 
     const res = await client.send(command);
-    return res.$metadata.httpStatusCode;
+    return res.$metadata.httpStatusCode === 200;
   } catch (error) {
     console.error("Failed to send email", error);
-    return 500;
+    return false;
   }
 };

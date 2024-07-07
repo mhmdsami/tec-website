@@ -44,6 +44,24 @@ export const SignInSchema = object({
   ),
 });
 
+export const ResetPasswordRequestSchema = object({
+  email: pipe(
+    string("Email is required"),
+    email("Please enter a valid email address"),
+  ),
+});
+
+export const ResetPasswordSchema = object({
+  email: pipe(
+    string("Email is required"),
+    email("Please enter a valid email address"),
+  ),
+  password: pipe(
+    string("Password is required"),
+    minLength(8, "Password must be at least 8 characters"),
+  ),
+});
+
 export const ContactFormSchema = object({
   name: pipe(
     string("Name is required"),

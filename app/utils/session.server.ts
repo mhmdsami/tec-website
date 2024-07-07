@@ -53,6 +53,27 @@ export async function signIn(
   return { success: true, data: { user: user as User } };
 }
 
+export async function resetPassword(
+  email: string,
+  password: string,
+): Promise<
+  { success: false; error: string } | { success: true; data: { user: User } }
+> {
+  const user = await db.user.findUnique({ where: { email } });
+
+  if (!user) {
+    return { success: false, error: "User not found" };
+  }
+
+  const passwordHash = await bcrypt.hash(password, 10);
+  await db.user.update({
+    where: { id: user.id },
+    data: { passwordHash },
+  });
+
+  return { success: true, data: { user: user as User } };
+}
+
 const { commitSession, getSession, destroySession } =
   createCookieSessionStorage({
     cookie: {
