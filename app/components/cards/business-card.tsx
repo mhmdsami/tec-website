@@ -26,7 +26,7 @@ export default function BusinessCard({
 }: BusinessCardProps) {
   return (
     <Card>
-      <CardHeader className="flex flex-row gap-2">
+      <CardHeader className="flex flex-row gap-3">
         <Avatar className="size-24">
           {logo && <AvatarImage src={logo} alt={name} />}
           <AvatarFallback className="text-3xl">{name[0]}</AvatarFallback>
@@ -38,25 +38,25 @@ export default function BusinessCard({
           </CardDescription>
         </div>
       </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        <div className="flex flex-wrap items-center gap-2">
+      <CardContent className="flex flex-col gap-4 overflow-clip">
+        <div className="flex items-center gap-2">
           <a href={`tel:${phone}`}>
             <Phone />
           </a>
           <p
             onClick={() => copyToClipboard(phone, "Phone number copied")}
-            className="hover:cursor-pointer"
+            className="hover:cursor-pointer text-sm lg:text-base"
           >
             {phone}
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex items-center gap-2">
           <a href={`tel:${phone}`}>
             <Mail />
           </a>
           <p
             onClick={() => copyToClipboard(email, "Email copied")}
-            className="hover:cursor-pointer"
+            className="hover:cursor-pointer text-sm lg:text-base"
           >
             {email}
           </p>
