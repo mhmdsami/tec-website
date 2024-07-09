@@ -59,7 +59,7 @@ const BusinessEnquiry = ({ name, enquiry }: BusinessEnquiry) => {
             <Section className="mb-[32px] mt-[32px] text-center">
               <Button
                 className="rounded-md bg-[#2563eb] px-5 py-3 text-center text-[12px] font-semibold text-white no-underline"
-                href={`${siteConfig.baseUrl}/dashboard/enquiries`}
+                href={`${siteConfig.baseUrl}/dashboard/enquires`}
               >
                 Dashboard
               </Button>
