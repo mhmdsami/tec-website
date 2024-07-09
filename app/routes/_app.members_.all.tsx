@@ -138,7 +138,7 @@ export default function MembersAll() {
       {businesses.length > 0 ? (
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
           {businesses.map(({ owner: { name }, typeId, ...business }, idx) => (
-            <BusinessCard {...business} owner={name} />
+            <BusinessCard key={idx} {...business} owner={name} />
           ))}
         </div>
       ) : (
