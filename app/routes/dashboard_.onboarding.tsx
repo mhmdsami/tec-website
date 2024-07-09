@@ -25,7 +25,9 @@ import {
 } from "~/components/ui/select";
 import { Textarea } from "~/components/ui/textarea";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
+import { sendEmail } from "~/services/mailer.server";
 import siteConfig from "~/site.config";
+import OnboardingComplete from "~/templates/onboarding-complete";
 import { db } from "~/utils/db.server";
 import { cn, slugify } from "~/utils/helpers";
 import { requireUserId } from "~/utils/session.server";
@@ -104,6 +106,17 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
       },
     },
   });
+
+  await sendEmail(
+    OnboardingComplete,
+    {
+      name: user.name,
+      businessName: business.name,
+    },
+    user.email,
+    "Business Onboarding Complete",
+  );
+
   return redirect("/dashboard");
 };
 

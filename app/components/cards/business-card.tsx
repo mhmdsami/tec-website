@@ -45,7 +45,7 @@ export default function BusinessCard({
           </a>
           <p
             onClick={() => copyToClipboard(phone, "Phone number copied")}
-            className="hover:cursor-pointer text-sm lg:text-base"
+            className="text-sm hover:cursor-pointer lg:text-base"
           >
             {phone}
           </p>
@@ -56,7 +56,7 @@ export default function BusinessCard({
           </a>
           <p
             onClick={() => copyToClipboard(email, "Email copied")}
-            className="hover:cursor-pointer text-sm lg:text-base"
+            className="text-sm hover:cursor-pointer lg:text-base"
           >
             {email}
           </p>

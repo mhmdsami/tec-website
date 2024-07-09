@@ -14,7 +14,10 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
+import { sendEmail } from "~/services/mailer.server";
 import siteConfig from "~/site.config";
+import SignUpBusiness from "~/templates/sign-up-business";
+import SignUpUser from "~/templates/sign-up-user";
 import { cn } from "~/utils/helpers";
 import { redirectToBasedOnRole } from "~/utils/helpers.server";
 import {
@@ -46,6 +49,14 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
     const res = await signUp(email, name, type, password);
     if (res.success) {
       const { user } = res.data;
+      await sendEmail(
+        user.type === "USER" ? SignUpUser : SignUpBusiness,
+        {
+          name: user.name,
+        },
+        user.email,
+        `Welcome to ${siteConfig.name}`,
+      );
       return createUserSession(
         user.id,
         redirectTo || redirectToBasedOnRole(user) || "/dashboard",

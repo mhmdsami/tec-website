@@ -27,6 +27,8 @@ import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
 import useActionDataWithToast from "~/hooks/use-action-data-with-toast";
 import { AppOutletContext } from "~/routes/_app";
+import { sendEmail } from "~/services/mailer.server";
+import BusinessEnquiry from "~/templates/business-enquiry";
 import { db } from "~/utils/db.server";
 import { errorHandler } from "~/utils/helpers.server";
 import { requireUserId } from "~/utils/session.server";
@@ -72,7 +74,10 @@ export const action: ActionFunction = async ({
     return json({ fieldErrors: parseRes.errors }, { status: 400 });
   }
 
-  const business = await db.business.findUnique({ where: { slug } });
+  const business = await db.business.findUnique({
+    where: { slug },
+    include: { owner: true },
+  });
   if (!business) {
     return json({ message: "Business not found" }, { status: 404 });
   }
@@ -89,6 +94,15 @@ export const action: ActionFunction = async ({
         },
       },
     });
+    await sendEmail(
+      BusinessEnquiry,
+      {
+        name: business.owner.name,
+        enquiry: parseRes.data.message,
+      },
+      business.owner.email,
+      "New Enquiry",
+    );
     return json({ message: "Enquiry sent" });
   } catch (error) {
     const { status, message } = errorHandler(error as Error);
