@@ -200,7 +200,7 @@ export default function Profile({
         )}
         <div>
           <iframe
-            src={`https://maps.google.com/maps?q=${location}/&output=embed`}
+            src={`https://maps.google.com/maps?q=${name}, ${location}/&output=embed`}
             style={{ border: 0 }}
             width="100%"
             height="400"
