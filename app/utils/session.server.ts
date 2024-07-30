@@ -82,7 +82,7 @@ const { commitSession, getSession, destroySession } =
       secrets: [SESSION_SECRET],
       sameSite: "lax",
       path: "/",
-      maxAge: 60 * 60 * 24 * 30,
+      maxAge: 60 * 60 * 24 * 2,
       httpOnly: true,
     },
   });
