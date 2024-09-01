@@ -363,9 +363,10 @@ export const DeleteServiceSchema = object({
 });
 
 export const ReceiptSchema = object({
-  wing: pipe(
-    string("Wing is required"),
-    minLength(3, "Wing must be at least 3 characters"),
+  wing: pipe(string("Wing is required"), minLength(3, "Select a wing")),
+  type: pipe(
+    string("Type is required"),
+    minLength(3, "Type must be at least 3 characters"),
   ),
   name: pipe(
     string("Name is required"),

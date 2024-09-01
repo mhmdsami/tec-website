@@ -113,6 +113,7 @@ export default function AdminReceipt() {
   } = useForm({
     defaultValues: {
       wing: "",
+      type: "",
       name: "",
       phone: "",
       date: new Date(),
@@ -231,6 +232,34 @@ export default function AdminReceipt() {
                     )}
                   >
                     {errors.date?.message}
+                  </p>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Label>Type</Label>
+                  <Controller
+                    render={({ field: { onChange, value } }) => (
+                      <Select onValueChange={onChange} value={value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Membership">
+                            Membership Fee
+                          </SelectItem>
+                          <SelectItem value="Donation">Donation</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                    name="type"
+                    control={control}
+                  />
+                  <p
+                    className={cn(
+                      "hidden text-sm text-destructive",
+                      errors.type && "block",
+                    )}
+                  >
+                    {errors.type?.message}
                   </p>
                 </div>
                 <div className="flex flex-col gap-2">

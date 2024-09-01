@@ -12,6 +12,7 @@ import { Button } from "~/components/ui/button";
 
 interface ReceiptProps {
   receiptNumber: string;
+  type: string;
   date: string;
   name: string;
   phone: string;
@@ -22,6 +23,7 @@ interface ReceiptProps {
 
 export default function Receipt({
   receiptNumber,
+  type,
   date,
   name,
   phone,
@@ -33,7 +35,16 @@ export default function Receipt({
     return null;
   }
 
-  Font.register({ family: "Geist", src: "/fonts/geist.ttf" });
+  Font.register({
+    family: "Geist",
+    src: "/fonts/geist-regular.ttf",
+    fontWeight: "normal",
+  });
+  Font.register({
+    family: "Geist-Bold",
+    src: "/fonts/geist-bold.ttf",
+    fontWeight: "bold",
+  });
 
   return (
     <PDFDownloadLink
@@ -94,7 +105,14 @@ export default function Receipt({
                 }}
               />
               <View style={{ display: "flex", flexDirection: "column" }}>
-                <Text>Tirunelveli Economic Chamber Trust</Text>
+                <Text
+                  style={{
+                    fontFamily: "Geist-Bold",
+                    fontSize: 16,
+                  }}
+                >
+                  Tirunelveli Economic Chamber Trust
+                </Text>
                 <Text>17C/4 South Mount Road, Raja Tower 2nd floor</Text>
                 <Text>Tirunelveli Town - 627006</Text>
               </View>
@@ -113,7 +131,7 @@ export default function Receipt({
                   textAlign: "center",
                 }}
               >
-                Membership Receipt
+                {type} Receipt
               </Text>
             </View>
             <View
@@ -131,23 +149,65 @@ export default function Receipt({
             <View
               style={{
                 fontSize: 14,
-                paddingHorizontal: 20,
-                paddingVertical: 10,
+                padding: 20,
+                border: "1px solid black",
                 display: "flex",
                 flexDirection: "column",
                 gap: 10,
               }}
             >
-              <Text>Business Name/Person Name: {name}</Text>
-              <Text>Phone Number: {phone}</Text>
-              <Text>Address: {address}</Text>
-              <Text>Amount: {amount}</Text>
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 5,
+                }}
+              >
+                <Text>Business Name/Person Name:</Text>
+                <Text style={{ fontFamily: "Geist-Bold" }}>{name}</Text>
+              </View>
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 5,
+                }}
+              >
+                <Text>Phone Number:</Text>
+                <Text style={{ fontFamily: "Geist-Bold" }}>{phone}</Text>
+              </View>
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 5,
+                }}
+              >
+                <Text>Address:</Text>
+                <Text style={{ fontFamily: "Geist-Bold" }}>{address}</Text>
+              </View>
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 5,
+                }}
+              >
+                <Text>Amount:</Text>
+                <Text style={{ fontFamily: "Geist-Bold" }}>{amount}</Text>
+              </View>
             </View>
             <View
               style={{
                 fontSize: 14,
+                marginTop: 20,
                 paddingHorizontal: 20,
-                paddingVertical: 10,
+                paddingVertical: 20,
+                border: "1px solid black",
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "space-between",
