@@ -79,7 +79,9 @@ export const action: ActionFunction = async ({ request }): ActionResponse => {
     return json({ fieldErrors: parseRes.errors }, { status: 400 });
   }
 
-  const lastReceipt = await db.receipt.findFirst();
+  const lastReceipt = await db.receipt.findFirst({
+    orderBy: { createdAt: "desc" },
+  });
   const receiptNumber =
     parseInt(lastReceipt?.receiptNumber.slice(3) || "0") + 1;
   const receipt = await db.receipt.create({
