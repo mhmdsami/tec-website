@@ -2,6 +2,7 @@ import { Blog } from "@prisma-app/client";
 import { json, LoaderFunction, TypedResponse } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { Calendar } from "lucide-react";
+import Markdown from "react-markdown";
 import { db } from "~/utils/db.server";
 
 type LoaderData = {
@@ -48,7 +49,9 @@ export default function BlogPage() {
       <div className="mx-auto max-w-prose object-contain">
         <img src={image} alt={title} className="rounded-md" />
       </div>
-      <p className="mx-auto max-w-prose object-contain">{content}</p>
+      <p className="mx-auto max-w-prose object-contain">
+        <Markdown>{content}</Markdown>
+      </p>
     </main>
   );
 }

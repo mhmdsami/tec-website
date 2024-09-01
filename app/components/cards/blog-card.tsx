@@ -1,6 +1,7 @@
 import { Blog } from "@prisma-app/client";
 import { Link } from "@remix-run/react";
 import { Calendar } from "lucide-react";
+import Markdown from "react-markdown";
 import { Button } from "~/components/ui/button";
 import {
   Card,
@@ -25,10 +26,10 @@ export default function EventCard({
     <Card className="h-fit">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
-        <CardDescription className="flex flex-col justify-between sm:flex-row">
+        <CardDescription className="flex flex-col flex-wrap justify-between sm:flex-row">
           <span className="text-lg">{description}</span>
           <span className="flex items-center gap-1">
-            <Calendar size={16} />{" "}
+            <Calendar size={16} className="" />{" "}
             {new Date(createdAt).toLocaleDateString("en-IN", {
               weekday: "long",
               year: "numeric",
@@ -39,7 +40,7 @@ export default function EventCard({
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-2">
-        <p className="line-clamp-3">{content}</p>
+        <Markdown className="line-clamp-3">{content}</Markdown>
         <Button className="self-end" asChild>
           <Link to={`/blog/${id}`} prefetch="intent">
             Read More

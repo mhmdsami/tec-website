@@ -307,6 +307,23 @@ export const AddBlogSchema = object({
   image: pipe(string("Image is required"), minLength(3, "Image is required")),
 });
 
+export const EditBlogSchema = object({
+  id: pipe(string("ID is required"), minLength(1, "ID is required")),
+  title: pipe(
+    string("Title is required"),
+    minLength(3, "Title must be at least 3 characters"),
+  ),
+  description: pipe(
+    string("Description is required"),
+    minLength(5, "Description must be at least 5 characters"),
+  ),
+  content: pipe(
+    string("Content is required"),
+    minLength(50, "Content must be at least 50 characters"),
+  ),
+  image: pipe(string("Image is required"), minLength(3, "Image is required")),
+});
+
 export const DeleteBlogSchema = object({
   id: pipe(string("ID is required"), minLength(1, "ID is required")),
 });
