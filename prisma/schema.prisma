@@ -136,13 +136,15 @@ model BusinessEnquiry {
 }
 
 model Receipt {
-  id      String   @id @default(uuid()) @map("_id")
-  wing    String
-  name    String
-  phone   String
-  date    DateTime
-  address String
-  amount  Float
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  receiptNumber String   @unique
+  wing          String
+  name          String
+  phone         String
+  date          DateTime
+  address       String
+  amount        Float
+  createdAt     DateTime @default(now())
 }
 
 model Event {
