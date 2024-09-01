@@ -345,6 +345,31 @@ export const DeleteServiceSchema = object({
   id: pipe(string("ID is required"), minLength(1, "ID is required")),
 });
 
+export const ReceiptSchema = object({
+  wing: pipe(
+    string("Wing is required"),
+    minLength(3, "Wing must be at least 3 characters"),
+  ),
+  name: pipe(
+    string("Name is required"),
+    minLength(3, "Name must be at least 3 characters"),
+  ),
+  phone: pipe(
+    string("Phone is required"),
+    length(10, "Enter a valid Phone number"),
+  ),
+  date: date("Date is required"),
+  address: pipe(
+    string("Address is required"),
+    minLength(5, "Address must be at least 5 characters"),
+  ),
+  amount: pipe(
+    string("Amount is required"),
+    minLength(1, "Amount is required"),
+    transform((value) => Number(value)),
+  ),
+});
+
 type ValidatedForm<Schema extends GenericSchema> =
   | {
       success: true;

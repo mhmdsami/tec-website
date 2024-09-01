@@ -9,6 +9,7 @@ import {
   Image,
   LogOut,
   Menu,
+  ReceiptText,
   StickyNote,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -79,6 +80,11 @@ export default function Sidebar({ isAdmin = false }: SidebarProps) {
           to: "/admin/blog",
           text: "Blog",
           icon: <StickyNote size={22} />,
+        },
+        {
+          to: "/admin/receipt",
+          text: "Receipt",
+          icon: <ReceiptText size={22} />,
         },
       ]
     : [
