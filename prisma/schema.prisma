@@ -136,7 +136,7 @@ model BusinessEnquiry {
 }
 
 model Receipt {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  id            String   @id @default(uuid()) @map("_id")
   receiptNumber String   @unique
   type          String
   wing          String
