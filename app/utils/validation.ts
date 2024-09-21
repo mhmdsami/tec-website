@@ -44,6 +44,23 @@ export const SignInSchema = object({
   ),
 });
 
+export const DeleteUserSchema = object({
+  id: pipe(string("ID is required"), minLength(1, "ID is required")),
+});
+
+export const UpdateUserSchema = object({
+  id: pipe(string("ID is required"), minLength(1, "ID is required")),
+  name: pipe(
+    string("Name is required"),
+    minLength(3, "Name must be at least 3 characters"),
+  ),
+  email: pipe(
+    string("Email is required"),
+    email("Please enter a valid email address"),
+  ),
+  type: picklist(["USER", "BUSINESS", "ADMIN"]),
+});
+
 export const ResetPasswordRequestSchema = object({
   email: pipe(
     string("Email is required"),

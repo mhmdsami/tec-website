@@ -40,6 +40,10 @@ export const makeNameDisplayable = (name: string) => {
   return name.split(/([&/ ])/).join(" ");
 };
 
+export const toTitleCase = (str: string) => {
+  return str.slice(0, 1).toUpperCase() + str.slice(1).toLowerCase();
+};
+
 export function convertToCSV(arr: Array<any>) {
   const array = [Object.keys(arr[0])].concat(arr);
 

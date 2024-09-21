@@ -11,6 +11,7 @@ import {
   Menu,
   ReceiptText,
   StickyNote,
+  UserRoundCog,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -58,7 +59,7 @@ export default function Sidebar({ isAdmin = false }: SidebarProps) {
         },
         {
           to: "/admin/verification",
-          text: "Verify",
+          text: "Verify Business",
           icon: <BadgeCheck size={22} />,
         },
         {
@@ -73,17 +74,22 @@ export default function Sidebar({ isAdmin = false }: SidebarProps) {
         },
         {
           to: "/admin/events",
-          text: "Events",
+          text: "Manage Events",
           icon: <Calendar size={22} />,
         },
         {
+          to: "/admin/users",
+          text: "Manage Users",
+          icon: <UserRoundCog size={22} />,
+        },
+        {
           to: "/admin/blog",
-          text: "Blog",
+          text: "Manage Blog",
           icon: <StickyNote size={22} />,
         },
         {
           to: "/admin/receipt",
-          text: "Receipt",
+          text: "Generate Receipt",
           icon: <ReceiptText size={22} />,
         },
       ]
