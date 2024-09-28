@@ -1,6 +1,6 @@
 # tec-website
 
-The official website of Tirunelveli Economic Chamber
+The official website of [Tirunelveli Economic Chamber](https://tirunelvelieconomicchamber.com)
 
 ## Getting Started
 
@@ -38,5 +38,7 @@ pnpm dev
 - [TailwindCSS](https://tailwindcss.com/)
 - [Prisma](https://www.prisma.io/)
 - [MongoDB](https://www.mongodb.com/)
-- [react-hot-toast](https://react-hot-toast.com/)
+- [AWS S3](https://aws.amazon.com/s3/)
+- [AWS SES](https://aws.amazon.com/ses/)
+- [React Email](https://react.email/)
 - [TypeScript](https://www.typescriptlang.org/)
