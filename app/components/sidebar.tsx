@@ -9,6 +9,7 @@ import {
   Image,
   LogOut,
   Menu,
+  NotepadText,
   ReceiptText,
   StickyNote,
   UserRoundCog,
@@ -51,64 +52,69 @@ export default function Sidebar({ isAdmin = false }: SidebarProps) {
 
   const links = isAdmin
     ? [
-        { to: "/admin", text: "Admin", icon: <Home size={22} /> },
+        { to: "/admin", text: "Admin", Icon: Home },
         {
           to: "/admin/businesses",
           text: "Businesses",
-          icon: <Building size={22} />,
+          Icon: Building,
         },
         {
           to: "/admin/verification",
           text: "Verify Business",
-          icon: <BadgeCheck size={22} />,
+          Icon: BadgeCheck,
         },
         {
           to: "/admin/manage",
           text: "Manage Business Category/Type",
-          icon: <CirclePlus size={22} />,
+          Icon: CirclePlus,
         },
         {
           to: "/admin/enquiries",
           text: "Resolve Enquiries",
-          icon: <CircleHelp size={22} />,
+          Icon: CircleHelp,
         },
         {
           to: "/admin/events",
           text: "Manage Events",
-          icon: <Calendar size={22} />,
+          Icon: Calendar,
         },
         {
           to: "/admin/users",
           text: "Manage Users",
-          icon: <UserRoundCog size={22} />,
+          Icon: UserRoundCog,
         },
         {
           to: "/admin/blog",
           text: "Manage Blog",
-          icon: <StickyNote size={22} />,
+          Icon: StickyNote,
         },
         {
           to: "/admin/receipt",
           text: "Generate Receipt",
-          icon: <ReceiptText size={22} />,
+          Icon: ReceiptText,
         },
       ]
     : [
-        { to: "/dashboard", text: "Dashboard", icon: <Home size={22} /> },
+        { to: "/dashboard", text: "Dashboard", Icon: Home },
         {
           to: "/dashboard/enquires",
           text: "Enquires",
-          icon: <CircleHelp size={22} />,
+          Icon: CircleHelp,
         },
         {
           to: "/dashboard/services",
           text: "Add Service",
-          icon: <CirclePlus size={22} />,
+          Icon: CirclePlus,
         },
         {
           to: "/dashboard/gallery",
           text: "Gallery",
-          icon: <Image size={22} />,
+          Icon: Image,
+        },
+        {
+          to: "/dashboard/business-clinic",
+          text: "Business Clinic",
+          Icon: NotepadText,
         },
       ];
 
@@ -130,7 +136,7 @@ export default function Sidebar({ isAdmin = false }: SidebarProps) {
             <img src="/logomark.png" alt="TEC Logo" className="h-8 w-8" />
           </Link>
           <div className="flex flex-col items-center gap-2">
-            {links.map(({ to, text, icon }, idx) => (
+            {links.map(({ to, text, Icon }, idx) => (
               <TooltipProvider key={idx}>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -143,7 +149,7 @@ export default function Sidebar({ isAdmin = false }: SidebarProps) {
                         pathname === to && "bg-primary/10",
                       )}
                     >
-                      {icon}
+                      <Icon size={22} />
                     </Link>
                   </TooltipTrigger>
                   <TooltipContent>

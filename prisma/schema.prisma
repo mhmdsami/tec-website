@@ -80,6 +80,7 @@ model Business {
 
   businessEnquiry BusinessEnquiry[]
   services        Service[]
+  BusinessClinic  BusinessClinic[]
 }
 
 model BusinessCategory {
@@ -195,4 +196,22 @@ model Contact {
   message    String
   createdAt  DateTime @default(now())
   isResolved Boolean  @default(false)
+}
+
+model BusinessClinic {
+  id                      String   @id @default(uuid()) @map("_id")
+  monthlySales            String
+  numberOfEmployees       String
+  haveDepartmentHeads     Boolean
+  numberOfDepartmentHeads String?
+  yearsInBusiness         Int
+  natureOfBusiness        String
+  segmentations           String
+  customerClassification  String
+  challenges              String
+  burningChallenge        String
+  createdAt               DateTime @default(now())
+
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  businessId String
 }

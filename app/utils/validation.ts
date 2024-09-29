@@ -2,6 +2,7 @@ import {
   GenericSchema,
   InferOutput,
   ValiError,
+  check,
   date,
   email,
   includes,
@@ -402,6 +403,94 @@ export const ReceiptSchema = object({
     string("Amount is required"),
     minLength(1, "Amount is required"),
     transform((value) => Number(value)),
+  ),
+});
+
+export const BusinessClinicSchema = object({
+  monthlySales: pipe(
+    string("Monthly sales is required"),
+    picklist(
+      [
+        "Less than 50,000",
+        "50,000 - 1,00,000",
+        "1,00,000 - 2,50,000",
+        "2,50,000 - 5,00,000",
+        "5,00,00 - 10,00,000",
+        "10,00,000 - 25,00,000",
+        "25,00,000 - 50,00,000",
+        "50,00,000 - 1,00,00,000",
+        "More than 1,00,00,000",
+      ],
+      "Select a valid option",
+    ),
+  ),
+  numberOfEmployees: pipe(
+    string("Number of employees is required"),
+    picklist(
+      [
+        "Less than 5",
+        "5 - 10",
+        "10 - 25",
+        "25 - 50",
+        "50 - 100",
+        "More than 100",
+      ],
+      "Select a valid option",
+    ),
+  ),
+  haveDepartmentHeads: pipe(
+    optional(string(), "false"),
+    transform((value) => value === "true"),
+  ),
+  numberOfDepartmentHeads: optional(
+    pipe(
+      string("Select a valid option"),
+      picklist(
+        ["1", "2", "3", "4", "5", "5 to 10", "More than 10"],
+        "Select a valid option",
+      ),
+    ),
+  ),
+  yearsInBusiness: pipe(
+    string("Years in business is required"),
+    transform((n) => parseInt(n)),
+    check((n) => n > 0, "Enter a valid value"),
+  ),
+  natureOfBusiness: pipe(
+    string("Nature of business is required"),
+    picklist(
+      [
+        "Sole Proprietor",
+        "Partnership",
+        "Private Limited Company",
+        "Public Company",
+      ],
+      "Select a valid option",
+    ),
+  ),
+  segmentations: pipe(
+    string("Segmentation is required"),
+    picklist(["B2B", "B2C", "Both"], "Select a valid option"),
+  ),
+  customerClassification: pipe(
+    string("Customer classification is required"),
+    picklist(
+      [
+        "Class A Segment",
+        "Class B Segment",
+        "Class C Segment",
+        "All of the Above",
+      ],
+      "Select a valid option",
+    ),
+  ),
+  challenges: pipe(
+    string("Challenges is required"),
+    minLength(3, "Challenges must be at least 3 characters"),
+  ),
+  burningChallenge: pipe(
+    string("Burning challenge is required"),
+    minLength(3, "Burning challenge must be at least 3 characters"),
   ),
 });
 
