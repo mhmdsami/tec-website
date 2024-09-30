@@ -93,6 +93,11 @@ export default function Sidebar({ isAdmin = false }: SidebarProps) {
           text: "Generate Receipt",
           Icon: ReceiptText,
         },
+        {
+          to: "/admin/business-clinic",
+          text: "Business Clinic",
+          Icon: NotepadText,
+        },
       ]
     : [
         { to: "/dashboard", text: "Dashboard", Icon: Home },
