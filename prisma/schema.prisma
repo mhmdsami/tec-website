@@ -78,9 +78,11 @@ model Business {
   owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   ownerId String @unique
 
-  businessEnquiry BusinessEnquiry[]
-  services        Service[]
-  BusinessClinic  BusinessClinic[]
+  businessEnquiry      BusinessEnquiry[]
+  services             Service[]
+  businessClinic       BusinessClinic[]
+  testimonials         Testimonial[]     @relation("testimonial")
+  providedTestimonials Testimonial[]     @relation("providedTestimonial")
 }
 
 model BusinessCategory {
@@ -134,6 +136,17 @@ model BusinessEnquiry {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
+}
+
+model Testimonial {
+  id      String @id @default(uuid()) @map("_id")
+  comment String
+
+  author   Business @relation("providedTestimonial", fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  authorId String
+
+  business   Business @relation("testimonial", fields: [businessId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  businessId String
 }
 
 model Receipt {

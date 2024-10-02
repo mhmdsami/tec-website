@@ -494,6 +494,13 @@ export const BusinessClinicSchema = object({
   ),
 });
 
+export const TestimonialSchema = object({
+  comment: pipe(
+    string("Testimonial is required"),
+    minLength(3, "Testimonial must be at least 3 characters"),
+  ),
+});
+
 type ValidatedForm<Schema extends GenericSchema> =
   | {
       success: true;

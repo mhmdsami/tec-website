@@ -1,4 +1,4 @@
-import { Business } from "@prisma-app/client";
+import { Business, Testimonial } from "@prisma-app/client";
 import Autoplay from "embla-carousel-autoplay";
 import {
   Facebook,
@@ -32,6 +32,7 @@ import { copyToClipboard } from "~/utils/helpers.client";
 interface ProfileProps extends Omit<Business, "createdAt"> {
   children?: ReactNode;
   headerChildren?: ReactNode;
+  testimonials: Array<Testimonial & { author: Omit<Business, "createdAt"> }>;
 }
 
 export default function Profile({
@@ -51,6 +52,7 @@ export default function Profile({
   headerChildren,
   services,
   gallery,
+  testimonials,
 }: ProfileProps) {
   const url = `${siteConfig.baseUrl}/business/${slug}`;
 
@@ -187,6 +189,53 @@ export default function Profile({
                 ))}
               </CarouselContent>
               {gallery.length > 2 && (
+                <div className="mt-5 flex items-center justify-center gap-3">
+                  <CarouselPrevious className="static translate-y-0" />
+                  <CarouselNext className="static translate-y-0" />
+                </div>
+              )}
+            </Carousel>
+          </div>
+        )}
+        {testimonials && testimonials.length > 0 && (
+          <div className="flex flex-col gap-2">
+            <p className="text-xl font-bold">Testimonials</p>
+            <Carousel
+              plugins={[
+                Autoplay({
+                  delay: 3000,
+                }),
+              ]}
+            >
+              <CarouselContent>
+                {testimonials.map(
+                  ({ comment, author: { name, logo, tagline } }, idx) => (
+                    <CarouselItem
+                      key={idx}
+                      className={cn(testimonials.length > 1 && "sm:basis-1/2")}
+                    >
+                      <Card>
+                        <CardHeader className="flex flex-row items-center gap-2">
+                          <Avatar>
+                            {logo && <AvatarImage src={logo} alt={name} />}
+                            <AvatarFallback className="text-xl">
+                              {name[0]}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex flex-col">
+                            <CardTitle className="text-xl">{name}</CardTitle>
+                            <CardDescription>{tagline}</CardDescription>
+                          </div>
+                        </CardHeader>
+                        <CardContent className="flex flex-col gap-3">
+                          <p className="line-clamp-5">{comment}</p>
+                        </CardContent>
+                      </Card>
+                    </CarouselItem>
+                  ),
+                )}
+              </CarouselContent>
+              {testimonials.length > 2 && (
                 <div className="mt-5 flex items-center justify-center gap-3">
                   <CarouselPrevious className="static translate-y-0" />
                   <CarouselNext className="static translate-y-0" />
