@@ -150,7 +150,7 @@ export default function Profile({
                             className="aspect-video rounded-lg object-cover"
                           />
                         )}
-                        <p>{description}</p>
+                        <p className="line-clamp-5">{description}</p>
                       </CardContent>
                     </Card>
                   </CarouselItem>
@@ -177,19 +177,16 @@ export default function Profile({
             >
               <CarouselContent>
                 {gallery.map(({ url, description }, idx) => (
-                  <CarouselItem
-                    key={idx}
-                    className="aspect-video overflow-clip"
-                  >
+                  <CarouselItem key={idx} className="overflow-clip">
                     <img
                       src={url}
                       alt={description || "gallery image"}
-                      className="aspect-video rounded-lg object-cover"
+                      className="aspect-video w-full rounded-lg object-cover"
                     />
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              {services.length > 2 && (
+              {gallery.length > 2 && (
                 <div className="mt-5 flex items-center justify-center gap-3">
                   <CarouselPrevious className="static translate-y-0" />
                   <CarouselNext className="static translate-y-0" />

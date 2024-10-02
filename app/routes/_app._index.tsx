@@ -81,13 +81,13 @@ export default function Index() {
             <CarouselItem className="flex aspect-video items-center justify-center p-6">
               <img src="/tec.png" alt="TEC Logo" />
             </CarouselItem>
-            {events.map(
+            {events.slice(0, 1).map(
               ({ images }, idx) =>
                 images.length > 0 && (
                   <CarouselItem key={idx}>
                     <Card>
                       <CardHeader>
-                        <CardTitle>Upcoming Event</CardTitle>
+                        <CardTitle>Latest Event</CardTitle>
                       </CardHeader>
                       <CardContent className="flex aspect-video flex-col items-center justify-center gap-2 p-6">
                         <img

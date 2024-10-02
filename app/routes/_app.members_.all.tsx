@@ -73,6 +73,11 @@ export default function MembersAll() {
   const handleTypeFilterChange = (type: string) => {
     if (category === "all") return;
 
+    if (type === "all") {
+      handleCategoryFilterChange(category);
+      return;
+    }
+
     const typeId = businessTypes.find((bt) => bt.slug === type)?.id;
     if (!typeId) return;
 
